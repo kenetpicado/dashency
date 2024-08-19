@@ -22,9 +22,9 @@ import { IconHome, IconLogout, IconUser } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
-import useUser from '@/composables/useUser'
+import useAuth from '@/composables/useAuth.ts'
 
-const { logout } = useUser()
+const { logout } = useAuth()
 
 const items = [
   {

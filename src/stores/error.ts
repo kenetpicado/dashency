@@ -1,19 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-
-interface ErrorState {
-  name: string
-  value: string
-}
+import type { IErrorStatus } from '@/types'
 
 export const useErrorStore = defineStore('error', () => {
-  const error = ref<ErrorState>()
+  const error = ref<IErrorStatus>()
 
   function clearErrorState() {
     error.value = undefined
   }
 
-  function setErrorState(state: ErrorState) {
+  function setErrorState(state: IErrorStatus) {
     error.value = state
   }
 

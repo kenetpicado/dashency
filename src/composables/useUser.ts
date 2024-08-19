@@ -1,17 +1,14 @@
 import router from '@/router'
+import { ref } from 'vue'
 
 export default function useUser() {
-  function register(): void {
-    router.push({ name: 'login' })
-  }
-
-  function login(): void {
-    router.push({ name: 'home' })
-  }
+  const users = ref([])
 
   function logout(): void {
     router.push({ name: 'login' })
   }
 
-  return { login, register, logout }
+  function getUsers() {}
+
+  return { register }
 }

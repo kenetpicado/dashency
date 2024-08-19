@@ -14,7 +14,7 @@ const loading = ref(false)
 
   <TheTable>
     <template #header>
-      <th>ID</th>
+      <th>#</th>
       <th>Nombre</th>
       <th>Correo</th>
       <th>Rol</th>

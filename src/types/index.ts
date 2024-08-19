@@ -11,3 +11,21 @@ export interface IInputForm {
     value: string
   }
 }
+
+export interface IErrorSatus {
+  field: string
+  message: string
+}
+
+export interface ILoginForm {
+  email: string
+  password: string
+}
+
+export interface IProfile {
+  _id: string
+  name: string
+  email: string
+  role: status
+  password_updated_at?: string
+}

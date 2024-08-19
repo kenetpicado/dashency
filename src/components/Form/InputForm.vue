@@ -23,8 +23,8 @@ const model = defineModel()
       v-model="model"
     />
 
-    <p class="text-sm text-red-400 mt-2" v-if="error && error.name === name">
-      {{ error.value }}
+    <p class="text-sm text-red-400 mt-2" v-if="error && error.field === name">
+      {{ error.message }}
     </p>
   </div>
 </template>

@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import useUser from '@/composables/useUser'
+import useAuth from '@/composables/useAuth.js'
+import { useErrorStore } from '@/stores/error'
+import { storeToRefs } from 'pinia'
+import type { ILoginForm } from '@/types'
 
-const { login } = useUser()
+const { login, processing } = useAuth()
+const { error } = storeToRefs(useErrorStore())
 
-const form = reactive({
-  email: '',
-  password: ''
+const form = ref<ILoginForm>({
+  email: 'ke@gmail.com',
+  password: 'kenetpicado'
 })
+
 </script>
 
 <template>
@@ -17,7 +22,7 @@ const form = reactive({
     <h1 class="text-xl font-bold">Inicia sesión</h1>
   </div>
 
-  <form @submit.prevent="login">
+  <form @submit.prevent="login(form)">
     <InputForm
       text="Correo"
       name="email"
@@ -26,11 +31,19 @@ const form = reactive({
       required
       type="email"
       autocomplete="on"
+      :error="error"
     />
-    <InputForm text="Contraseña" name="password" v-model="form.password" required type="password" />
+    <InputForm
+      text="Contraseña"
+      name="password"
+      v-model="form.password"
+      required
+      type="password"
+      :error="error"
+    />
 
     <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="false"> Ingresar </BtnPrimary>
+      <BtnPrimary type="submit" class="w-full" :loading="processing"> Ingresar </BtnPrimary>
     </div>
     <div class="text-center mt-5">
       ¿No tienes cuenta?
