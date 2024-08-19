@@ -2,12 +2,8 @@
 import StatCard from '@/components/StatCard.vue'
 import { onMounted } from 'vue'
 import useAuth from '@/composables/useAuth.ts'
-import { useAuthStore } from '@/stores/auth'
-import { storeToRefs } from 'pinia'
 
-const { getProfile } = useAuth()
-
-const { auth } = storeToRefs(useAuthStore())
+const { getProfile, auth } = useAuth()
 
 const stats = [
   {
@@ -41,5 +37,5 @@ onMounted(() => {
   <main class="grid grid-cols-4 xl:grid-cols-5 gap-4">
     <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
   </main>
-  <pre>{{auth}}</pre>
+  <pre>{{ auth }}</pre>
 </template>

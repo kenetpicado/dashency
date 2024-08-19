@@ -2,7 +2,7 @@
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import { onMounted } from 'vue'
-import useUser from "@/composables/useUser"
+import useUser from '@/composables/useUser'
 
 const { getUsers, users } = useUser()
 
@@ -26,9 +26,8 @@ onMounted(() => {
       <th>Estado</th>
     </template>
     <template #body>
-
       <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
-        <td>{{ index + 1}}</td>
+        <td>{{ index + 1 }}</td>
         <td>
           {{ item.name }}
         </td>

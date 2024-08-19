@@ -14,7 +14,6 @@ const form = ref<ILoginForm>({
   email: 'ke@gmail.com',
   password: 'kenetpicado'
 })
-
 </script>
 
 <template>
