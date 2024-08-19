@@ -22,10 +22,11 @@ export interface ILoginForm {
   password: string
 }
 
-export interface IProfile {
+export interface IUser {
   _id: string
   name: string
   email: string
-  role: status
+  role: string
+  status: string
   password_updated_at?: string
 }
