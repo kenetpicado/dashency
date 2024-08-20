@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import StatCard from '@/components/StatCard.vue'
 import { onMounted } from 'vue'
-import useAuth from '@/composables/useAuth.ts'
+import useAuth from '@/composables/useAuth'
 
 const { getProfile, auth } = useAuth()
 

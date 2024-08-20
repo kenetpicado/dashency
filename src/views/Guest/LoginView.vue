@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import useAuth from '@/composables/useAuth.js'
 import { useErrorStore } from '@/stores/error'
@@ -14,6 +14,8 @@ const form = ref<ILoginForm>({
   email: 'ke@gmail.com',
   password: 'kenetpicado'
 })
+
+onMounted(() => useErrorStore().clearErrorState())
 </script>
 
 <template>
@@ -42,13 +44,15 @@ const form = ref<ILoginForm>({
     />
 
     <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="processing"> Ingresar </BtnPrimary>
+      <BtnPrimary type="submit" class="w-full" :loading="processing">
+        Ingresar
+      </BtnPrimary>
     </div>
     <div class="text-center mt-5">
       ¿No tienes cuenta?
-      <RouterLink :to="{ name: 'register' }" class="text-blue-600">Registrarme</RouterLink>
+      <RouterLink :to="{ name: 'register' }" class="text-blue-600">
+        Registrarme
+      </RouterLink>
     </div>
   </form>
 </template>
-
-<style scoped></style>

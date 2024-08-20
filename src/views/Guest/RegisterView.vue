@@ -1,69 +1,96 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { reactive } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import { useErrorStore } from '@/stores/error'
 import { storeToRefs } from 'pinia'
-import useUser from '@/composables/useUser'
+import useAuth from '@/composables/useAuth'
+import type { IRegisterForm } from '@/types'
 
-const form = reactive({
+const defaultValues = <IRegisterForm>{
   name: '',
   email: '',
   password: '',
   password_confirmation: ''
-})
+}
+
+const form = ref<IRegisterForm>({...defaultValues})
 
 const errorStore = useErrorStore()
 const { error } = storeToRefs(useErrorStore())
-const { register } = useUser()
+const { register, processing } = useAuth()
+const statusMessage = ref<string>("")
+const title = ref<string>("Crear nueva cuenta")
 
-function onRegister(): void {
+async function onRegister(): void {
   errorStore.clearErrorState()
 
-  if (form.password.length < 8) {
+  if (form.value.password.length < 8) {
     errorStore.setErrorState({
-      name: 'password',
-      value: 'La contraseña debe tener al menos 8 caracteres'
+      field: 'password',
+      message: 'La contraseña debe tener al menos 8 caracteres'
     })
     return
   }
 
-  if (!/\d/.test(form.password)) {
+  if (!/\d/.test(form.value.password)) {
     errorStore.setErrorState({
-      name: 'password',
-      value: 'La contraseña debe tener al menos 1 número'
+      field: 'password',
+      message: 'La contraseña debe tener al menos 1 número'
     })
     return
   }
 
-  if (!/[A-Z]/.test(form.password)) {
+  if (!/[A-Z]/.test(form.value.password)) {
     errorStore.setErrorState({
-      name: 'password',
-      value: 'La contraseña debe tener al menos 1 letra mayúscula'
+      field: 'password',
+      message: 'La contraseña debe tener al menos 1 letra mayúscula'
     })
     return
   }
 
-  if (form.password !== form.password_confirmation) {
+  if (form.value.password !== form.value.password_confirmation) {
     errorStore.setErrorState({
-      name: 'password_confirmation',
-      value: 'Las contraseñas no coinciden'
+      field: 'password_confirmation',
+      message: 'Las contraseñas no coinciden'
     })
     return
   }
 
-  register()
+  const done = await register(form.value)
+
+  if (done) {
+    form.value = defaultValues
+    title.value = "¡Su registro se ha realizado correctamente!"
+    statusMessage.value = "Para activar su cuenta, por favor, contacte a un administrador. Una vez aprobado, podrá iniciar sesión."
+  } else {
+    statusMessage.value = ""
+  }
 }
+
+onMounted(() => errorStore.clearErrorState())
 </script>
 
 <template>
   <div class="flex flex-col justify-center items-center mb-4">
-    <h1 class="text-xl font-bold mb-2">Registrarme</h1>
-    <div class="text-gray-400">Crear nueva cuenta</div>
+    <h1 class="text-xl font-bold mb-2">
+      {{ title }}
+    </h1>
   </div>
 
-  <form @submit.prevent="onRegister">
-    <InputForm text="Nombre" name="name" v-model="form.name" autofocus required :error="error" />
+  <div v-if="statusMessage" class="bg-blue-50 text-blue-600 p-4 rounded-lg text-base">
+    {{ statusMessage }}
+  </div>
+
+  <form v-else @submit.prevent="onRegister">
+    <InputForm
+      text="Nombre"
+      name="name"
+      v-model="form.name"
+      autofocus
+      required
+      :error="error"
+    />
 
     <InputForm
       text="Correo"
@@ -93,11 +120,15 @@ function onRegister(): void {
     />
 
     <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="false"> Crear cuenta </BtnPrimary>
-    </div>
-    <div class="text-center mt-5">
-      ¿Ya tienes cuenta?
-      <RouterLink :to="{ name: 'login' }" class="text-blue-600"> Inicia sesión </RouterLink>
+      <BtnPrimary type="submit" class="w-full" :loading="processing">
+        Crear cuenta
+      </BtnPrimary>
     </div>
   </form>
+    <div class="text-center mt-5">
+    ¿Ya tienes cuenta?
+    <RouterLink :to="{ name: 'login' }" class="text-blue-600">
+      Inicia sesión
+    </RouterLink>
+  </div>
 </template>

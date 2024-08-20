@@ -10,7 +10,10 @@
           <ItemSidebarLink v-else :item="item" />
         </li>
         <li>
-          <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
+          <ItemSidebar
+            @click="logout"
+            :item="{ title: 'Salir', icon: IconLogout }"
+          />
         </li>
       </ul>
     </div>
@@ -22,7 +25,7 @@ import { IconHome, IconLogout, IconUser } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
-import useAuth from '@/composables/useAuth.ts'
+import useAuth from '@/composables/useAuth'
 
 const { logout } = useAuth()
 

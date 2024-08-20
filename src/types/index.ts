@@ -6,13 +6,10 @@ export interface IInputForm {
   autofocus?: boolean
   type?: string
   placeholder?: string
-  error?: {
-    name: string
-    value: string
-  }
+  error?: IErrorStatus
 }
 
-export interface IErrorSatus {
+export interface IErrorStatus {
   field: string
   message: string
 }
@@ -22,6 +19,13 @@ export interface ILoginForm {
   password: string
 }
 
+export interface IRegisterForm {
+  email: string
+  name: string
+  password: string
+  password_confirmation: string
+}
+
 export interface IUser {
   _id: string
   name: string
@@ -29,4 +33,10 @@ export interface IUser {
   role: string
   status: string
   password_updated_at?: string
+}
+
+export interface IButton {
+  type?: 'submit' | 'button'
+  disabled?: boolean
+  loading?: boolean
 }

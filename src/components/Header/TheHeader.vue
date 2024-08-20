@@ -7,7 +7,9 @@ const { auth } = storeToRefs(useAuthStore())
 
 <template>
   <header class="bg-white border-b">
-    <div class="w-full mx-auto h-20 py-4 px-6 flex justify-between items-center">
+    <div
+      class="w-full mx-auto h-20 py-4 px-6 flex justify-between items-center"
+    >
       <section></section>
       <section v-if="auth" class="text-right">
         <div>{{ auth.name }}</div>
