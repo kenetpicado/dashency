@@ -20,6 +20,16 @@ const router = createRouter({
           path: 'usuarios',
           component: UsersView,
           name: 'users'
+        },
+        {
+          path: 'lotes',
+          component: () => import('../views/Batch/BatchView.vue'),
+          name: 'batches'
+        },
+        {
+          path: 'lotes/crear',
+          component: () => import('../views/Batch/BatchCreate.vue'),
+          name: 'batches.create'
         }
       ]
     },

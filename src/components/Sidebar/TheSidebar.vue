@@ -36,6 +36,11 @@ const items = [
     icon: IconHome
   },
   {
+    title: 'Lotes',
+    to: { name: 'batches' },
+    icon: IconUser
+  },
+  {
     title: 'Administración'
   },
   {

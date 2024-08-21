@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { reactive, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import { useErrorStore } from '@/stores/error'
 import { storeToRefs } from 'pinia'
 import useAuth from '@/composables/useAuth'
 import type { IRegisterForm } from '@/types'
 
-const defaultValues = <IRegisterForm>{
+const defaultValues: IRegisterForm = {
   name: '',
   email: '',
   password: '',
   password_confirmation: ''
 }
 
-const form = ref<IRegisterForm>({...defaultValues})
+const form = ref<IRegisterForm>({ ...defaultValues })
 
 const errorStore = useErrorStore()
 const { error } = storeToRefs(useErrorStore())
 const { register, processing } = useAuth()
-const statusMessage = ref<string>("")
-const title = ref<string>("Crear nueva cuenta")
+const statusMessage = ref<string>('')
+const title = ref<string>('Crear nueva cuenta')
 
 async function onRegister(): void {
   errorStore.clearErrorState()
@@ -61,10 +61,11 @@ async function onRegister(): void {
 
   if (done) {
     form.value = defaultValues
-    title.value = "¡Su registro se ha realizado correctamente!"
-    statusMessage.value = "Para activar su cuenta, por favor, contacte a un administrador. Una vez aprobado, podrá iniciar sesión."
+    title.value = '¡Su registro se ha realizado correctamente!'
+    statusMessage.value =
+      'Para activar su cuenta, por favor, contacte a un administrador. Una vez aprobado, podrá iniciar sesión.'
   } else {
-    statusMessage.value = ""
+    statusMessage.value = ''
   }
 }
 
@@ -78,7 +79,10 @@ onMounted(() => errorStore.clearErrorState())
     </h1>
   </div>
 
-  <div v-if="statusMessage" class="bg-blue-50 text-blue-600 p-4 rounded-lg text-base">
+  <div
+    v-if="statusMessage"
+    class="bg-blue-50 text-blue-600 p-4 rounded-lg text-base"
+  >
     {{ statusMessage }}
   </div>
 
@@ -125,7 +129,7 @@ onMounted(() => errorStore.clearErrorState())
       </BtnPrimary>
     </div>
   </form>
-    <div class="text-center mt-5">
+  <div class="text-center mt-5">
     ¿Ya tienes cuenta?
     <RouterLink :to="{ name: 'login' }" class="text-blue-600">
       Inicia sesión
