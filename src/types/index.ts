@@ -40,3 +40,22 @@ export interface IButton {
   disabled?: boolean
   loading?: boolean
 }
+
+export interface IPackage {
+  guide: string
+  description: string
+  pieces: number
+  gross_weight: number
+  client: string
+  entry_date: string
+}
+
+export interface IBatch {
+  total: number
+  packages: IPackage[]
+}
+
+export interface IExcelFile {
+  rows: IPackage[]
+  errors: array
+}
