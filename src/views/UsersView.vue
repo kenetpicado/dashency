@@ -8,6 +8,7 @@ import { IconEdit } from '@tabler/icons-vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
+import getFormattedDate from "@/utils/date"
 
 const { getUsers, users } = useUser()
 const openModal = ref(false)
@@ -87,7 +88,7 @@ function onSubmit(data: IUser) {
           <span class="bg-blue-50 px-2 py-1 text-blue-600 rounded-lg">{{ item.status }}</span>
         </td>
         <td>
-          {{ item.createdAt }}
+          {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
           <button type="button" @click="editUser(item)">

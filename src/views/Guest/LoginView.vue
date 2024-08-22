@@ -9,7 +9,7 @@ const { login, processing } = useAuth()
 
 const form = ref<ILoginForm>({
   email: 'ke@gmail.com',
-  password: 'kenetpicado'
+  password: 'password1A'
 })
 </script>
 
