@@ -27,12 +27,14 @@ export interface IRegisterForm {
 }
 
 export interface IUser {
-  _id: string
+  id: string
   name: string
   email: string
   role: string
   status: string
-  password_updated_at?: string
+  passwordUpdatedAt?: Date
+  lastActiveAt?: Date
+  createdAt: Date
 }
 
 export interface IButton {

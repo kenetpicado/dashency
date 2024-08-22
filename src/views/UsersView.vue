@@ -26,10 +26,12 @@ function editUser(item: IUser) {
   openModal.value = true
 }
 
-async function onSubmit(data: IUser) {
-  await updateUser(data)
-  openModal.value = false
-  user.value = undefined
+function onSubmit(data: IUser) {
+  updateUser(data)
+  .then(() => {
+    openModal.value = false
+    user.value = undefined
+  })
 }
 </script>
 
@@ -49,38 +51,43 @@ async function onSubmit(data: IUser) {
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
         <BtnPrimary @click="onSubmit(user)" :loading="processing"
-          >Guardar</BtnPrimary
-        >
+          >
+          Guardar
+        </BtnPrimary>
       </div>
     </template>
   </DialogForm>
 
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Usuarios</span>
-    <BtnPrimary> Nuevo </BtnPrimary>
   </header>
 
   <TheTable>
     <template #header>
       <th>Nombre</th>
-      <th>Correo</th>
       <th>Rol</th>
       <th>Estado</th>
+      <th>Registrado</th>
       <th>Acciones</th>
     </template>
     <template #body>
       <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
         <td>
-          {{ item.name }}
-        </td>
-        <td>
-          {{ item.email }}
+          <div class="mb-2">
+            {{ item.name }}
+          </div>
+          <div class="text-sm text-gray-500">
+            {{ item.email }}
+          </div>
         </td>
         <td>
           {{ item.role }}
         </td>
         <td>
-          {{ item.status }}
+          <span class="bg-blue-50 px-2 py-1 text-blue-600 rounded-lg">{{ item.status }}</span>
+        </td>
+        <td>
+          {{ item.createdAt }}
         </td>
         <td>
           <button type="button" @click="editUser(item)">
