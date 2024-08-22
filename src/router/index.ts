@@ -10,6 +10,7 @@ const router = createRouter({
     {
       path: '/',
       component: DefaultLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -36,6 +37,7 @@ const router = createRouter({
     {
       path: '/',
       component: GuestLayout,
+      meta: { requiresAuth: false },
       children: [
         {
           path: 'login',
@@ -57,13 +59,16 @@ const router = createRouter({
   ]
 })
 
-//verificar que este logueado antes de acceder a las rutas
 router.beforeEach((to, from, next) => {
-  // const token = localStorage.getItem('token')
-  // if (to.name !== 'login' && !token) next({ name: 'login' })
-  // else next()
-  console.log(to, from)
-  next()
+  const token = localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !token) {
+    next({ name: 'login' })
+  } else if (!to.meta.requiresAuth && token) {
+    next({ name: 'home' })
+  } else {
+    next()
+  }
 })
 
 export default router

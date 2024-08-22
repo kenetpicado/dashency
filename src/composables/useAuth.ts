@@ -1,11 +1,9 @@
 import router from '@/router'
 import { ref } from 'vue'
-import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/config/axios'
 import type { ILoginForm, IUser, IRegisterForm } from '@/types'
 import { storeToRefs } from 'pinia'
-import axios from 'axios'
 import toast from '@/utils/toast'
 
 export default function useAuth() {
