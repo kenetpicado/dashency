@@ -57,4 +57,13 @@ const router = createRouter({
   ]
 })
 
+//verificar que este logueado antes de acceder a las rutas
+router.beforeEach((to, from, next) => {
+  // const token = localStorage.getItem('token')
+  // if (to.name !== 'login' && !token) next({ name: 'login' })
+  // else next()
+  console.log(to, from)
+  next()
+})
+
 export default router

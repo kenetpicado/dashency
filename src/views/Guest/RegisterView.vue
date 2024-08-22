@@ -56,28 +56,16 @@ function onRegister() {
   </div>
 
   <div v-if="done" class="text-base">
-    Para activar su cuenta, por favor, contacte a un administrador. Una vez
-    aprobado, podrá iniciar sesión.
+    Para activar su cuenta, por favor, contacte a un administrador. Una vez aprobado, podrá iniciar
+    sesión.
   </div>
 
   <form v-else @submit.prevent="onRegister">
     <InputForm text="Nombre" name="name" v-model="form.name" autofocus />
 
-    <InputForm
-      text="Correo"
-      name="email"
-      v-model="form.email"
-      required
-      type="email"
-    />
+    <InputForm text="Correo" name="email" v-model="form.email" required type="email" />
 
-    <InputForm
-      text="Contraseña"
-      name="password"
-      v-model="form.password"
-      required
-      type="password"
-    />
+    <InputForm text="Contraseña" name="password" v-model="form.password" required type="password" />
 
     <InputForm
       text="Confirmar contraseña"
@@ -88,15 +76,11 @@ function onRegister() {
     />
 
     <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="processing">
-        Crear cuenta
-      </BtnPrimary>
+      <BtnPrimary type="submit" class="w-full" :loading="processing"> Crear cuenta </BtnPrimary>
     </div>
   </form>
   <div class="text-center mt-5">
     ¿Ya tienes cuenta?
-    <RouterLink :to="{ name: 'login' }" class="text-blue-600">
-      Inicia sesión
-    </RouterLink>
+    <RouterLink :to="{ name: 'login' }" class="text-blue-600"> Inicia sesión </RouterLink>
   </div>
 </template>

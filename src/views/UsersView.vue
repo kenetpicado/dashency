@@ -8,7 +8,7 @@ import { IconEdit } from '@tabler/icons-vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
-import getFormattedDate from "@/utils/date"
+import getFormattedDate from '@/utils/date'
 
 const { getUsers, users } = useUser()
 const openModal = ref(false)
@@ -28,8 +28,7 @@ function editUser(item: IUser) {
 }
 
 function onSubmit(data: IUser) {
-  updateUser(data)
-  .then(() => {
+  updateUser(data).then(() => {
     openModal.value = false
     user.value = undefined
   })
@@ -51,10 +50,7 @@ function onSubmit(data: IUser) {
       </SelectForm>
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
-        <BtnPrimary @click="onSubmit(user)" :loading="processing"
-          >
-          Guardar
-        </BtnPrimary>
+        <BtnPrimary @click="onSubmit(user)" :loading="processing"> Guardar </BtnPrimary>
       </div>
     </template>
   </DialogForm>

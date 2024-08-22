@@ -61,8 +61,8 @@ export interface ICreatedBy {
 export interface IBatch {
   total: number
   packages: IPackage[]
-  created_at: Date
-  created_by: ICreatedBy
+  created_at?: Date
+  created_by?: ICreatedBy
 }
 
 export interface IExcelFile {

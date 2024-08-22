@@ -28,24 +28,14 @@ const form = ref<ILoginForm>({
       type="email"
       autocomplete="on"
     />
-    <InputForm
-      text="Contraseña"
-      name="password"
-      v-model="form.password"
-      required
-      type="password"
-    />
+    <InputForm text="Contraseña" name="password" v-model="form.password" required type="password" />
 
     <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="processing">
-        Ingresar
-      </BtnPrimary>
+      <BtnPrimary type="submit" class="w-full" :loading="processing"> Ingresar </BtnPrimary>
     </div>
     <div class="text-center mt-5">
       ¿No tienes cuenta?
-      <RouterLink :to="{ name: 'register' }" class="text-blue-600">
-        Registrarme
-      </RouterLink>
+      <RouterLink :to="{ name: 'register' }" class="text-blue-600"> Registrarme </RouterLink>
     </div>
   </form>
 </template>

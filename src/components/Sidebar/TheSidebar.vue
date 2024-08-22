@@ -10,10 +10,7 @@
           <ItemSidebarLink v-else :item="item" />
         </li>
         <li>
-          <ItemSidebar
-            @click="logout"
-            :item="{ title: 'Salir', icon: IconLogout }"
-          />
+          <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
         </li>
       </ul>
     </div>

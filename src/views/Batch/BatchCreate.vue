@@ -1,24 +1,19 @@
-<template>None</template>
-<!-- <template>
+<template>
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Nuevo</span>
-    <BtnPrimary @click="inputFile?.click()">
-      <IconUpload size="20"/>
+    <BtnPrimary @click="openInputFile">
+      <IconUpload size="20" />
       Subir archivo
     </BtnPrimary>
   </header>
 
-  <input type="file" ref="inputFile" class="hidden" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" @change="onChange" />
+  <input type="file" id="excelFileInput" class="hidden"
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+    @change="onChange" />
 
-  <div
-    v-if="uploadedFile?.errors.length"
-    class="bg-red-50 p-4 rounded-lg text-red-600"
-  >
-    <div class="mb-4">
-      No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y
-      vuelve a intentarlo.
-    </div>
-    <pre>{{ uploadedFile?.errors[0] }}</pre>
+  <div v-if="hasErrors" class="bg-red-50 p-4 rounded-lg text-red-600">
+    No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y
+    vuelve a intentarlo.
   </div>
 
   <TheTable v-else class="mb-4">
@@ -31,15 +26,10 @@
       <th>Ingreso</th>
     </template>
     <template #body>
-      <tr v-if="!uploadedFile?.rows.length">
+      <tr v-if="!form.packages.length">
         <td colspan="6" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr
-        v-else
-        v-for="(item, index) in uploadedFile?.rows"
-        :key="index"
-        class="hover:bg-gray-50"
-      >
+      <tr v-else v-for="(item, index) in form.packages" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.guide }}
         </td>
@@ -50,12 +40,9 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input
-            type="number"
-            required
+          <input type="number" required
             class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.gross_weight"
-          />
+            v-model="item.gross_weight" />
         </td>
         <td>
           {{ item.client }}
@@ -67,12 +54,7 @@
     </template>
   </TheTable>
   <div class="grid grid-cols-4">
-    <InputForm
-      text="Total"
-      name="total"
-      v-model="form.total"
-      type="number"
-    />
+    <InputForm text="Total" name="total" v-model="form.total" type="number" />
   </div>
   <div class="flex justify-end gap-4">
     <BtnSecondary>Cancelar</BtnSecondary>
@@ -89,15 +71,11 @@ import TheTable from '@/components/Table/TheTable.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconUpload } from '@tabler/icons-vue'
 import toast from "@/utils/toast"
-import type { IBatch, IExcelFile } from '@/types'
+import type { IBatch, IPackage } from '@/types'
 import useBatch from '@/composables/useBatch'
 
-const uploadedFile = ref<IExcelFile>({
-  rows: [],
-  errors: []
-})
+const hasErrors = ref<boolean>(false)
 
-const inputFile = ref(null)
 const { storeBatch } = useBatch()
 
 const form = ref<IBatch>({
@@ -132,15 +110,14 @@ const schema = {
   }
 }
 
-function onChange(event) {
-  readXlsxFile(event.target.files[0], { schema }).then((response) => {
-    uploadedFile.value = response
+function onChange(event: any) {
+  readXlsxFile(event.target.files[0], { schema }).then((response: any) => {
+    form.value.packages = response.rows as IPackage[]
+    //todo verificar errores
   })
 }
 
-async function onSubmit() {
-  form.value.packages = uploadedFile.value.rows
-
+function onSubmit() {
   if (!form.value.packages.length) {
     toast.error("No hay paquetes")
     return
@@ -151,7 +128,11 @@ async function onSubmit() {
     return
   }
 
-  await storeBatch(form.value)
+  storeBatch(form.value)
 }
+
+function openInputFile() {
+  document.getElementById('excelFileInput')?.click()
+}
+
 </script>
- -->

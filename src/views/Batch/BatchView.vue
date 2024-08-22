@@ -14,11 +14,7 @@
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr
-        v-for="(item, index) in batches"
-        :key="index"
-        class="hover:bg-gray-50"
-      >
+      <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.created_at }}
         </td>

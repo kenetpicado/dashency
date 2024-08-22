@@ -1,19 +1,19 @@
-import { useDateFormat } from "@vueuse/core"
+import { useDateFormat } from '@vueuse/core'
 
-export const getFormattedDate = (date: Date, format = "DD/MM/YY hh:mm a") => {
+export const getFormattedDate = (date: Date, format = 'DD/MM/YY hh:mm a') => {
   if (!date) {
-    return ""
+    return ''
   }
 
-  return useDateFormat(date, format,  { locales: 'es-NI' }).value
+  return useDateFormat(date, format, { locales: 'es-NI' }).value
 }
 
 export const getBaseDate = (date: Date) => {
   if (!date) {
-    return ""
+    return ''
   }
 
-  return useDateFormat(date, "DD/MM/YYYY").value
+  return useDateFormat(date, 'DD/MM/YYYY').value
 }
 
 export default getFormattedDate

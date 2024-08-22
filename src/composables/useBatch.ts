@@ -1,4 +1,4 @@
-import type { IErrorStatus, IBatch } from '@/types'
+import type { IBatch } from '@/types'
 import { useBatchStore } from '@/stores/batch'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -19,17 +19,16 @@ export default function useBatch() {
     }
   }
 
-  async function storeBatch(data: IBatch) {
-    try {
-      processing.value = true
-      const response = await api.post('/batches', data)
-      await getBatches()
-      router.push({ name: 'batches' })
-    } catch (error) {
-      console.log(error)
-    } finally {
-      processing.value = false
-    }
+  function storeBatch(data: IBatch) {
+    return api
+      .post('/batches', data)
+      .then(() => {
+        getBatches()
+        router.push({ name: 'batches' })
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   return { getBatches, batches, processing, storeBatch }

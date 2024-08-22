@@ -11,12 +11,8 @@ const emit = defineEmits(['onClose'])
 
 <template>
   <dialog :open="isOpen">
-    <div
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-    >
-      <div
-        class="w-[35rem] min-h-[10rem] bg-white rounded-lg p-5 text-gray-700"
-      >
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="w-[35rem] min-h-[10rem] bg-white rounded-lg p-5 text-gray-700">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-2xl font-bold">
             {{ title }}
