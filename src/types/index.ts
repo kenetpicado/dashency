@@ -68,3 +68,12 @@ export interface IBatch {
 export interface IExcelFile {
   rows: IPackage[]
 }
+
+export interface IExcelFileError {
+  row: number
+  column: number
+  error: string
+  reason?: string
+  value?: string
+  type?: string
+}

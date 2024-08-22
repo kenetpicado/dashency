@@ -11,9 +11,10 @@
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
     @change="onChange" />
 
-  <div v-if="hasErrors" class="bg-red-50 p-4 rounded-lg text-red-600">
+  <div v-if="error" class="bg-red-50 p-4 rounded-lg text-red-600">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y
     vuelve a intentarlo.
+    <pre>{{ error }}</pre>
   </div>
 
   <TheTable v-else class="mb-4">
@@ -71,10 +72,10 @@ import TheTable from '@/components/Table/TheTable.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconUpload } from '@tabler/icons-vue'
 import toast from "@/utils/toast"
-import type { IBatch, IPackage } from '@/types'
+import type { IBatch, IPackage, IExcelFileError } from '@/types'
 import useBatch from '@/composables/useBatch'
 
-const hasErrors = ref<boolean>(false)
+const error = ref<IExcelFileError>()
 
 const { storeBatch } = useBatch()
 
@@ -113,7 +114,12 @@ const schema = {
 function onChange(event: any) {
   readXlsxFile(event.target.files[0], { schema }).then((response: any) => {
     form.value.packages = response.rows as IPackage[]
-    //todo verificar errores
+
+    if (response.errors.length > 0) {
+      error.value = response.errors[0] as IExcelFileError
+    } else {
+      error.value = undefined
+    }
   })
 }
 
