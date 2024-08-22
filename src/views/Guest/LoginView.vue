@@ -1,21 +1,16 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import useAuth from '@/composables/useAuth.js'
-import { useErrorStore } from '@/stores/error'
-import { storeToRefs } from 'pinia'
 import type { ILoginForm } from '@/types'
 
 const { login, processing } = useAuth()
-const { error } = storeToRefs(useErrorStore())
 
 const form = ref<ILoginForm>({
   email: 'ke@gmail.com',
   password: 'kenetpicado'
 })
-
-onMounted(() => useErrorStore().clearErrorState())
 </script>
 
 <template>
@@ -32,7 +27,6 @@ onMounted(() => useErrorStore().clearErrorState())
       required
       type="email"
       autocomplete="on"
-      :error="error"
     />
     <InputForm
       text="Contraseña"
@@ -40,7 +34,6 @@ onMounted(() => useErrorStore().clearErrorState())
       v-model="form.password"
       required
       type="password"
-      :error="error"
     />
 
     <div class="mt-10">

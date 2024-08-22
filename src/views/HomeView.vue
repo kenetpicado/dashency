@@ -28,9 +28,7 @@ const stats = [
   }
 ]
 
-onMounted(() => {
-  getProfile()
-})
+onMounted(() => getProfile())
 </script>
 
 <template>

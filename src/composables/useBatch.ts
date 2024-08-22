@@ -3,6 +3,7 @@ import { useBatchStore } from '@/stores/batch'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import router from '@/router'
 
 export default function useBatch() {
   const { setBatches } = useBatchStore()
@@ -19,12 +20,11 @@ export default function useBatch() {
   }
 
   async function storeBatch(data: IBatch) {
-    console.log(data)
-    return
     try {
       processing.value = true
       const response = await api.post('/batches', data)
-      //await getBatches()
+      await getBatches()
+      router.push({ name: 'batches' })
     } catch (error) {
       console.log(error)
     } finally {

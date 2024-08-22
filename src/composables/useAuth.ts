@@ -3,43 +3,37 @@ import { ref } from 'vue'
 import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/config/axios'
-import type { IErrorStatus, ILoginForm, IUser, IRegisterForm } from '@/types'
+import type { ILoginForm, IUser, IRegisterForm } from '@/types'
 import { storeToRefs } from 'pinia'
 import axios from 'axios'
+import toast from '@/utils/toast'
 
 export default function useAuth() {
   const processing = ref(false)
-  const errorStatus = ref<IErrorStatus>()
-  const errorStore = useErrorStore()
   const { setAuthData } = useAuthStore()
   const { auth } = storeToRefs(useAuthStore())
 
-  async function getProfile() {
-    try {
-      const response = await api.get('/profile')
+  function getProfile() {
+    api.get('/profile').then((response) => {
       setAuthData(response.data as IUser)
-    } catch (error) {}
+    })
   }
 
-  async function login(data: ILoginForm) {
-    errorStore.clearErrorState()
+  function login(data: ILoginForm) {
+    processing.value = true
 
-    try {
-      processing.value = true
-      const response = await api.post('/login', data)
-      localStorage.setItem('token', response.data.token)
-
-      router.push({ name: 'home' })
-    } catch (error: any) {
-      if (axios.isAxiosError(error) && error.response) {
-        errorStatus.value = error.response.data as IErrorStatus
-        errorStore.setErrorState(errorStatus.value)
-      } else {
-        console.error('Unexpected error', error)
-      }
-    } finally {
-      processing.value = false
-    }
+    api
+      .post('/login', data)
+      .then((response) => {
+        localStorage.setItem('token', response.data.token)
+        router.push({ name: 'home' })
+      })
+      .catch((error: any) => {
+        toast.error(error.response?.data?.message || error?.message || 'Error')
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   function logout() {
@@ -47,24 +41,17 @@ export default function useAuth() {
     router.push({ name: 'login' })
   }
 
-  async function register(data: IRegisterForm): boolean {
-    try {
-      processing.value = true
-      const response = await api.post('/register', data)
-      return true
-      //router.push({ name: 'home' })
-    } catch (error: any) {
-      if (axios.isAxiosError(error) && error.response) {
-        errorStatus.value = error.response.data as IErrorStatus
-        errorStore.setErrorState(errorStatus.value)
-      } else {
-        console.error('Unexpected error', error)
-      }
+  function register(data: IRegisterForm) {
+    processing.value = true
 
-      return false
-    } finally {
-      processing.value = false
-    }
+    return api
+      .post('/register', data)
+      .catch((error: any) => {
+        toast.error(error.response?.data?.message || error?.message || 'Error')
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   return { login, logout, getProfile, processing, auth, register }

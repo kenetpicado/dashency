@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import InputForm from '@/components/Form/InputForm.vue'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import { useErrorStore } from '@/stores/error'
-import { storeToRefs } from 'pinia'
 import useAuth from '@/composables/useAuth'
 import type { IRegisterForm } from '@/types'
+import toast from '@/utils/toast'
 
 const defaultValues: IRegisterForm = {
   name: '',
@@ -16,60 +15,37 @@ const defaultValues: IRegisterForm = {
 
 const form = ref<IRegisterForm>({ ...defaultValues })
 
-const errorStore = useErrorStore()
-const { error } = storeToRefs(useErrorStore())
 const { register, processing } = useAuth()
-const statusMessage = ref<string>('')
+const done = ref<boolean>(false)
 const title = ref<string>('Crear nueva cuenta')
 
-async function onRegister(): void {
-  errorStore.clearErrorState()
-
+function onRegister() {
   if (form.value.password.length < 8) {
-    errorStore.setErrorState({
-      field: 'password',
-      message: 'La contraseña debe tener al menos 8 caracteres'
-    })
+    toast.error('La contraseña debe tener al menos 8 caracteres')
     return
   }
 
   if (!/\d/.test(form.value.password)) {
-    errorStore.setErrorState({
-      field: 'password',
-      message: 'La contraseña debe tener al menos 1 número'
-    })
+    toast.error('La contraseña debe tener al menos 1 número')
     return
   }
 
   if (!/[A-Z]/.test(form.value.password)) {
-    errorStore.setErrorState({
-      field: 'password',
-      message: 'La contraseña debe tener al menos 1 letra mayúscula'
-    })
+    toast.error('La contraseña debe tener al menos 1 letra mayúscula')
     return
   }
 
   if (form.value.password !== form.value.password_confirmation) {
-    errorStore.setErrorState({
-      field: 'password_confirmation',
-      message: 'Las contraseñas no coinciden'
-    })
+    toast.error('Las contraseñas no coinciden')
     return
   }
 
-  const done = await register(form.value)
-
-  if (done) {
+  register(form.value).then(() => {
     form.value = defaultValues
+    done.value = true
     title.value = '¡Su registro se ha realizado correctamente!'
-    statusMessage.value =
-      'Para activar su cuenta, por favor, contacte a un administrador. Una vez aprobado, podrá iniciar sesión.'
-  } else {
-    statusMessage.value = ''
-  }
+  })
 }
-
-onMounted(() => errorStore.clearErrorState())
 </script>
 
 <template>
@@ -79,22 +55,13 @@ onMounted(() => errorStore.clearErrorState())
     </h1>
   </div>
 
-  <div
-    v-if="statusMessage"
-    class="bg-blue-50 text-blue-600 p-4 rounded-lg text-base"
-  >
-    {{ statusMessage }}
+  <div v-if="done" class="text-base">
+    Para activar su cuenta, por favor, contacte a un administrador. Una vez
+    aprobado, podrá iniciar sesión.
   </div>
 
   <form v-else @submit.prevent="onRegister">
-    <InputForm
-      text="Nombre"
-      name="name"
-      v-model="form.name"
-      autofocus
-      required
-      :error="error"
-    />
+    <InputForm text="Nombre" name="name" v-model="form.name" autofocus />
 
     <InputForm
       text="Correo"
@@ -102,7 +69,6 @@ onMounted(() => errorStore.clearErrorState())
       v-model="form.email"
       required
       type="email"
-      :error="error"
     />
 
     <InputForm
@@ -111,7 +77,6 @@ onMounted(() => errorStore.clearErrorState())
       v-model="form.password"
       required
       type="password"
-      :error="error"
     />
 
     <InputForm
@@ -120,7 +85,6 @@ onMounted(() => errorStore.clearErrorState())
       v-model="form.password_confirmation"
       required
       type="password"
-      :error="error"
     />
 
     <div class="mt-10">

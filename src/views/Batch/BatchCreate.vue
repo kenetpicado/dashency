@@ -1,7 +1,8 @@
-<template>
+<template>None</template>
+<!-- <template>
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Nuevo</span>
-    <BtnPrimary @click="inputFile.click()">
+    <BtnPrimary @click="inputFile?.click()">
       <IconUpload size="20"/>
       Subir archivo
     </BtnPrimary>
@@ -35,9 +36,7 @@
       </tr>
       <tr
         v-else
-        v-for="(item, index) in uploadedFile?.rows.sort(
-          (a, b) => a.guide - b.guide
-        )"
+        v-for="(item, index) in uploadedFile?.rows"
         :key="index"
         class="hover:bg-gray-50"
       >
@@ -155,3 +154,4 @@ async function onSubmit() {
   await storeBatch(form.value)
 }
 </script>
+ -->

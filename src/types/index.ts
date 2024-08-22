@@ -50,12 +50,19 @@ export interface IPackage {
   entry_date: string
 }
 
+export interface ICreatedBy {
+  id: string
+  name: string
+  email: string
+}
+
 export interface IBatch {
   total: number
   packages: IPackage[]
+  created_at: Date
+  created_by: ICreatedBy
 }
 
 export interface IExcelFile {
   rows: IPackage[]
-  errors: array
 }
