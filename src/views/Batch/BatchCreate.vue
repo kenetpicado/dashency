@@ -1,4 +1,6 @@
 <template>
+  <loading v-model:active="isLoading"/>
+
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Nuevo</span>
     <BtnPrimary @click="openInputFile">
@@ -74,8 +76,12 @@ import { IconUpload } from '@tabler/icons-vue'
 import toast from "@/utils/toast"
 import type { IBatch, IPackage, IExcelFileError } from '@/types'
 import useBatch from '@/composables/useBatch'
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
+import * as XLSX from 'xlsx';
 
 const error = ref<IExcelFileError>()
+const isLoading = ref<boolean>(false)
 
 const { storeBatch } = useBatch()
 
@@ -87,40 +93,76 @@ const form = ref<IBatch>({
 const schema = {
   Guide: {
     prop: 'guide',
+    type: String,
     required: true
   },
   Description: {
     prop: 'description',
+     type: String,
     required: true
   },
   Pieces: {
     prop: 'pieces',
+    type: String,
     required: true
   },
   'Gross Weight': {
     prop: 'gross_weight',
+     type: String,
     required: true
   },
   Client: {
     prop: 'client',
+     type: String,
     required: true
   },
   FechaIngreso: {
     prop: 'entry_date',
+     type: String,
     required: true
   }
 }
 
 function onChange(event: any) {
-  readXlsxFile(event.target.files[0], { schema }).then((response: any) => {
-    form.value.packages = response.rows as IPackage[]
+  isLoading.value = true;
 
-    if (response.errors.length > 0) {
-      error.value = response.errors[0] as IExcelFileError
+  const file = event.target.files[0];
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const arrayBuffer = e.target?.result;
+
+    if (arrayBuffer) {
+      // Leer el archivo usando SheetJS
+      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      // Suponiendo que quieres leer la primera hoja
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+
+      // Convertir la hoja de cálculo a JSON (cambia según tus necesidades)
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // Aquí deberías mapear jsonData a tu estructura IPackage[]
+      form.value.packages = jsonData as IPackage[];
+
+      error.value = undefined;
     } else {
-      error.value = undefined
+      // Manejar el error si no se puede leer el archivo
+      error.value = { message: 'No se pudo leer el archivo.' } as IExcelFileError;
     }
-  })
+
+    isLoading.value = false;
+  };
+
+  reader.onerror = function () {
+    // Manejar el error de lectura del archivo
+    error.value = { message: 'Error al leer el archivo.' } as IExcelFileError;
+    isLoading.value = false;
+  };
+
+  reader.readAsArrayBuffer(file);
 }
 
 function onSubmit() {

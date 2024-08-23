@@ -9,19 +9,19 @@
   <TheTable>
     <template #header>
       <th>Fecha</th>
-      <th>Total</th>
       <th>Creado por</th>
+      <th>Total</th>
       <th>Acciones</th>
     </template>
     <template #body>
       <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
         <td>
-          {{ item.created_at }}
+          {{ getFormattedDate(item.createdAt) }}
+        </td>
+        <td>
+          {{ item.createdBy?.name }}
         </td>
         <td>${{ item.total }}</td>
-        <td>
-          {{ item.created_by?.email }}
-        </td>
         <td>
           <button type="button">
             <IconEdit size="20" />
@@ -38,6 +38,7 @@ import TheTable from '@/components/Table/TheTable.vue'
 import { onMounted } from 'vue'
 import useBatch from '@/composables/useBatch'
 import { IconEdit } from '@tabler/icons-vue'
+import getFormattedDate from '@/utils/date'
 
 const { getBatches, batches } = useBatch()
 
