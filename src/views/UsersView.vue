@@ -28,7 +28,7 @@ function editUser(item: IUser) {
 }
 
 function onSubmit(data: IUser) {
-  updateUser(data).then(() => {
+  updateUser(data, () => {
     openModal.value = false
     user.value = undefined
   })

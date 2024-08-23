@@ -20,7 +20,7 @@ export default function useBatch() {
   }
 
   function storeBatch(data: IBatch) {
-    return api
+    api
       .post('/batches', data)
       .then(() => {
         getBatches()

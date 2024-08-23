@@ -39,11 +39,12 @@ export default function useAuth() {
     router.push({ name: 'login' })
   }
 
-  function register(data: IRegisterForm) {
+  function register(data: IRegisterForm, onDone: () => void) {
     processing.value = true
 
-    return api
+    api
       .post('/register', data)
+      .then(() => onDone())
       .catch((error: any) => {
         toast.error(error.response?.data?.message || error?.message || 'Error')
       })

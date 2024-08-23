@@ -16,12 +16,14 @@ export default function useUser() {
     })
   }
 
-  function updateUser(data: IUser) {
+  function updateUser(data: IUser, onDone: () => void) {
     processing.value = true
-    return api
+
+    api
       .put('/users/' + data.id, data)
       .then(() => {
         getUsers()
+        onDone()
       })
       .catch((error: any) => {
         toast.error(error.response?.data?.message || error?.message || 'Error')
