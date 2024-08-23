@@ -1,5 +1,5 @@
 <template>
-  <loading v-model:active="isLoading"/>
+  <loading v-model:active="isLoading" color="#2563eb" loader="dots" />
 
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Nuevo</span>
@@ -13,10 +13,9 @@
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
     @change="onChange" />
 
-  <div v-if="error" class="bg-red-50 p-4 rounded-lg text-red-600">
+  <div v-if="workerStatus == 'ERROR'" class="bg-red-50 p-4 rounded-lg text-red-600">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y
     vuelve a intentarlo.
-    <pre>{{ error }}</pre>
   </div>
 
   <TheTable v-else class="mb-4">
@@ -68,19 +67,18 @@
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
-import readXlsxFile from 'read-excel-file'
 import { ref } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconUpload } from '@tabler/icons-vue'
 import toast from "@/utils/toast"
-import type { IBatch, IPackage, IExcelFileError } from '@/types'
+import type { IBatch, IPackage } from '@/types'
 import useBatch from '@/composables/useBatch'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import * as XLSX from 'xlsx';
+import { useWebWorkerFn } from '@vueuse/core';
 
-const error = ref<IExcelFileError>()
 const isLoading = ref<boolean>(false)
 
 const { storeBatch } = useBatch()
@@ -90,79 +88,36 @@ const form = ref<IBatch>({
   packages: []
 })
 
-const schema = {
-  Guide: {
-    prop: 'guide',
-    type: String,
-    required: true
-  },
-  Description: {
-    prop: 'description',
-     type: String,
-    required: true
-  },
-  Pieces: {
-    prop: 'pieces',
-    type: String,
-    required: true
-  },
-  'Gross Weight': {
-    prop: 'gross_weight',
-     type: String,
-    required: true
-  },
-  Client: {
-    prop: 'client',
-     type: String,
-    required: true
-  },
-  FechaIngreso: {
-    prop: 'entry_date',
-     type: String,
-    required: true
-  }
-}
+const { workerFn, workerStatus } = useWebWorkerFn(async (file: File) => {
+  const data = await file.arrayBuffer();
+  const workbook = XLSX.read(data, { type: 'array' });
+  const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+  return jsonData.map((item: any) => ({
+    guide: item['Guide'],
+    description: item['Description'].toString().trim(),
+    pieces: item['pieces'],
+    gross_weight: item['Gross Weight'],
+    client: item['Client'].toString().trim(),
+    entry_date: item['FechaIngreso']
+  })) as IPackage[];
+}, {
+  dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
+});
 
 function onChange(event: any) {
   isLoading.value = true;
 
-  const file = event.target.files[0];
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const arrayBuffer = e.target?.result;
-
-    if (arrayBuffer) {
-      // Leer el archivo usando SheetJS
-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-      const workbook = XLSX.read(data, { type: 'array' });
-
-      // Suponiendo que quieres leer la primera hoja
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-
-      // Convertir la hoja de cálculo a JSON (cambia según tus necesidades)
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      // Aquí deberías mapear jsonData a tu estructura IPackage[]
-      form.value.packages = jsonData as IPackage[];
-
-      error.value = undefined;
-    } else {
-      // Manejar el error si no se puede leer el archivo
-      error.value = { message: 'No se pudo leer el archivo.' } as IExcelFileError;
-    }
-
-    isLoading.value = false;
-  };
-
-  reader.onerror = function () {
-    // Manejar el error de lectura del archivo
-    error.value = { message: 'Error al leer el archivo.' } as IExcelFileError;
-    isLoading.value = false;
-  };
-
-  reader.readAsArrayBuffer(file);
+  workerFn(event.target.files[0])
+    .then((packages: any) => {
+      form.value.packages = packages as IPackage[]
+    })
+    .catch((error: any) => {
+      console.error(error)
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 }
 
 function onSubmit() {

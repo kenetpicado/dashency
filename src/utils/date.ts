@@ -1,6 +1,6 @@
 import { useDateFormat } from '@vueuse/core'
 
-export const getFormattedDate = (date: Date, format = 'DD/MM/YY hh:mm a') => {
+export const getFormattedDate = (date?: Date, format = 'DD/MM/YY hh:mm a') => {
   if (!date) {
     return ''
   }
