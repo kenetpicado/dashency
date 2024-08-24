@@ -52,7 +52,7 @@ export interface IPackage {
   entryDate: string
   status?: string
   createdAt?: Date
-  batch?: IBatch
+  type?: string
 }
 
 export interface ICreatedBy {

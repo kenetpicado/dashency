@@ -87,7 +87,7 @@ const batch = ref<IBatch | null>(null)
 const openModal = ref(false)
 
 function edit(item: IBatch) {
-  batch.value = item
+  batch.value = { ...item }
   openModal.value = true
 }
 

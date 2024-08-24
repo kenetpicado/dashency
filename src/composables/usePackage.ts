@@ -9,9 +9,13 @@ export default function usePackage() {
   const { packages } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
 
+  const queryParams = ref({
+    type: ''
+  })
+
   function getPackages() {
     api
-      .get('/packages')
+      .get('/packages', { params: queryParams.value })
       .then((response) => {
         setPackages(response.data as IPackage[])
       })
@@ -20,5 +24,5 @@ export default function usePackage() {
       })
   }
 
-  return { getPackages, packages, processing }
+  return { getPackages, packages, processing, queryParams }
 }

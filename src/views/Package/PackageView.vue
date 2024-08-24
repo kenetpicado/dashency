@@ -1,10 +1,15 @@
 <template>
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Paquetes</span>
-    <!-- <RouterLink :to="{ name: 'batches.create' }">
-      <BtnPrimary> Nuevo </BtnPrimary>
-    </RouterLink> -->
   </header>
+
+  <div class="grid grid-cols-4 gap-4 mb-4">
+    <SelectForm text="Tipo" name="type" v-model="queryParams.type">
+      <option value="">Selecciona un tipo</option>
+      <option value="AEREO">AEREO</option>
+      <option value="MARITIMO">MARITIMO</option>
+    </SelectForm>
+  </div>
 
   <TheTable>
     <template #header>
@@ -34,7 +39,7 @@
           {{ item.grossWeight }}
         </td>
         <td>
-          {{ item.batch?.type }}
+          {{ item.type }}
         </td>
         <td>
           {{ item.entryDate }}
@@ -51,10 +56,13 @@
 
 <script setup lang="ts">
 import TheTable from '@/components/Table/TheTable.vue'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import usePackage from '@/composables/usePackage'
+import SelectForm from '@/components/Form/SelectForm.vue';
 
-const { getPackages, packages } = usePackage()
+const { getPackages, packages, queryParams } = usePackage()
 
 onMounted(() => getPackages())
+
+watch(() => queryParams.value, () => getPackages(), { deep: true })
 </script>
