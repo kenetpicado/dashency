@@ -2,7 +2,7 @@
   <DialogForm title="Editar" :isOpen="openModal" @onClose="openModal = false">
     <template v-if="batch">
       <InputForm text="Total" name="total" v-model="batch.total" type="number" />
-      <SelectForm text="Tipo de lote" name="type" v-model="batch.type">
+      <SelectForm text="Tipo" name="type" v-model="batch.type">
         <option value="">Selecciona un tipo</option>
         <option value="AEREO">AEREO</option>
         <option value="MARITIMO">MARITIMO</option>
@@ -20,6 +20,14 @@
       <BtnPrimary> Nuevo </BtnPrimary>
     </RouterLink>
   </header>
+
+  <div class="grid grid-cols-4 gap-4 mb-4">
+    <SelectForm text="Tipo" name="type" v-model="queryParams.type">
+      <option value="">Selecciona un tipo</option>
+      <option value="AEREO">AEREO</option>
+      <option value="MARITIMO">MARITIMO</option>
+    </SelectForm>
+  </div>
 
   <TheTable>
     <template #header>
@@ -61,7 +69,7 @@
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import useBatch from '@/composables/useBatch'
 import { IconEdit } from '@tabler/icons-vue'
 import getFormattedDate from '@/utils/date'
@@ -71,7 +79,7 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 
-const { getBatches, batches, processing, updateBatch } = useBatch()
+const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 
 onMounted(() => getBatches())
 
@@ -90,5 +98,9 @@ function onSubmit() {
     batch.value = null
   })
 }
+
+watch(() => queryParams.value, () => {
+  getBatches()
+}, { deep: true })
 
 </script>
