@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { IconHome, IconLogout, IconUser } from '@tabler/icons-vue'
+import { IconHome, IconLogout, IconPackage, IconPackages, IconUser, IconUsersGroup } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
@@ -35,12 +35,12 @@ const items = [
   {
     title: 'Lotes',
     to: { name: 'batches' },
-    icon: IconUser
+    icon: IconPackages
   },
   {
     title: 'Paquetes',
     to: { name: 'packages' },
-    icon: IconUser
+    icon: IconPackage
   },
   {
     title: 'Administración'
@@ -48,7 +48,7 @@ const items = [
   {
     title: 'Usuarios',
     to: { name: 'users' },
-    icon: IconUser
+    icon: IconUsersGroup
   }
 ]
 </script>

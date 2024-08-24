@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import ItemSidebar from './ItemSidebar.vue'
+import router from '@/router';
 
-defineProps<{
+const props = defineProps<{
   item: {
     title: string
     to: { name: string }
     icon: any
   }
 }>()
+
 </script>
 
 <template>

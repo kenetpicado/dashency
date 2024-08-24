@@ -65,7 +65,7 @@
   </div>
   <div class="flex justify-end gap-4">
     <BtnSecondary>Cancelar</BtnSecondary>
-    <BtnPrimary @click="onSubmit">Guardar</BtnPrimary>
+    <BtnPrimary @click="onSubmit" :loading="processing">Guardar</BtnPrimary>
   </div>
 </template>
 
@@ -87,7 +87,7 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 
 const isLoading = ref<boolean>(false)
 
-const { storeBatch } = useBatch()
+const { storeBatch, processing } = useBatch()
 
 const form = ref<IBatch>({
   total: 0,
