@@ -34,7 +34,7 @@
           {{ item.grossWeight }}
         </td>
         <td>
-          {{ item.type }}
+          {{ item.batch?.type }}
         </td>
         <td>
           {{ item.entryDate }}

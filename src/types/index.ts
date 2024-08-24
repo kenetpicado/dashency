@@ -51,8 +51,8 @@ export interface IPackage {
   client: string
   entryDate: string
   status?: string
-  type?: string
   createdAt?: Date
+  batch?: IBatch
 }
 
 export interface ICreatedBy {
@@ -61,6 +61,7 @@ export interface ICreatedBy {
 }
 
 export interface IBatch {
+  id?: string
   total: number
   type: string
   packages: IPackage[]
@@ -68,15 +69,7 @@ export interface IBatch {
   user?: ICreatedBy
 }
 
-export interface IExcelFile {
-  rows: IPackage[]
-}
-
-export interface IExcelFileError {
-  row: number
-  column: number
-  error: string
-  reason?: string
-  value?: string
-  type?: string
+export interface IBatchType {
+  id: string
+  type: string
 }

@@ -35,5 +35,28 @@ export default function useBatch() {
       })
   }
 
-  return { getBatches, batches, processing, storeBatch }
+  function updateBatch(data: IBatch, callback: () => void) {
+    if (!data.total) {
+      toast.error('El campo total es requerido')
+      return
+    }
+
+    if (!data.type) {
+      toast.error('El campo tipo es requerido')
+      return
+    }
+
+    api
+      .put('/batches/' + data.id, data)
+      .then(() => {
+        callback()
+        toast.success('Lote actualizado correctamente')
+        getBatches()
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  return { getBatches, batches, processing, storeBatch, updateBatch }
 }
