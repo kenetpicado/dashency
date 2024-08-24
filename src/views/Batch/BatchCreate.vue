@@ -3,10 +3,10 @@
 
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Nuevo</span>
-    <BtnPrimary @click="openInputFile">
+    <BtnSecondary @click="openInputFile">
       <IconUpload size="20" />
       Subir archivo
-    </BtnPrimary>
+    </BtnSecondary>
   </header>
 
   <input type="file" id="excelFileInput" class="hidden"
@@ -42,12 +42,12 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input type="number" required
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+          <input type="number" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
             v-model="item.grossWeight" />
         </td>
         <td>
-          {{ item.client }}
+          <input type="text" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.client" />
         </td>
         <td>
           {{ item.entryDate }}
@@ -100,14 +100,14 @@ const { workerFn, workerStatus } = useWebWorkerFn(async (file: File) => {
   const workbook = XLSX.read(data, { type: 'array' });
   const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-  return jsonData.map((item: any) => ({
+  return jsonData.filter((item: any) => item.Guide).map((item: any) => ({
     guide: item['Guide'],
-    description: item['Description'],
+    description: item['Description'].toString().trim(),
     pieces: item['Pieces'],
     grossWeight: item['Gross Weight'],
-    client: item['Client'],
+    client: item['Client'].toString().trim(),
     entryDate: item['FechaIngreso'],
-  })).filter(item => item.guide) as IPackage[];
+  })) as IPackage[];
 }, {
   dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
 });
