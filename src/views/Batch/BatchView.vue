@@ -9,19 +9,30 @@
   <TheTable>
     <template #header>
       <th>Fecha</th>
+      <th>Tipo</th>
       <th>Creado por</th>
       <th>Total</th>
+      <th>Cantidad de items</th>
       <th>Acciones</th>
     </template>
     <template #body>
+      <tr v-if="!batches?.length">
+        <td colspan="7" class="text-center">No hay datos que mostrar</td>
+      </tr>
       <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
         <td>
           {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
-          {{ item.createdBy?.name }}
+          {{ item.type }}
         </td>
-        <td>${{ item.total }}</td>
+        <td>
+          {{ item.user?.name }}
+        </td>
+        <td>
+          <span class="bg-red-50 text-red-600 px-3 py-1 rounded-lg">${{ item.total }}</span>
+        </td>
+        <td>{{ item.packages.length }}</td>
         <td>
           <button type="button">
             <IconEdit size="20" />

@@ -38,6 +38,11 @@ const items = [
     icon: IconUser
   },
   {
+    title: 'Paquetes',
+    to: { name: 'packages' },
+    icon: IconUser
+  },
+  {
     title: 'Administración'
   },
   {

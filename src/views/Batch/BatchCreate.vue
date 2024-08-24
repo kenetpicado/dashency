@@ -44,19 +44,24 @@
         <td>
           <input type="number" required
             class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.gross_weight" />
+            v-model="item.grossWeight" />
         </td>
         <td>
           {{ item.client }}
         </td>
         <td>
-          {{ item.entry_date }}
+          {{ item.entryDate }}
         </td>
       </tr>
     </template>
   </TheTable>
-  <div class="grid grid-cols-4">
+  <div class="grid grid-cols-4 gap-4">
     <InputForm text="Total" name="total" v-model="form.total" type="number" />
+    <SelectForm text="Tipo de lote" name="type" v-model="form.type">
+      <option value="">Selecciona un tipo</option>
+      <option value="AEREO">AEREO</option>
+      <option value="MARITIMO">MARITIMO</option>
+    </SelectForm>
   </div>
   <div class="flex justify-end gap-4">
     <BtnSecondary>Cancelar</BtnSecondary>
@@ -78,6 +83,7 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import * as XLSX from 'xlsx';
 import { useWebWorkerFn } from '@vueuse/core';
+import SelectForm from '@/components/Form/SelectForm.vue'
 
 const isLoading = ref<boolean>(false)
 
@@ -85,6 +91,7 @@ const { storeBatch } = useBatch()
 
 const form = ref<IBatch>({
   total: 0,
+  type: '',
   packages: []
 })
 
@@ -95,12 +102,12 @@ const { workerFn, workerStatus } = useWebWorkerFn(async (file: File) => {
 
   return jsonData.map((item: any) => ({
     guide: item['Guide'],
-    description: item['Description'].toString().trim(),
-    pieces: item['pieces'],
-    gross_weight: item['Gross Weight'],
-    client: item['Client'].toString().trim(),
-    entry_date: item['FechaIngreso']
-  })) as IPackage[];
+    description: item['Description'],
+    pieces: item['Pieces'],
+    grossWeight: item['Gross Weight'],
+    client: item['Client'],
+    entryDate: item['FechaIngreso'],
+  })).filter(item => item.guide) as IPackage[];
 }, {
   dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
 });
@@ -128,6 +135,11 @@ function onSubmit() {
 
   if (!form.value.total || form.value.total < 1) {
     toast.error("El total es requerido")
+    return
+  }
+
+  if (!form.value.type) {
+    toast.error("El tipo es requerido")
     return
   }
 

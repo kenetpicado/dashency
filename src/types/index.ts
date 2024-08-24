@@ -47,22 +47,25 @@ export interface IPackage {
   guide: string
   description: string
   pieces: number
-  gross_weight: number
+  grossWeight: number
   client: string
-  entry_date: string
+  entryDate: string
+  status?: string
+  type?: string
+  createdAt?: Date
 }
 
 export interface ICreatedBy {
   id: string
   name: string
-  email: string
 }
 
 export interface IBatch {
   total: number
+  type: string
   packages: IPackage[]
   createdAt?: Date
-  createdBy?: ICreatedBy
+  user?: ICreatedBy
 }
 
 export interface IExcelFile {
