@@ -73,3 +73,12 @@ export interface IBatchType {
   id: string
   type: string
 }
+
+export interface IItemSidebar {
+  item: {
+    title: string
+    icon: any
+    to?: { name?: string }
+  }
+  active?: boolean
+}

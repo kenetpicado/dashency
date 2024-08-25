@@ -13,9 +13,11 @@
   td {
     @apply px-5 py-4;
   }
+
   th {
     @apply px-5 py-4 font-normal uppercase text-sm;
   }
+
   body {
     @apply text-gray-700 antialiased;
   }

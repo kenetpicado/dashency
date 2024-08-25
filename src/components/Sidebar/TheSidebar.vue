@@ -4,10 +4,11 @@
       <div class="h-14 w-14 mx-auto my-6">
         <img src="/gh.png" class="h-full w-full" alt="" />
       </div>
+
       <ul class="space-y-1">
         <li v-for="(item, index) in items" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink v-else :item="item" />
+          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -18,13 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { IconHome, IconLogout, IconPackage, IconPackages, IconUser, IconUsersGroup } from '@tabler/icons-vue'
+import { IconHome, IconLogout, IconPackage, IconPackages, IconUsersGroup } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
 import useAuth from '@/composables/useAuth'
+import { useStorage } from '@vueuse/core'
 
 const { logout } = useAuth()
+const selected = useStorage('selected', 'home')
 
 const items = [
   {
