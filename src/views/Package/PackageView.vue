@@ -4,6 +4,8 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
+    <InputForm text="Guía" name="guide" v-model="queryParams.guide" placeholder="Número de guia" type="number" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" placeholder="Nombre del cliente" />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option value="AEREO">AEREO</option>
@@ -13,8 +15,7 @@
       <option value="">Todos</option>
       <option value="REGISTRADO">REGISTRADO</option>
     </SelectForm>
-    <InputForm text="Cliente" name="client" v-model="queryParams.client" placeholder="Nombre del cliente" />
-    <InputForm text="Guía" name="guide" v-model="queryParams.guide" placeholder="Número de guia" type="number" />
+    <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
 
   <TheTable>
@@ -35,14 +36,16 @@
             <span class="text-blue-600">{{ item.guide }}</span> - {{ item.client }}
           </div>
           <div class="text-sm text-gray-500">
-           ({{ item.pieces }}) {{ item.description }}
+            ({{ item.pieces }}) {{ item.description }}
           </div>
         </td>
         <td>
           {{ item.grossWeight }}
         </td>
         <td>
-          {{ item.type }} {{ item.type == 'MARITIMO' ? '🚢' : '✈️'}}
+          <span class="bg-gray-200 px-3 py-1 rounded-lg">
+            {{ item.type }} {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }}
+          </span>
         </td>
         <td>
           <span class="bg-red-100 text-red-600 px-3 py-1 rounded-lg">
@@ -50,7 +53,7 @@
           </span>
         </td>
         <td>
-          {{ item.entryDate }}
+          {{ getBaseDate(item.entryDate) }}
         </td>
       </tr>
     </template>
@@ -64,6 +67,7 @@ import usePackage from '@/composables/usePackage'
 import SelectForm from '@/components/Form/SelectForm.vue';
 import InputForm from '@/components/Form/InputForm.vue';
 import { watchDebounced } from '@vueuse/core'
+import { getBaseDate } from '@/utils/date'
 
 const { getPackages, packages, queryParams } = usePackage()
 

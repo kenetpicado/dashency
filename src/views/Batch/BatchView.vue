@@ -47,7 +47,9 @@
           {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
-          {{ item.type }}
+          <span class="bg-gray-200 px-3 py-1 rounded-lg">
+            {{ item.type }} {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }}
+          </span>
         </td>
         <td>
           {{ item.user?.name }}

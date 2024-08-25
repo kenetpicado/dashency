@@ -8,7 +8,7 @@ export const getFormattedDate = (date?: Date, format = 'DD/MM/YY hh:mm a') => {
   return useDateFormat(date, format, { locales: 'es-NI' }).value
 }
 
-export const getBaseDate = (date: Date) => {
+export const getBaseDate = (date: Date | string) => {
   if (!date) {
     return ''
   }

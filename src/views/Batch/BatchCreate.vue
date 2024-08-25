@@ -101,14 +101,23 @@ const { workerFn, workerStatus } = useWebWorkerFn(async (file: File) => {
   const workbook = XLSX.read(data, { type: 'array' });
   const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-  return jsonData.filter((item: any) => item.Guide).map((item: any) => ({
-    guide: item['Guide'],
-    description: item['Description'].toString().trim(),
-    pieces: item['Pieces'],
-    grossWeight: item['Gross Weight'],
-    client: item['Client'].toString().trim(),
-    entryDate: item['FechaIngreso'],
-  })) as IPackage[];
+  return jsonData.filter((item: any) => item.Guide).map((item: any) => {
+
+    const dateArray = item['FechaIngreso'].split('/');
+
+    const day = dateArray[0].padStart(2, '0');
+    const month = dateArray[1].padStart(2, '0');
+    const year = dateArray[2];
+
+    return {
+      guide: item['Guide'],
+      description: item['Description'].toString().trim(),
+      pieces: item['Pieces'],
+      grossWeight: item['Gross Weight'],
+      client: item['Client'].toString().trim(),
+      entryDate: `${year}-${month}-${day}`,
+    } as IPackage
+  });
 }, {
   dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
 });

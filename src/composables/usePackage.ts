@@ -13,7 +13,8 @@ export default function usePackage() {
     type: '',
     client: '',
     guide: '',
-    status: ''
+    status: '',
+    entryDate: ''
   })
 
   function getPackages() {
