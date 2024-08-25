@@ -48,7 +48,7 @@
         </td>
         <td>
           <span class="bg-gray-200 px-3 py-1 rounded-lg">
-            {{ item.type }} {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }}
+            {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }} {{ item.type }}
           </span>
         </td>
         <td>
