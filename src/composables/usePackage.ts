@@ -10,7 +10,10 @@ export default function usePackage() {
   const processing = ref<boolean>(false)
 
   const queryParams = ref({
-    type: ''
+    type: '',
+    client: '',
+    guide: '',
+    status: ''
   })
 
   function getPackages() {

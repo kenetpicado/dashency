@@ -81,7 +81,7 @@ function onSubmit(data: IUser) {
           {{ item.role }}
         </td>
         <td>
-          <span class="bg-blue-50 px-2 py-1 text-blue-600 rounded-lg">{{ item.status }}</span>
+          <span class="bg-blue-100 px-2 py-1 text-blue-600 rounded-lg">{{ item.status }}</span>
         </td>
         <td>
           {{ getFormattedDate(item.createdAt) }}

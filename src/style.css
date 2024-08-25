@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'custom';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/font.ttf') format('truetype');
+}
+
 @layer base {
   td {
     @apply px-5 py-4;
@@ -12,4 +19,14 @@
   body {
     @apply text-gray-700 antialiased;
   }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }

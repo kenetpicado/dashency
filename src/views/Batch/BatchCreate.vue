@@ -96,6 +96,7 @@ const form = ref<IBatch>({
 })
 
 const { workerFn, workerStatus } = useWebWorkerFn(async (file: File) => {
+
   const data = await file.arrayBuffer();
   const workbook = XLSX.read(data, { type: 'array' });
   const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
@@ -143,7 +144,11 @@ function onSubmit() {
     return
   }
 
-  storeBatch(form.value)
+  storeBatch(form.value, () => {
+    form.value.total = 0
+    form.value.type = ''
+    form.value.packages = []
+  })
 }
 
 function openInputFile() {

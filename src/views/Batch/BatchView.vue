@@ -33,9 +33,9 @@
     <template #header>
       <th>Fecha</th>
       <th>Tipo</th>
-      <th>Creado por</th>
+      <th>Usuario</th>
       <th>Total</th>
-      <th>Cantidad de items</th>
+      <th>Paquetes</th>
       <th>Acciones</th>
     </template>
     <template #body>
@@ -53,7 +53,7 @@
           {{ item.user?.name }}
         </td>
         <td>
-          <span class="bg-red-50 text-red-600 px-3 py-1 rounded-lg">${{ item.total }}</span>
+          <span class="bg-red-100 text-red-600 px-3 py-1 rounded-lg">${{ item.total }}</span>
         </td>
         <td>{{ item.packages.length }}</td>
         <td>

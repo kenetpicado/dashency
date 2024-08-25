@@ -26,12 +26,14 @@ export default function useBatch() {
       })
   }
 
-  function storeBatch(data: IBatch) {
+  function storeBatch(data: IBatch, callback: () => void) {
+    processing.value = true
+
     api
       .post('/batches', data)
       .then(() => {
+        callback()
         toast.success('Lote creado correctamente')
-        getBatches()
         router.push({ name: 'batches' })
       })
       .finally(() => {
@@ -49,6 +51,8 @@ export default function useBatch() {
       toast.error('El campo tipo es requerido')
       return
     }
+
+    processing.value = true
 
     api
       .put('/batches/' + data.id, data)
