@@ -7,7 +7,7 @@ const model = defineModel()
 
 <template>
   <div class="w-full mb-5">
-    <label class="block mb-2 text-gray-500">
+    <label class="block mb-1 text-gray-500">
       {{ text }}
     </label>
 

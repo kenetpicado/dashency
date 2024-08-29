@@ -12,6 +12,14 @@ export const useBatchStore = defineStore('batch', () => {
 
   function setBatch(data: IBatch) {
     batch.value = data
+
+    if (data.packages) {
+      const packages = data.packages.sort((a, b) => {
+        return a.guide.localeCompare(b.guide)
+      })
+
+      batch.value.packages = packages
+    }
   }
 
   return { batches, setBatches, batch, setBatch }
