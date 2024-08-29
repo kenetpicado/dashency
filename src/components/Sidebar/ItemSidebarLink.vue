@@ -4,7 +4,6 @@ import ItemSidebar from './ItemSidebar.vue'
 import type { IItemSidebar } from '@/types'
 
 defineProps<IItemSidebar>()
-
 </script>
 
 <template>

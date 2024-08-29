@@ -33,6 +33,11 @@ const router = createRouter({
           name: 'batches.create'
         },
         {
+          path: 'lotes/:id',
+          component: () => import('../views/Batch/BatchShow.vue'),
+          name: 'batches.show'
+        },
+        {
           path: 'paquetes',
           component: () => import('../views/Package/PackageView.vue'),
           name: 'packages'

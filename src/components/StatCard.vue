@@ -1,13 +1,6 @@
 <script setup lang="ts">
+import type { IStatCard } from '@/types';
 import { IconInfoCircle } from '@tabler/icons-vue'
-
-interface IStatCard {
-  stat: {
-    title: string
-    value: string
-    icon?: any
-  }
-}
 defineProps<IStatCard>()
 </script>
 

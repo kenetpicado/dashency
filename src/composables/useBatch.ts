@@ -7,8 +7,8 @@ import router from '@/router'
 import toast from '@/utils/toast'
 
 export default function useBatch() {
-  const { setBatches } = useBatchStore()
-  const { batches } = storeToRefs(useBatchStore())
+  const { setBatches, setBatch } = useBatchStore()
+  const { batches, batch } = storeToRefs(useBatchStore())
   const processing = ref<boolean>(false)
 
   const queryParams = ref({
@@ -20,6 +20,17 @@ export default function useBatch() {
       .get('/batches', { params: queryParams.value })
       .then((response) => {
         setBatches(response.data as IBatch[])
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  function getBatch(id: string) {
+    api
+      .get('/batches/' + id)
+      .then((response) => {
+        setBatch(response.data as IBatch)
       })
       .catch((error) => {
         console.log(error)
@@ -66,5 +77,5 @@ export default function useBatch() {
       })
   }
 
-  return { getBatches, batches, processing, storeBatch, updateBatch, queryParams }
+  return { getBatches, getBatch, batches, batch, processing, storeBatch, updateBatch, queryParams }
 }

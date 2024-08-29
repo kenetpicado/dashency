@@ -55,23 +55,13 @@ export interface IPackage {
   type?: string
 }
 
-export interface ICreatedBy {
-  id: string
-  name: string
-}
-
 export interface IBatch {
   id?: string
   total: number
   type: string
   packages: IPackage[]
   createdAt?: Date
-  user?: ICreatedBy
-}
-
-export interface IBatchType {
-  id: string
-  type: string
+  user?: IUser
 }
 
 export interface IItemSidebar {
@@ -81,4 +71,12 @@ export interface IItemSidebar {
     to?: { name?: string }
   }
   active?: boolean
+}
+
+export interface IStatCard {
+  stat: {
+    title: string
+    value: string | number
+    icon?: any
+  }
 }

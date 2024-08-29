@@ -59,9 +59,14 @@
         </td>
         <td>{{ item.packages.length }}</td>
         <td>
-          <button type="button" @click="edit(item)">
-            <IconEdit size="20" />
-          </button>
+          <div class="flex gap-4">
+            <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
+              <IconEye size="20" />
+            </RouterLink>
+            <button type="button" @click="edit(item)">
+              <IconEdit size="20" />
+            </button>
+          </div>
         </td>
       </tr>
     </template>
@@ -73,13 +78,14 @@ import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import { onMounted, ref, watch } from 'vue'
 import useBatch from '@/composables/useBatch'
-import { IconEdit } from '@tabler/icons-vue'
+import { IconEdit, IconEye } from '@tabler/icons-vue'
 import getFormattedDate from '@/utils/date'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import type { IBatch } from '@/types'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
+import { RouterLink } from 'vue-router'
 
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 
@@ -101,8 +107,11 @@ function onSubmit() {
   })
 }
 
-watch(() => queryParams.value, () => {
-  getBatches()
-}, { deep: true })
-
+watch(
+  () => queryParams.value,
+  () => {
+    getBatches()
+  },
+  { deep: true }
+)
 </script>

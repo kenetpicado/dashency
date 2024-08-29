@@ -15,7 +15,7 @@
   }
 
   th {
-    @apply px-5 py-4 font-normal uppercase text-sm;
+    @apply px-5 py-4 font-semibold uppercase text-sm;
   }
 
   body {
@@ -29,6 +29,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
