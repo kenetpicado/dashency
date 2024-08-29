@@ -6,8 +6,8 @@ const model = defineModel()
 </script>
 
 <template>
-  <div class="w-full mb-4">
-    <label class="block mb-1 text-gray-500">
+  <div class="w-full mb-5">
+    <label class="block mb-2 text-gray-500">
       {{ text }}
     </label>
 
@@ -18,7 +18,7 @@ const model = defineModel()
       :autofocus="autofocus"
       :required="required ?? false"
       :name="name"
-      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out placeholder-gray-400"
       :class="[disabled ? 'bg-gray-100' : '']"
       v-model="model"
     />

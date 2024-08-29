@@ -53,5 +53,22 @@ export default function useAuth() {
       })
   }
 
-  return { login, logout, getProfile, processing, auth, register }
+  function updateProfile(data: { name: string; email: string }) {
+    processing.value = true
+
+    api
+      .put('/profile', data)
+      .then(() => {
+        getProfile()
+        toast.success('Perfil actualizado')
+      })
+      .catch((error: any) => {
+        toast.error(error.response?.data?.message || error?.message || 'Error')
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  return { login, logout, getProfile, processing, auth, register, updateProfile }
 }
