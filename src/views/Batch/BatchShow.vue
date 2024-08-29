@@ -8,25 +8,21 @@
   </main>
 
   <div v-if="batch?.user" class="bg-white p-4 rounded-xl mb-8">
-    <span class="font-bold">
-      {{ batch.user.name }} - {{ batch.user.role }}
-    </span>
+    <span class="font-bold"> {{ batch.user.name }} - {{ batch.user.role }} </span>
     <div class="mb-5">
       {{ batch.user.email }}
     </div>
-    <div class="text-gray-400">
-      Registrado el {{ getFormattedDate(batch.createdAt) }}
-    </div>
+    <div class="text-gray-400">Registrado el {{ getFormattedDate(batch.createdAt) }}</div>
   </div>
 
   <PackageTable :packages="batch?.packages" />
 </template>
 
 <script setup lang="ts">
-import StatCard from '@/components/StatCard.vue';
+import StatCard from '@/components/StatCard.vue'
 import PackageTable from '@/components/Table/PackageTable.vue'
 import useBatch from '@/composables/useBatch'
-import getFormattedDate from '@/utils/date';
+import getFormattedDate from '@/utils/date'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -47,6 +43,6 @@ const stats = computed(() => [
   {
     title: 'Paquetes',
     value: batch.value?.packages.length || '0'
-  },
+  }
 ])
 </script>
