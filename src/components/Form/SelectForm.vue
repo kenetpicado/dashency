@@ -5,7 +5,7 @@
     </label>
 
     <select
-      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out focus:border-edo-950"
       v-model="model"
       :required="required"
     >

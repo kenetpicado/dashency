@@ -43,6 +43,16 @@ const router = createRouter({
           name: 'packages'
         },
         {
+          path: 'facturacion',
+          component: () => import('../views/Billing/BillingView.vue'),
+          name: 'billing'
+        },
+        {
+          path: 'facturacion/crear',
+          component: () => import('../views/Billing/BillingCreate.vue'),
+          name: 'billing.create'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'

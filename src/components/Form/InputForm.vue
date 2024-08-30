@@ -18,7 +18,7 @@ const model = defineModel()
       :autofocus="autofocus"
       :required="required ?? false"
       :name="name"
-      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out placeholder-gray-400"
+      class="flex items-center h-12 border-gray-300 rounded-lg w-full transition duration-300 ease-in-out placeholder-gray-400 focus:border-edo-950"
       :class="[disabled ? 'bg-gray-100' : '']"
       v-model="model"
     />

@@ -58,6 +58,11 @@ const items = [
     icon: IconPackage
   },
   {
+    title: 'Facturación',
+    to: { name: 'billing' },
+    icon: IconPackage
+  },
+  {
     title: 'Administración'
   },
   {
