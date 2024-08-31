@@ -53,6 +53,11 @@ const router = createRouter({
           name: 'billing.create'
         },
         {
+          path: 'facturacion/:id',
+          component: () => import('../views/Billing/BillingShow.vue'),
+          name: 'billing.show'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'

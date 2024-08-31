@@ -3,16 +3,12 @@
     <span class="font-bold text-2xl">Detalles</span>
   </header>
 
-  <main class="grid grid-cols-4 xl:grid-cols-5 gap-2 mb-8">
+  <main class="grid grid-cols-4 xl:grid-cols-5 gap-2 mb-4">
     <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
   </main>
 
-  <div v-if="batch?.user" class="bg-white p-4 rounded-xl mb-8">
-    <span class="font-bold"> {{ batch.user.name }} - {{ batch.user.role }} </span>
-    <div class="mb-5">
-      {{ batch.user.email }}
-    </div>
-    <div class="text-gray-400">Registrado el {{ getFormattedDate(batch.createdAt) }}</div>
+  <div class="mb-4 bg-white p-4 rounded-xl border">
+    <UserInfo v-if="batch?.user" :item="batch.user" />
   </div>
 
   <div v-if="batch?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
@@ -27,6 +23,8 @@ import getFormattedDate from '@/utils/date'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import PackageCard from '@/components/PackageCard.vue'
+import UserInfo from '@/components/UserInfo.vue'
+import type { IStatCard } from '@/types'
 
 const route = useRoute()
 const { getBatch, batch } = useBatch()
@@ -45,6 +43,10 @@ const stats = computed(() => [
   {
     title: 'Paquetes',
     value: batch.value?.packages.length || '0'
+  },
+  {
+    title: 'Creado',
+    value: getFormattedDate(batch.value?.createdAt) || ''
   }
-])
+] as IStatCard[])
 </script>

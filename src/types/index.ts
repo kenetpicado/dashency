@@ -75,11 +75,9 @@ export interface IItemSidebar {
 }
 
 export interface IStatCard {
-  stat: {
-    title: string
-    value: string | number
-    icon?: any
-  }
+  title: string | number
+  value: string | number
+  icon?: any
 }
 
 export interface ISummary {

@@ -8,12 +8,7 @@
       <ul class="space-y-1">
         <li v-for="(item, index) in items" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink
-            v-else
-            :item="item"
-            :active="selected == item.to.name"
-            @click="selected = item.to.name"
-          />
+          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -30,7 +25,8 @@ import {
   IconPackage,
   IconPackages,
   IconUsersGroup,
-  IconUser
+  IconUser,
+  IconDatabaseDollar
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
@@ -60,7 +56,7 @@ const items = [
   {
     title: 'Facturación',
     to: { name: 'billing' },
-    icon: IconPackage
+    icon: IconDatabaseDollar
   },
   {
     title: 'Administración'

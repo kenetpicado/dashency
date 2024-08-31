@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col bg-white border rounded-lg p-4 border-2">
+    <div class="flex flex-col bg-white border rounded-lg p-4">
         <div class="flex justify-between">
             <span class="flex items-center gap-1 text-lg font-bold text-edo-950">
                 {{ item.guide }}

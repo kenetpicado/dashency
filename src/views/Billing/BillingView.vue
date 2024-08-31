@@ -37,7 +37,7 @@
         </td>
         <td>
           <div class="flex gap-4">
-            <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
+            <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">
               <IconEye size="20" />
             </RouterLink>
           </div>

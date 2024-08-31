@@ -4,10 +4,15 @@ import type { IBilling } from '@/types'
 
 export const useBillingStore = defineStore('billing', () => {
   const billing = ref<IBilling[]>([])
+  const bill = ref<IBilling>()
 
   function setBilling(data: IBilling[]) {
     billing.value = data
   }
 
-  return { billing, setBilling }
+  function setBill(data: IBilling) {
+    bill.value = data
+  }
+
+  return { billing, setBilling, bill, setBill }
 })

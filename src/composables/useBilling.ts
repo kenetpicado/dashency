@@ -7,8 +7,8 @@ import router from '@/router'
 import toast from '@/utils/toast'
 
 export default function useBilling() {
-  const { setBilling } = useBillingStore()
-  const { billing } = storeToRefs(useBillingStore())
+  const { setBilling, setBill } = useBillingStore()
+  const { billing, bill } = storeToRefs(useBillingStore())
   const processing = ref<boolean>(false)
 
   const queryParams = ref({
@@ -30,7 +30,7 @@ export default function useBilling() {
     api
       .get('/billing/' + id)
       .then((response) => {
-        //setBatch(response.data as IBatch)
+        setBill(response.data as IBilling)
       })
       .catch((error) => {
         console.log(error)
@@ -51,5 +51,5 @@ export default function useBilling() {
       })
   }
 
-  return { getBilling, billing, processing, storeBilling, queryParams }
+  return { getBilling, billing, processing, storeBilling, queryParams, getBill, bill }
 }
