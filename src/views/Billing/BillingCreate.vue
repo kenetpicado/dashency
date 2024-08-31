@@ -5,7 +5,7 @@
     <span class="font-bold text-2xl">Nueva</span>
   </header>
 
-  <div class="grid grid-cols-2 gap-8">
+  <div class="grid grid-cols-2 gap-4">
     <div>
       <div class="text-lg mb-2 font-bold">
         Paquetes
@@ -44,22 +44,22 @@
             <td>{{ item.type }}</td>
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
-            <td>$ {{ item.amount }}</td>
-          </tr>
-          <tr>
-            <td class="font-bold">Total</td>
-            <td class="font-bold">
-              {{ total.reduce((acc, item) => acc + item.weight, 0) }} lbs
-            </td>
-            <td class="font-bold">{{ selectedPackages.length }}</td>
-            <td class="font-bold">
-              $ {{ total.reduce((acc, item) => acc + item.amount, 0) }}
-            </td>
+            <td>${{ item.amount }}</td>
           </tr>
         </template>
       </TheTable>
 
       <InputForm text="Total pagado" name="total" v-model="form.paid" class="mb-4" />
+
+      <div class="grid grid-cols-2 gap-4">
+        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
+        <SelectForm text="Banco" name="bank" v-model="form.bank">
+          <option value="">Seleccionar banco</option>
+          <option v-for="item in banks" :value="item" :key="item">
+            {{ item }}
+          </option>
+        </SelectForm>
+      </div>
 
       <div class="flex justify-end gap-4">
         <BtnSecondary>Cancelar</BtnSecondary>
@@ -82,6 +82,7 @@ import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
 import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
+import SelectForm from '@/components/Form/SelectForm.vue'
 
 const isLoading = ref<boolean>(false)
 const selectedPackages = ref<IPackage[]>([])
@@ -91,9 +92,12 @@ const prices = [
   { type: 'MARITIMO', value: 3 }
 ]
 
+const banks = ["BAC", "LAFISE", "BANPRO", "FICOHSA", "ZELLE"]
+
 const total = ref([
   { type: 'AEREO', weight: 0, amount: 0, count: 0 },
-  { type: 'MARITIMO', weight: 0, amount: 0, count: 0 }
+  { type: 'MARITIMO', weight: 0, amount: 0, count: 0 },
+  { type: 'TOTAL', weight: 0, amount: 0, count: 0 },
 ])
 
 const queryParams = ref({
@@ -102,10 +106,11 @@ const queryParams = ref({
 
 const form = ref({
   client: '',
-  grossWeightTotal: 0,
-  amount: 0,
   packages: [],
-  paid: 0
+  paid: '',
+  reference: '',
+  bank: '',
+  summary: []
 })
 
 function addPackage(item: IPackage) {
@@ -149,12 +154,21 @@ function onSubmit() {
     return
   }
 
-  if (!form.value.grossWeightTotal || form.value.grossWeightTotal <= 0) {
-    toast.error('El peso total debe ser mayor a 0')
+  if (!form.value.reference) {
+    toast.error('Ingrese una referencia')
+    return
+  }
+
+  if (!form.value.bank) {
+    toast.error('Seleccione un banco')
     return
   }
 
   isLoading.value = true
+  form.value.summary = total.value
+  form.value.packages = selectedPackages.value
+
+  console.log(form.value)
 
   setTimeout(() => {
     isLoading.value = false
@@ -186,7 +200,15 @@ function calculateTotal() {
     }
   })
 
-  form.value.paid = total.value.reduce((acc, item) => acc + item.amount, 0)
+  form.value.paid = Math.round(total.value.reduce((acc, item) => acc + item.amount, 0) * 100) / 100
+
+  const summaryTotal = total.value.find((item) => item.type === "TOTAL")
+
+  if (summaryTotal) {
+    summaryTotal.weight = Math.round(total.value.reduce((acc, item) => acc + item.weight, 0) * 100) / 100
+    summaryTotal.count = selectedPackages.value.length
+    summaryTotal.amount = form.value.paid
+  }
 }
 
 </script>
