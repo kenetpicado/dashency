@@ -23,7 +23,7 @@
 
       <InputForm text="Cliente" name="client" v-model="form.client" />
 
-      <div v-if="!selectedPackages.length" class="text-center text-gray-500 my-4">
+      <div v-if="!selectedPackages.length" class="text-center text-gray-500">
         No hay paquetes seleccionados
       </div>
 
@@ -49,7 +49,7 @@
         </template>
       </TheTable>
 
-      <InputForm text="Total pagado" name="total" v-model="form.paid" class="mb-4" />
+      <InputForm text="Total pagado" name="total" v-model.number="form.paid" />
 
       <div class="grid grid-cols-2 gap-4">
         <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
@@ -61,9 +61,13 @@
         </SelectForm>
       </div>
 
+      <div class="text-sm text-red-400 mb-4">
+        Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar posteriormente.
+      </div>
+
       <div class="flex justify-end gap-4">
         <BtnSecondary>Cancelar</BtnSecondary>
-        <BtnPrimary @click="onSubmit" :loading="false"> Guardar </BtnPrimary>
+        <BtnPrimary @click="onSubmit" :loading="processing"> Guardar </BtnPrimary>
       </div>
     </div>
   </div>
@@ -76,16 +80,22 @@ import { computed, onMounted, ref } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
-import type { IPackage } from '@/types'
+import type { IBilling, IPackage, ISummary } from '@/types'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
 import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
+import useBilling from '@/composables/useBilling'
 
 const isLoading = ref<boolean>(false)
 const selectedPackages = ref<IPackage[]>([])
+
+const { getPackages, packages } = usePackage()
+const { storeBilling, processing } = useBilling()
+
+onMounted(() => getPackages())
 
 const prices = [
   { type: 'AEREO', value: 7 },
@@ -94,7 +104,7 @@ const prices = [
 
 const banks = ["BAC", "LAFISE", "BANPRO", "FICOHSA", "ZELLE"]
 
-const total = ref([
+const total = ref<ISummary[]>([
   { type: 'AEREO', weight: 0, amount: 0, count: 0 },
   { type: 'MARITIMO', weight: 0, amount: 0, count: 0 },
   { type: 'TOTAL', weight: 0, amount: 0, count: 0 },
@@ -104,10 +114,10 @@ const queryParams = ref({
   search: ''
 })
 
-const form = ref({
+const form = ref<IBilling>({
   client: '',
-  packages: [],
-  paid: '',
+  packages_ids: [],
+  paid: 0,
   reference: '',
   bank: '',
   summary: []
@@ -132,10 +142,6 @@ function removePackage(index: number) {
 
   calculateTotal()
 }
-
-const { getPackages, packages } = usePackage()
-
-onMounted(() => getPackages())
 
 const filteredPackages = computed(() => {
   return packages.value.filter((item) => {
@@ -164,16 +170,10 @@ function onSubmit() {
     return
   }
 
-  isLoading.value = true
   form.value.summary = total.value
-  form.value.packages = selectedPackages.value
+  form.value.packages_ids = selectedPackages.value.map((item) => item.id) as string[]
 
-  console.log(form.value)
-
-  setTimeout(() => {
-    isLoading.value = false
-    toast.success('Factura creada correctamente')
-  }, 2000)
+  storeBilling(form.value)
 }
 
 function calculateTotal() {

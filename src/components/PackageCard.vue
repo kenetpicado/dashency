@@ -3,7 +3,7 @@
         <div class="flex justify-between">
             <span class="flex items-center gap-1 text-lg font-bold text-edo-950">
                 {{ item.guide }}
-                <IconCircleCheckFilled v-if="item.status == 'ENTREGADO'" size="20" class="text-green-600"/>
+                <IconCircleCheckFilled v-if="item.status == 'FACTURADO'" size="20" class="text-green-600" />
             </span>
             <span class="text-gray-400 text-sm">
                 {{ getBaseDate(item.entryDate) }}

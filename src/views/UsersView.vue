@@ -9,6 +9,7 @@ import DialogForm from '@/components/Form/DialogForm.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
 import getFormattedDate from '@/utils/date'
+import UserInfo from '@/components/UserInfo.vue'
 
 const { getUsers, users } = useUser()
 const openModal = ref(false)
@@ -70,12 +71,7 @@ function onSubmit(data: IUser) {
     <template #body>
       <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
         <td>
-          <div class="mb-2">
-            {{ item.name }}
-          </div>
-          <div class="text-sm text-gray-500">
-            {{ item.email }}
-          </div>
+          <UserInfo :item="item" />
         </td>
         <td>
           {{ item.role }}

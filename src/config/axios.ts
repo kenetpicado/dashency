@@ -24,10 +24,12 @@ api.interceptors.response.use(
     return response
   },
   function (error) {
-    if (error.response.status === 401 || error.response.status === 403) {
+    if (error.response.status === 401) {
       localStorage.removeItem('token')
       router.push({ name: 'login' })
     }
+
+    //si es  || error.response.status === 403
 
     return Promise.reject(error)
   }

@@ -47,15 +47,13 @@
           {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
-          <span class="bg-gray-200 px-3 py-1 rounded-lg">
-            {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }} {{ item.type }}
-          </span>
+          {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }}
         </td>
         <td>
-          {{ item.user?.name }}
+          <UserInfo v-if="item.user" :item="item.user" />
         </td>
         <td>
-          <span class="bg-red-100 text-red-600 px-3 py-1 rounded-lg">${{ item.total }}</span>
+          <span class="font-bold">${{ item.total }}</span>
         </td>
         <td>{{ item.packages.length }}</td>
         <td>
@@ -86,6 +84,7 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { RouterLink } from 'vue-router'
+import UserInfo from '@/components/UserInfo.vue'
 
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 

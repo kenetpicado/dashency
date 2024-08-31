@@ -62,7 +62,7 @@ export interface IBatch {
   type: string
   packages: IPackage[]
   createdAt?: Date
-  user?: IUser
+  user?: IUserInfo
 }
 
 export interface IItemSidebar {
@@ -80,4 +80,30 @@ export interface IStatCard {
     value: string | number
     icon?: any
   }
+}
+
+export interface ISummary {
+  type: string
+  weight: number
+  amount: number
+  count: number
+}
+
+export interface IBilling {
+  id?: string
+  client: string
+  packages?: IPackage[]
+  packages_ids?: Array<string>
+  paid: number
+  reference: string
+  bank: string
+  summary?: ISummary[]
+  createdAt?: Date
+  user?: IUserInfo
+}
+
+export interface IUserInfo {
+  id: string
+  name: string
+  email: string
 }
