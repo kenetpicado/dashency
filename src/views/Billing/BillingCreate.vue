@@ -171,7 +171,7 @@ function calculateTotal() {
 
     if (!currentTotal) return
 
-    currentTotal.weight = totalWeight
+    currentTotal.weight = Math.round(totalWeight * 100) / 100
     currentTotal.count = filtered.length
 
     if (totalWeight == 0) {
