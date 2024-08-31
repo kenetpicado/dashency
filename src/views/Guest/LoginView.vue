@@ -19,15 +19,7 @@ const form = ref<ILoginForm>({
   </div>
 
   <form @submit.prevent="login(form)">
-    <InputForm
-      text="Correo"
-      name="email"
-      v-model="form.email"
-      autofocus
-      required
-      type="email"
-      autocomplete="on"
-    />
+    <InputForm text="Correo" name="email" v-model="form.email" autofocus required type="email" autocomplete="on" />
     <InputForm text="Contraseña" name="password" v-model="form.password" required type="password" />
 
     <div class="mt-10">
@@ -35,7 +27,7 @@ const form = ref<ILoginForm>({
     </div>
     <div class="text-center mt-5">
       ¿No tienes cuenta?
-      <RouterLink :to="{ name: 'register' }" class="text-blue-600"> Registrarme </RouterLink>
+      <RouterLink :to="{ name: 'register' }" class="text-edo-950"> Registrarme </RouterLink>
     </div>
   </form>
 </template>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { IPackage } from '@/types'
 
 export const usePackageStore = defineStore('package', () => {
-  const packages = ref<IPackage[]>()
+  const packages = ref<IPackage[]>([])
 
   function setPackages(data: IPackage[]) {
     packages.value = data

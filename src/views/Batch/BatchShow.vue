@@ -15,16 +15,18 @@
     <div class="text-gray-400">Registrado el {{ getFormattedDate(batch.createdAt) }}</div>
   </div>
 
-  <PackageTable :packages="batch?.packages" />
+  <div v-if="batch?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
+    <PackageCard v-for="(item, index) in batch?.packages" :item="item" :key="index" :showIcon="false" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import StatCard from '@/components/StatCard.vue'
-import PackageTable from '@/components/Table/PackageTable.vue'
 import useBatch from '@/composables/useBatch'
 import getFormattedDate from '@/utils/date'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import PackageCard from '@/components/PackageCard.vue'
 
 const route = useRoute()
 const { getBatch, batch } = useBatch()

@@ -44,6 +44,7 @@ export interface IButton {
 }
 
 export interface IPackage {
+  id?: string
   guide: string
   description: string
   pieces: number
