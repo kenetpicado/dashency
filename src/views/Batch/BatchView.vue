@@ -119,5 +119,5 @@ function onSubmit() {
   })
 }
 
-watchDebounced(queryParams.value, () => getBatches(), { debounce: 500, maxWait: 1000 })
+watchDebounced(queryParams.value, () => getBatches(), { debounce: 700, maxWait: 1000 })
 </script>

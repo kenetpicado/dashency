@@ -10,13 +10,14 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
 import getFormattedDate from '@/utils/date'
 import UserInfo from '@/components/UserInfo.vue'
+import { useTimeAgo } from '@vueuse/core'
 
 const { getUsers, users } = useUser()
 const openModal = ref(false)
 const user = ref<IUser>()
 const { updateUser, processing } = useUser()
 
-const roles = ['USUARIO', 'ADMINISTRADOR']
+const roles = ['USUARIO', 'ADMINISTRADOR', 'CAJERO']
 const status = ['REGISTRADO', 'ACTIVO', 'INACTIVO']
 
 onMounted(() => {
@@ -66,6 +67,7 @@ function onSubmit(data: IUser) {
       <th>Rol</th>
       <th>Estado</th>
       <th>Registrado</th>
+      <th>Última actividad</th>
       <th>Acciones</th>
     </template>
     <template #body>
@@ -81,6 +83,11 @@ function onSubmit(data: IUser) {
         </td>
         <td>
           {{ getFormattedDate(item.createdAt) }}
+        </td>
+        <td>
+          <span v-if="item.lastActivity">
+            {{ useTimeAgo(item.lastActivity) }}
+          </span>
         </td>
         <td>
           <button type="button" @click="editUser(item)">

@@ -34,7 +34,6 @@ onMounted(() => {
   selected.value = 'home'
   getProfile()
 })
-
 </script>
 
 <template>

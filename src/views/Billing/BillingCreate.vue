@@ -7,19 +7,25 @@
 
   <div class="grid grid-cols-2 gap-4">
     <div>
-      <div class="text-lg mb-2 font-bold">
-        Paquetes
-      </div>
-      <InputForm text="Buscar" name="search" v-model="queryParams.search" placeholder="Buscar por guía o cliente" />
+      <div class="text-lg mb-2 font-bold">Paquetes</div>
+      <InputForm
+        text="Buscar"
+        name="search"
+        v-model="queryParams.search"
+        placeholder="Buscar por guía o cliente"
+      />
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
-          @selectedItem="addPackage" />
+        <PackageCard
+          v-for="(item, index) in filteredPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          @selectedItem="addPackage"
+        />
       </div>
     </div>
     <div>
-      <div class="text-lg mb-2 font-bold">
-        Factura
-      </div>
+      <div class="text-lg mb-2 font-bold">Factura</div>
 
       <InputForm text="Cliente" name="client" v-model="form.client" />
 
@@ -28,8 +34,14 @@
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
-          :icon="IconTrash" @selectedItem="removePackage(index)" />
+        <PackageCard
+          v-for="(item, index) in selectedPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          :icon="IconTrash"
+          @selectedItem="removePackage(index)"
+        />
       </div>
 
       <TheTable class="mb-4">
@@ -62,7 +74,8 @@
       </div>
 
       <div class="text-sm text-red-400 mb-4">
-        Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar posteriormente.
+        Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
+        posteriormente.
       </div>
 
       <div class="flex justify-end gap-4">
@@ -88,6 +101,7 @@ import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
+import banks from '@/utils/banks'
 
 const isLoading = ref<boolean>(false)
 const selectedPackages = ref<IPackage[]>([])
@@ -102,12 +116,10 @@ const prices = [
   { type: 'MARITIMO', value: 3 }
 ]
 
-const banks = ["BAC", "LAFISE", "BANPRO", "FICOHSA", "ZELLE"]
-
 const total = ref<ISummary[]>([
   { type: 'AEREO', weight: 0, amount: 0, count: 0 },
   { type: 'MARITIMO', weight: 0, amount: 0, count: 0 },
-  { type: 'TOTAL', weight: 0, amount: 0, count: 0 },
+  { type: 'TOTAL', weight: 0, amount: 0, count: 0 }
 ])
 
 const queryParams = ref({
@@ -196,19 +208,19 @@ function calculateTotal() {
     if (totalWeight < 1) {
       currentTotal.amount = price.value
     } else {
-      currentTotal.amount = Math.round((price.value * totalWeight) * 100) / 100
+      currentTotal.amount = Math.round(price.value * totalWeight * 100) / 100
     }
   })
 
   form.value.paid = Math.round(total.value.reduce((acc, item) => acc + item.amount, 0) * 100) / 100
 
-  const summaryTotal = total.value.find((item) => item.type === "TOTAL")
+  const summaryTotal = total.value.find((item) => item.type === 'TOTAL')
 
   if (summaryTotal) {
-    summaryTotal.weight = Math.round(total.value.reduce((acc, item) => acc + item.weight, 0) * 100) / 100
+    summaryTotal.weight =
+      Math.round(total.value.reduce((acc, item) => acc + item.weight, 0) * 100) / 100
     summaryTotal.count = selectedPackages.value.length
     summaryTotal.amount = form.value.paid
   }
 }
-
 </script>

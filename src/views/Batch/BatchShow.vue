@@ -12,7 +12,12 @@
   </div>
 
   <div v-if="batch?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard v-for="(item, index) in batch?.packages" :item="item" :key="index" :showIcon="false" />
+    <PackageCard
+      v-for="(item, index) in batch?.packages"
+      :item="item"
+      :key="index"
+      :showIcon="false"
+    />
   </div>
 </template>
 
@@ -31,26 +36,29 @@ const { getBatch, batch } = useBatch()
 
 onMounted(() => getBatch(route.params.id as string))
 
-const stats = computed(() => [
-  {
-    title: 'Tipo',
-    value: batch.value?.type || ''
-  },
-  {
-    title: 'Total',
-    value: '$ ' + batch.value?.total || ''
-  },
-  {
-    title: 'Paquetes',
-    value: batch.value?.packages.length || '0'
-  },
-  {
-    title: 'Código o referencia',
-    value: batch.value?.code || ''
-  },
-  {
-    title: 'Creado',
-    value: getFormattedDate(batch.value?.createdAt) || ''
-  }
-] as IStatCard[])
+const stats = computed(
+  () =>
+    [
+      {
+        title: 'Tipo',
+        value: batch.value?.type || ''
+      },
+      {
+        title: 'Total',
+        value: '$ ' + batch.value?.total || ''
+      },
+      {
+        title: 'Paquetes',
+        value: batch.value?.packages.length || '0'
+      },
+      {
+        title: 'Código o referencia',
+        value: batch.value?.code || ''
+      },
+      {
+        title: 'Creado',
+        value: getFormattedDate(batch.value?.createdAt) || ''
+      }
+    ] as IStatCard[]
+)
 </script>

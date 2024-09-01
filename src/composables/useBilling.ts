@@ -12,12 +12,19 @@ export default function useBilling() {
   const processing = ref<boolean>(false)
 
   const queryParams = ref({
-    type: ''
+    date: '',
+    reference: '',
+    client: '',
+    bank: ''
   })
 
   function getBilling() {
+    const params = Object.fromEntries(
+      Object.entries(queryParams.value).filter(([_, value]) => value)
+    )
+
     api
-      .get('/billing')
+      .get('/billing', { params })
       .then((response) => {
         setBilling(response.data as IBilling[])
       })

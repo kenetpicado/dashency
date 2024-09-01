@@ -8,7 +8,12 @@
       <ul class="space-y-1">
         <li v-for="(item, index) in items" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
+          <ItemSidebarLink
+            v-else
+            :item="item"
+            :active="selected == item.to.name"
+            @click="selected = item.to.name"
+          />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />

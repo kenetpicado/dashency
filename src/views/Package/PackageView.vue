@@ -4,8 +4,19 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Guía" name="guide" v-model="queryParams.guide" placeholder="Número de guia" type="number" />
-    <InputForm text="Cliente" name="client" v-model="queryParams.client" placeholder="Nombre del cliente" />
+    <InputForm
+      text="Guía"
+      name="guide"
+      v-model="queryParams.guide"
+      placeholder="Número de guia"
+      type="number"
+    />
+    <InputForm
+      text="Cliente"
+      name="client"
+      v-model="queryParams.client"
+      placeholder="Nombre del cliente"
+    />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option value="AEREO">AEREO</option>
