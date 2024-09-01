@@ -11,13 +11,18 @@ export default function useBatch() {
   const { batches, batch } = storeToRefs(useBatchStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref({
-    type: ''
+  const queryParams = ref<{ type: string; code: string }>({
+    type: '',
+    code: ''
   })
 
   function getBatches() {
+    const params = Object.fromEntries(
+      Object.entries(queryParams.value).filter(([_, value]) => value)
+    )
+
     api
-      .get('/batches', { params: queryParams.value })
+      .get('/batches', { params })
       .then((response) => {
         setBatches(response.data as IBatch[])
       })

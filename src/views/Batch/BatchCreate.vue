@@ -9,13 +9,9 @@
     </BtnSecondary>
   </header>
 
-  <input
-    type="file"
-    id="excelFileInput"
-    class="hidden"
+  <input type="file" id="excelFileInput" class="hidden"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-    @change="onChange"
-  />
+    @change="onChange" />
 
   <div v-if="workerStatus == 'ERROR'" class="bg-red-50 p-4 rounded-lg text-red-600">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a intentarlo.
@@ -45,18 +41,12 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input
-            type="number"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.grossWeight"
-          />
+          <input type="number" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.grossWeight" />
         </td>
         <td>
-          <input
-            type="text"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.client"
-          />
+          <input type="text" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.client" />
         </td>
         <td>
           {{ item.entryDate }}
@@ -66,6 +56,7 @@
   </TheTable>
   <div class="grid grid-cols-4 gap-4">
     <InputForm text="Total" name="total" v-model="form.total" type="number" />
+    <InputForm text="Código o referencia" name="code" v-model="form.code" />
     <SelectForm text="Tipo de lote" name="type" v-model="form.type">
       <option value="">Selecciona un tipo</option>
       <option value="AEREO">AEREO</option>
@@ -101,7 +92,8 @@ const { storeBatch, processing } = useBatch()
 const form = ref<IBatch>({
   total: 0,
   type: '',
-  packages: []
+  packages: [],
+  code: ''
 })
 
 const { workerFn, workerStatus } = useWebWorkerFn(
@@ -162,6 +154,11 @@ function onSubmit() {
 
   if (!form.value.type) {
     toast.error('El tipo es requerido')
+    return
+  }
+
+  if (!form.value.code) {
+    toast.error('El código es requerido')
     return
   }
 

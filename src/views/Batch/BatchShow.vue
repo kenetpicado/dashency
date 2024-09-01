@@ -45,6 +45,10 @@ const stats = computed(() => [
     value: batch.value?.packages.length || '0'
   },
   {
+    title: 'Código o referencia',
+    value: batch.value?.code || ''
+  },
+  {
     title: 'Creado',
     value: getFormattedDate(batch.value?.createdAt) || ''
   }

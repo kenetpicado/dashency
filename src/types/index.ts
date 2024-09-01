@@ -59,6 +59,7 @@ export interface IPackage {
 export interface IBatch {
   id?: string
   total: number
+  code: string
   type: string
   packages: IPackage[]
   createdAt?: Date

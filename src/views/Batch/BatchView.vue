@@ -2,6 +2,7 @@
   <DialogForm title="Editar" :isOpen="openModal" @onClose="openModal = false">
     <template v-if="batch">
       <InputForm text="Total" name="total" v-model="batch.total" type="number" />
+      <InputForm text="Código o referencia" name="code" v-model="batch.code" />
       <SelectForm text="Tipo" name="type" v-model="batch.type">
         <option value="">Selecciona un tipo</option>
         <option value="AEREO">AEREO</option>
@@ -22,6 +23,7 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
+    <InputForm text="Código o referencia" name="code" v-model="queryParams.code" type="search" />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Selecciona un tipo</option>
       <option value="AEREO">AEREO</option>
@@ -33,6 +35,7 @@
     <template #header>
       <th>Fecha</th>
       <th>Tipo</th>
+      <th>Código o referencia</th>
       <th>Usuario</th>
       <th>Total</th>
       <th>Paquetes</th>
@@ -48,6 +51,9 @@
         </td>
         <td>
           {{ item.type == 'MARITIMO' ? '🚢' : '✈️' }}
+        </td>
+        <td>
+          {{ item.code }}
         </td>
         <td>
           <UserInfo v-if="item.user" :item="item.user" />
@@ -74,7 +80,7 @@
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import useBatch from '@/composables/useBatch'
 import { IconEdit, IconEye } from '@tabler/icons-vue'
 import getFormattedDate from '@/utils/date'
@@ -85,6 +91,8 @@ import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { RouterLink } from 'vue-router'
 import UserInfo from '@/components/UserInfo.vue'
+import toast from '@/utils/toast'
+import { watchDebounced } from '@vueuse/core'
 
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 
@@ -100,17 +108,16 @@ function edit(item: IBatch) {
 
 function onSubmit() {
   if (!batch.value) return
+
+  if (!batch.value.type || !batch.value.code || !batch.value.total) {
+    return toast.error('Todos los campos son requeridos')
+  }
+
   updateBatch(batch.value, () => {
     openModal.value = false
     batch.value = null
   })
 }
 
-watch(
-  () => queryParams.value,
-  () => {
-    getBatches()
-  },
-  { deep: true }
-)
+watchDebounced(queryParams.value, () => getBatches(), { debounce: 500, maxWait: 1000 })
 </script>

@@ -2,8 +2,10 @@
 import StatCard from '@/components/StatCard.vue'
 import { onMounted } from 'vue'
 import useAuth from '@/composables/useAuth'
+import { useStorage } from '@vueuse/core'
 
 const { getProfile, auth } = useAuth()
+const selected = useStorage('selected', 'home')
 
 const stats = [
   {
@@ -28,7 +30,11 @@ const stats = [
   }
 ]
 
-onMounted(() => getProfile())
+onMounted(() => {
+  selected.value = 'home'
+  getProfile()
+})
+
 </script>
 
 <template>
