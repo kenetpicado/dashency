@@ -13,12 +13,7 @@
         </option>
       </SelectForm>
 
-      <InputForm
-        v-if="!conceptSelected"
-        text="Especificar concepto"
-        name="concept"
-        v-model="form.concept"
-      />
+      <InputForm v-if="!conceptSelected" text="Especificar concepto" name="concept" v-model="form.concept" />
 
       <InputForm text="Descripción (Opcional)" name="description" v-model="form.description" />
 
@@ -74,7 +69,7 @@
           <div>
             {{ item.concept }}
           </div>
-          <div class="text-sm text-gray-500">
+          <div v-if="item.description" class="text-sm text-gray-500">
             {{ item.description }}
           </div>
         </td>
