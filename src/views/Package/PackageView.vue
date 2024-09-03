@@ -4,19 +4,8 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm
-      text="Guía"
-      name="guide"
-      v-model="queryParams.guide"
-      placeholder="Número de guia"
-      type="number"
-    />
-    <InputForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      placeholder="Nombre del cliente"
-    />
+    <InputForm text="Guía" name="guide" v-model="queryParams.guide" placeholder="Número de guia" type="number" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" placeholder="Nombre del cliente" />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option value="AEREO">AEREO</option>
@@ -27,6 +16,10 @@
       <option value="REGISTRADO">REGISTRADO</option>
     </SelectForm>
     <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
+  </div>
+
+  <div v-if="!packages?.length" class="text-center my-3 text-gray-400">
+    No hay datos que mostrar
   </div>
 
   <div v-if="packages?.length" class="grid grid-cols-2 xl:grid-cols-3 gap-4">

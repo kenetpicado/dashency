@@ -117,3 +117,7 @@ export interface IExpense {
   createdAt?: Date
   user?: IUserInfo
 }
+
+export interface IHome {
+  stats: IStatCard[]
+}

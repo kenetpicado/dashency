@@ -33,12 +33,12 @@
 
   <TheTable>
     <template #header>
+      <th>Usuario</th>
       <th>Fecha</th>
       <th>Tipo</th>
       <th>Código o referencia</th>
-      <th>Usuario</th>
-      <th>Total</th>
       <th>Paquetes</th>
+      <th>Total</th>
       <th>Acciones</th>
     </template>
     <template #body>
@@ -46,6 +46,9 @@
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
+        <td>
+          <UserInfo v-if="item.user" :item="item.user" />
+        </td>
         <td>
           {{ getFormattedDate(item.createdAt) }}
         </td>
@@ -55,13 +58,10 @@
         <td>
           {{ item.code }}
         </td>
-        <td>
-          <UserInfo v-if="item.user" :item="item.user" />
-        </td>
-        <td>
-          <span class="font-bold">${{ item.total }}</span>
-        </td>
         <td>{{ item.packages.length }}</td>
+        <td>
+          ${{ item.total }}
+        </td>
         <td>
           <div class="flex gap-4">
             <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">

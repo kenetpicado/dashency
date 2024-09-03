@@ -14,20 +14,9 @@
         {{ item }}
       </option>
     </SelectForm>
-    <InputForm
-      text="Código o referencia"
-      name="reference"
-      v-model="queryParams.reference"
-      type="search"
-      placeholder="Buscar código o referencia"
-    />
-    <InputForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      type="search"
-      placeholder="Buscar cliente"
-    />
+    <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
+      placeholder="Buscar código o referencia" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" type="search" placeholder="Buscar cliente" />
   </div>
 
   <TheTable>
@@ -36,7 +25,7 @@
       <th>Fecha</th>
       <th>Referencia</th>
       <th>Cliente</th>
-      <th>Facturado</th>
+      <th>Total</th>
       <th>Acciones</th>
     </template>
     <template #body>
@@ -55,7 +44,7 @@
           {{ item.client }}
         </td>
         <td>
-          <span class="font-bold">${{ item.paid }}</span>
+          ${{ item.paid }}
         </td>
         <td>
           <div class="flex gap-4">
