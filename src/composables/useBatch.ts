@@ -52,6 +52,9 @@ export default function useBatch() {
         toast.success('Lote creado correctamente')
         router.push({ name: 'batches' })
       })
+      .catch((error) => {
+        console.log(error)
+      })
       .finally(() => {
         processing.value = false
       })

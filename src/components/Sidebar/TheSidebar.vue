@@ -31,7 +31,8 @@ import {
   IconPackages,
   IconUsersGroup,
   IconUser,
-  IconDatabaseDollar
+  IconDatabaseDollar,
+  IconTransferOut
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
@@ -62,6 +63,11 @@ const items = [
     title: 'Facturación',
     to: { name: 'billing' },
     icon: IconDatabaseDollar
+  },
+  {
+    title: 'Gastos',
+    to: { name: 'expenses' },
+    icon: IconTransferOut
   },
   {
     title: 'Administración'

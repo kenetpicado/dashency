@@ -33,7 +33,7 @@ export interface IUser {
   role: string
   status: string
   passwordUpdatedAt?: Date
-  lastActiveAt?: Date
+  lastActivity?: Date
   createdAt: Date
 }
 
@@ -105,4 +105,15 @@ export interface IUserInfo {
   id: string
   name: string
   email: string
+}
+
+export interface IExpense {
+  id?: string
+  concept: string
+  description?: string
+  quantity: number
+  cost: number
+  total?: number
+  createdAt?: Date
+  user?: IUserInfo
 }

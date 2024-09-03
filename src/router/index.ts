@@ -58,6 +58,11 @@ const router = createRouter({
           name: 'billing.show'
         },
         {
+          path: 'gastos',
+          component: () => import('../views/Expense/ExpenseView.vue'),
+          name: 'expenses'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'
