@@ -25,7 +25,7 @@
     <div>
       <div class="text-lg mb-2 font-bold">Factura</div>
 
-      <InputForm text="Cliente" name="client" v-model="form.client" />
+      <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" />
 
       <div v-if="!selectedPackages.length" class="text-center text-gray-400">
         No hay paquetes seleccionados

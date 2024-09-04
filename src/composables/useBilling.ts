@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import router from '@/router'
 import toast from '@/utils/toast'
+import cleanQueryParams from '@/utils/query-params'
 
 export default function useBilling() {
   const { setBilling, setBill } = useBillingStore()
@@ -19,9 +20,7 @@ export default function useBilling() {
   })
 
   function getBilling() {
-    const params = Object.fromEntries(
-      Object.entries(queryParams.value).filter(([_, value]) => value)
-    )
+    const params = cleanQueryParams(queryParams.value)
 
     api
       .get('/billing', { params })
