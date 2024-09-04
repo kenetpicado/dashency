@@ -23,7 +23,7 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Código o referencia" name="code" v-model="queryParams.code" type="search" />
+    <InputForm text="Código o referencia" name="code" v-model="queryParams.code" type="search" placeholder="Buscar código o referencia" />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Selecciona un tipo</option>
       <option value="AEREO">AEREO</option>
@@ -42,10 +42,10 @@
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!batches?.length">
+      <tr v-if="!batches.data.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
+      <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
         <td>
           <UserInfo v-if="item.user" :item="item.user" />
         </td>
@@ -75,6 +75,7 @@
       </tr>
     </template>
   </TheTable>
+  <PaginationComponent v-if="batches.pages > 1" :pages="batches.pages" :page="batches.current" @selected="getThisPage" />
 </template>
 
 <script setup lang="ts">
@@ -93,6 +94,7 @@ import { RouterLink } from 'vue-router'
 import UserInfo from '@/components/UserInfo.vue'
 import toast from '@/utils/toast'
 import { watchDebounced } from '@vueuse/core'
+import PaginationComponent from "@/components/PaginationComponent.vue"
 
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 
@@ -119,5 +121,9 @@ function onSubmit() {
   })
 }
 
-watchDebounced(queryParams.value, () => getBatches(), { debounce: 700, maxWait: 1000 })
+watchDebounced(queryParams.value, () => getBatches(), { debounce: 500, maxWait: 1000 })
+
+function getThisPage(selected) {
+  queryParams.value.page = selected * 1
+}
 </script>

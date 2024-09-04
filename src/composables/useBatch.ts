@@ -1,4 +1,4 @@
-import type { IBatch } from '@/types'
+import type { IBatch, IBatchResponse } from '@/types'
 import { useBatchStore } from '@/stores/batch'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -11,9 +11,10 @@ export default function useBatch() {
   const { batches, batch } = storeToRefs(useBatchStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref<{ type: string; code: string }>({
+  const queryParams = ref<{ type: string; code: string, page: number }>({
     type: '',
-    code: ''
+    code: '',
+    page: 1
   })
 
   function getBatches() {
@@ -24,7 +25,7 @@ export default function useBatch() {
     api
       .get('/batches', { params })
       .then((response) => {
-        setBatches(response.data as IBatch[])
+        setBatches(response.data as IBatchResponse)
       })
       .catch((error) => {
         console.log(error)

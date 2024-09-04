@@ -8,13 +8,13 @@
 
   <h5 class="text-lg font-bold mb-2">Estadísticas</h5>
 
-  <main class="grid grid-cols-4 xl:grid-cols-5 gap-2 mb-4">
+  <main class="grid grid-cols-4 gap-2 mb-4">
     <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
   </main>
 
   <h5 class="text-lg font-bold mb-2">Resumen</h5>
 
-  <main class="grid grid-cols-4 xl:grid-cols-5 gap-2 mb-4">
+  <main class="grid grid-cols-4 gap-2 mb-4">
     <StatCard v-for="(stat, index) in summaryStat" :stat="stat" :key="index" />
   </main>
 

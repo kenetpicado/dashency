@@ -30,7 +30,7 @@
     </template>
     <template #body>
       <tr v-if="!billing?.length">
-        <td colspan="5" class="text-center">No hay datos que mostrar</td>
+        <td colspan="6" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in billing" :key="index" class="hover:bg-gray-50">
         <td>

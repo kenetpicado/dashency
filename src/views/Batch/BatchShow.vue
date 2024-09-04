@@ -3,7 +3,7 @@
     <span class="font-bold text-2xl">Detalles</span>
   </header>
 
-  <main class="grid grid-cols-4 xl:grid-cols-5 gap-2 mb-4">
+  <main class="grid grid-cols-4 gap-2 mb-4">
     <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
   </main>
 

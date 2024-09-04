@@ -1,12 +1,17 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IBatch } from '@/types'
+import type { IBatch, IBatchResponse } from '@/types'
 
 export const useBatchStore = defineStore('batch', () => {
-  const batches = ref<IBatch[]>()
+  const batches = ref<IBatchResponse>({
+    data: [],
+    current: 1,
+    pages: 1
+  })
+
   const batch = ref<IBatch>()
 
-  function setBatches(data: IBatch[]) {
+  function setBatches(data: IBatchResponse) {
     batches.value = data
   }
 
