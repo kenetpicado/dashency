@@ -118,6 +118,12 @@ export interface IExpense {
   user?: IUserInfo
 }
 
+export interface IExpenseResponse {
+  data: IExpense[]
+  pages: number
+  current: number
+}
+
 export interface IHome {
   stats: IStatCard[]
 }

@@ -55,10 +55,10 @@
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!expenses?.length">
+      <tr v-if="!expenses.data.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in expenses" :key="index" class="hover:bg-gray-50">
+      <tr v-for="(item, index) in expenses.data" :key="index" class="hover:bg-gray-50">
         <td>
           <UserInfo v-if="item.user" :item="item.user" />
         </td>
@@ -88,6 +88,15 @@
       </tr>
     </template>
   </TheTable>
+
+  <div class="flex items-center justify-center gap-1 mb-4">
+    <button type="button" v-for="page in expenses.pages" @click="getThisPage(page)"
+      :class="page == expenses.current ? 'bg-edo-950 text-white border-edo-950' : 'bg-white'"
+      class="h-8 w-10 flex items-center justify-center rounded-lg border" :key="page">
+      {{ page }}
+    </button>
+  </div>
+
 </template>
 
 <script setup lang="ts">
@@ -167,5 +176,10 @@ function edit(item: IExpense) {
   isEdit.value = true
   form.value = { ...item }
   openModal.value = true
+}
+
+function getThisPage(page: number) {
+  if (page == expenses.value.current) return
+  queryParams.value.page = page
 }
 </script>

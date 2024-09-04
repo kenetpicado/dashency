@@ -1,4 +1,4 @@
-import type { IExpense } from '@/types'
+import type { IExpense, IExpenseResponse } from '@/types'
 import { useExpenseStore } from '@/stores/expense'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -10,8 +10,9 @@ export default function useExpense() {
   const { expenses } = storeToRefs(useExpenseStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref<{ concept: string }>({
-    concept: ''
+  const queryParams = ref<{ concept: string; page: number }>({
+    concept: '',
+    page: 1
   })
 
   function getExpenses() {
@@ -22,7 +23,7 @@ export default function useExpense() {
     api
       .get('/expenses', { params })
       .then((response) => {
-        setExpenses(response.data as IExpense[])
+        setExpenses(response.data as IExpenseResponse)
       })
       .catch((error) => {
         console.log(error)

@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full bg-white border rounded-lg">
+  <div class="w-full bg-white border rounded-lg mb-4">
     <div class="overflow-hidden rounded-lg">
       <table class="w-full border-collapse text-left">
         <thead class="bg-gray-50">
