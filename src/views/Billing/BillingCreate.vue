@@ -1,5 +1,6 @@
 <template>
-  <loading v-model:active="isLoading" color="#2563eb" loader="dots" />
+  <loading v-model:active="processing" color="#2563eb" loader="dots" />
+  <loading v-model:active="searching" color="#2563eb" loader="dots" />
 
   <header class="flex items-center justify-between mb-4 h-14">
     <span class="font-bold text-2xl">Nueva</span>
@@ -7,21 +8,18 @@
 
   <div class="grid grid-cols-2 gap-4">
     <div>
-      <div class="text-lg mb-2 font-bold">Paquetes</div>
-      <InputForm
-        text="Buscar"
-        name="search"
-        v-model="queryParams.search"
-        placeholder="Buscar por guía o cliente"
-      />
+      <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
+      <InputForm text="Cliente" name="search" v-model="queryParams.client" placeholder="Nombre del cliente" />
+      <div class="grid grid-cols-2 gap-4 items-end">
+        <InputForm text="Guía" name="search" v-model="queryParams.guide" placeholder="Número de guía" />
+        <BtnPrimary class="mb-5" @click="search" :loading="processing"> Buscar </BtnPrimary>
+      </div>
+      <div v-if="!filteredPackages.length" class="text-center text-gray-400 mt-5">
+        No hay datos que mostrar
+      </div>
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
     <div>
@@ -29,19 +27,13 @@
 
       <InputForm text="Cliente" name="client" v-model="form.client" />
 
-      <div v-if="!selectedPackages.length" class="text-center text-gray-500">
+      <div v-if="!selectedPackages.length" class="text-center text-gray-400">
         No hay paquetes seleccionados
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -103,13 +95,10 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
 import banks from '@/utils/banks'
 
-const isLoading = ref<boolean>(false)
 const selectedPackages = ref<IPackage[]>([])
 
-const { getPackages, packages } = usePackage()
+const { searchPackages, packages, queryParams, processing: searching } = usePackage()
 const { storeBilling, processing } = useBilling()
-
-onMounted(() => getPackages())
 
 const prices = [
   { type: 'AEREO', value: 7 },
@@ -121,10 +110,6 @@ const total = ref<ISummary[]>([
   { type: 'MARITIMO', weight: 0, amount: 0, count: 0 },
   { type: 'TOTAL', weight: 0, amount: 0, count: 0 }
 ])
-
-const queryParams = ref({
-  search: ''
-})
 
 const form = ref<IBilling>({
   client: '',
@@ -223,4 +208,17 @@ function calculateTotal() {
     summaryTotal.amount = form.value.paid
   }
 }
+
+function search() {
+  if (!queryParams.value.guide && !queryParams.value.client) {
+    toast.error('Debe ingresar al menos un criterio de búsqueda')
+    return
+  }
+
+  searchPackages()
+}
+
+onMounted(() => {
+  packages.value = []
+})
 </script>

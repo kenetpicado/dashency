@@ -1,4 +1,4 @@
-import type { IBatch, IBilling } from '@/types'
+import type { IBilling } from '@/types'
 import { useBillingStore } from '@/stores/billing'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
