@@ -9,57 +9,31 @@
   <div class="grid grid-cols-2 gap-4">
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
-      <InputForm
-        text="Cliente"
-        name="search"
-        v-model="queryParams.client"
-        placeholder="Nombre del cliente"
-      />
+      <InputForm text="Cliente" name="search" v-model="queryParams.client" placeholder="Nombre del cliente" />
       <div class="grid grid-cols-2 gap-4 items-end">
-        <InputForm
-          text="Guía"
-          name="search"
-          v-model="queryParams.guide"
-          placeholder="Número de guía"
-        />
+        <InputForm text="Guía" name="search" v-model="queryParams.guide" placeholder="Número de guía" />
         <BtnPrimary class="mb-5" @click="search" :loading="processing"> Buscar </BtnPrimary>
       </div>
       <div v-if="!filteredPackages.length" class="text-center text-gray-400 mt-5">
         No hay datos que mostrar
       </div>
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+      <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
     <div>
       <div class="text-lg mb-2 font-bold">Factura</div>
 
-      <InputForm
-        text="Cliente"
-        name="client"
-        v-model="form.client"
-        placeholder="Nombre del cliente"
-      />
+      <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" />
 
       <div v-if="!selectedPackages.length" class="text-center text-gray-400">
         No hay paquetes seleccionados
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -123,7 +97,7 @@ import banks from '@/utils/banks'
 
 const selectedPackages = ref<IPackage[]>([])
 
-const { searchPackages, packages, queryParams, processing: searching } = usePackage()
+const { getPackages, packages, queryParams, processing: searching } = usePackage()
 const { storeBilling, processing } = useBilling()
 
 const prices = [
@@ -167,7 +141,7 @@ function removePackage(index: number) {
 }
 
 const filteredPackages = computed(() => {
-  return packages.value.filter((item) => {
+  return packages.value.data.filter((item) => {
     return !selectedPackages.value.find((selected) => selected.id === item.id)
   })
 })
@@ -241,10 +215,12 @@ function search() {
     return
   }
 
-  searchPackages()
+  queryParams.value.status = 'REGISTRADO'
+
+  getPackages()
 }
 
 onMounted(() => {
-  packages.value = []
+  packages.value.data = []
 })
 </script>

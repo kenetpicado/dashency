@@ -56,6 +56,12 @@ export interface IPackage {
   type?: string
 }
 
+export interface IPackageResponse {
+  data: IPackage[]
+  pages: number
+  current: number
+}
+
 export interface IBatchResponse {
   data: IBatch[]
   pages: number

@@ -8,28 +8,13 @@
   <div class="grid grid-cols-2 gap-4">
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
-      <InputForm
-        text="Cliente"
-        name="search"
-        v-model="queryParams.client"
-        placeholder="Nombre del cliente"
-      />
+      <InputForm text="Cliente" name="search" v-model="queryParams.client" placeholder="Nombre del cliente" />
       <div class="grid grid-cols-2 gap-4">
-        <InputForm
-          text="Guía"
-          name="search"
-          v-model="queryParams.guide"
-          placeholder="Número de guía"
-        />
+        <InputForm text="Guía" name="search" v-model="queryParams.guide" placeholder="Número de guía" />
       </div>
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
     <div>
@@ -42,14 +27,8 @@
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -114,7 +93,7 @@ import banks from '@/utils/banks'
 const isLoading = ref<boolean>(false)
 const selectedPackages = ref<IPackage[]>([])
 
-const { searchPackages, packages } = usePackage()
+const { packages } = usePackage()
 const { storeBilling, processing } = useBilling()
 
 const prices = [

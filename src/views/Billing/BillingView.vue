@@ -14,20 +14,9 @@
         {{ item }}
       </option>
     </SelectForm>
-    <InputForm
-      text="Código o referencia"
-      name="reference"
-      v-model="queryParams.reference"
-      type="search"
-      placeholder="Buscar código o referencia"
-    />
-    <InputForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      type="search"
-      placeholder="Buscar cliente"
-    />
+    <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
+      placeholder="Buscar código o referencia" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" type="search" placeholder="Buscar cliente" />
   </div>
 
   <TheTable>
@@ -91,7 +80,7 @@ onMounted(() => {
 
 watchDebounced(queryParams.value, () => getBilling(), { debounce: 500, maxWait: 1000 })
 
-function getThisPage(selected) {
+function getThisPage(selected: number) {
   queryParams.value.page = selected * 1
 }
 </script>

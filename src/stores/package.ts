@@ -1,11 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IPackage } from '@/types'
+import type { IPackageResponse } from '@/types'
 
 export const usePackageStore = defineStore('package', () => {
-  const packages = ref<IPackage[]>([])
+  const packages = ref<IPackageResponse>({
+    data: [],
+    pages: 1,
+    current: 1
+  })
 
-  function setPackages(data: IPackage[]) {
+  function setPackages(data: IPackageResponse) {
     packages.value = data
   }
 

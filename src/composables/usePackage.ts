@@ -1,4 +1,4 @@
-import type { IPackage } from '@/types'
+import type { IPackageResponse } from '@/types'
 import { usePackageStore } from '@/stores/package'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -15,36 +15,22 @@ export default function usePackage() {
     client: '',
     guide: '',
     status: '',
-    entryDate: ''
+    entryDate: '',
+    page: 1
   })
 
   function getPackages() {
-    api
-      .get('/packages', { params: queryParams.value })
-      .then((response) => {
-        setPackages(response.data as IPackage[])
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  function searchPackages() {
-    processing.value = true
     const params = cleanQueryParams(queryParams.value)
 
     api
-      .get('/search-packages', { params })
+      .get('/packages', { params })
       .then((response) => {
-        setPackages(response.data as IPackage[])
+        setPackages(response.data as IPackageResponse)
       })
       .catch((error) => {
         console.log(error)
       })
-      .finally(() => {
-        processing.value = false
-      })
   }
 
-  return { getPackages, packages, processing, queryParams, searchPackages }
+  return { getPackages, packages, processing, queryParams }
 }
