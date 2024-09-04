@@ -23,7 +23,13 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Código o referencia" name="code" v-model="queryParams.code" type="search" placeholder="Buscar código o referencia" />
+    <InputForm
+      text="Código o referencia"
+      name="code"
+      v-model="queryParams.code"
+      type="search"
+      placeholder="Buscar código o referencia"
+    />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Selecciona un tipo</option>
       <option value="AEREO">AEREO</option>
@@ -59,9 +65,7 @@
           {{ item.code }}
         </td>
         <td>{{ item.packages.length }}</td>
-        <td>
-          ${{ item.total }}
-        </td>
+        <td>${{ item.total }}</td>
         <td>
           <div class="flex gap-4">
             <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
@@ -75,7 +79,7 @@
       </tr>
     </template>
   </TheTable>
-  <PaginationComponent v-if="batches.pages > 1" :pages="batches.pages" :page="batches.current" @selected="getThisPage" />
+  <PaginationComponent :pages="batches.pages" :page="batches.current" @selected="getThisPage" />
 </template>
 
 <script setup lang="ts">
@@ -94,7 +98,7 @@ import { RouterLink } from 'vue-router'
 import UserInfo from '@/components/UserInfo.vue'
 import toast from '@/utils/toast'
 import { watchDebounced } from '@vueuse/core'
-import PaginationComponent from "@/components/PaginationComponent.vue"
+import PaginationComponent from '@/components/PaginationComponent.vue'
 
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 

@@ -13,7 +13,12 @@
         </option>
       </SelectForm>
 
-      <InputForm v-if="!conceptSelected" text="Especificar concepto" name="concept" v-model="form.concept" />
+      <InputForm
+        v-if="!conceptSelected"
+        text="Especificar concepto"
+        name="concept"
+        v-model="form.concept"
+      />
 
       <InputForm text="Descripción (Opcional)" name="description" v-model="form.description" />
 
@@ -89,14 +94,7 @@
     </template>
   </TheTable>
 
-  <div class="flex items-center justify-center gap-1 mb-4">
-    <button type="button" v-for="page in expenses.pages" @click="getThisPage(page)"
-      :class="page == expenses.current ? 'bg-edo-950 text-white border-edo-950' : 'bg-white'"
-      class="h-8 w-10 flex items-center justify-center rounded-lg border" :key="page">
-      {{ page }}
-    </button>
-  </div>
-
+  <PaginationComponent :pages="expenses.pages" :page="expenses.current" @selected="getThisPage" />
 </template>
 
 <script setup lang="ts">
@@ -115,6 +113,7 @@ import type { IExpense } from '@/types'
 import concepts from '@/utils/concepts'
 import toast from '@/utils/toast'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
+import PaginationComponent from '@/components/PaginationComponent.vue'
 
 const { getExpenses, expenses, queryParams, processing, storeExpense, updateExpense } = useExpense()
 const openModal = ref<boolean>(false)

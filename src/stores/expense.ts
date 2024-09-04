@@ -5,8 +5,8 @@ import type { IExpenseResponse } from '@/types'
 export const useExpenseStore = defineStore('expense', () => {
   const expenses = ref<IExpenseResponse>({
     data: [],
-    pages: 0,
-    current: 0
+    pages: 1,
+    current: 1
   })
 
   function setExpenses(data: IExpenseResponse) {

@@ -11,7 +11,7 @@ export default function useBatch() {
   const { batches, batch } = storeToRefs(useBatchStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref<{ type: string; code: string, page: number }>({
+  const queryParams = ref<{ type: string; code: string; page: number }>({
     type: '',
     code: '',
     page: 1

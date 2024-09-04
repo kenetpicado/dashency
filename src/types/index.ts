@@ -107,6 +107,12 @@ export interface IBilling {
   user?: IUserInfo
 }
 
+export interface IBillingResponse {
+  data: IBilling[]
+  pages: number
+  current: number
+}
+
 export interface IUserInfo {
   id: string
   name: string

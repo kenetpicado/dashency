@@ -1,4 +1,4 @@
-import type { IBilling } from '@/types'
+import type { IBilling, IBillingResponse } from '@/types'
 import { useBillingStore } from '@/stores/billing'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -12,11 +12,18 @@ export default function useBilling() {
   const { billing, bill } = storeToRefs(useBillingStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref({
+  const queryParams = ref<{
+    date: string
+    reference: string
+    client: string
+    bank: string
+    page: number
+  }>({
     date: '',
     reference: '',
     client: '',
-    bank: ''
+    bank: '',
+    page: 1
   })
 
   function getBilling() {
@@ -25,7 +32,7 @@ export default function useBilling() {
     api
       .get('/billing', { params })
       .then((response) => {
-        setBilling(response.data as IBilling[])
+        setBilling(response.data as IBillingResponse)
       })
       .catch((error) => {
         console.log(error)

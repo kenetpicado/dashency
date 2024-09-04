@@ -1,12 +1,17 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IBilling } from '@/types'
+import type { IBilling, IBillingResponse } from '@/types'
 
 export const useBillingStore = defineStore('billing', () => {
-  const billing = ref<IBilling[]>([])
+  const billing = ref<IBillingResponse>({
+    data: [],
+    pages: 1,
+    current: 1
+  })
+
   const bill = ref<IBilling>()
 
-  function setBilling(data: IBilling[]) {
+  function setBilling(data: IBillingResponse) {
     billing.value = data
   }
 
