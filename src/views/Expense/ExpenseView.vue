@@ -13,12 +13,7 @@
         </option>
       </SelectForm>
 
-      <InputForm
-        v-if="!conceptSelected"
-        text="Especificar concepto"
-        name="concept"
-        v-model="form.concept"
-      />
+      <InputForm v-if="!conceptSelected" text="Especificar concepto" name="concept" v-model="form.concept" />
 
       <InputForm text="Descripción (Opcional)" name="description" v-model="form.description" />
 
@@ -134,6 +129,7 @@ const form = ref<IExpense>({
 
 const resetValues = () => {
   openModal.value = false
+  conceptSelected.value = ''
   isEdit.value = false
 
   form.value = {
@@ -160,7 +156,9 @@ function onSubmit() {
     return
   }
 
-  form.value.concept = conceptSelected.value ?? form.value.concept
+  if (conceptSelected.value) {
+    form.value.concept = conceptSelected.value
+  }
 
   if (isEdit.value) {
     updateExpense(form.value, () => resetValues())
@@ -172,8 +170,16 @@ function onSubmit() {
 watchDebounced(queryParams.value, () => getExpenses(), { debounce: 500, maxWait: 1000 })
 
 function edit(item: IExpense) {
-  isEdit.value = true
   form.value = { ...item }
+
+  if (concepts.includes(item.concept)) {
+    conceptSelected.value = item.concept
+  } else {
+    conceptSelected.value = ''
+    form.value.concept = item.concept
+  }
+
+  isEdit.value = true
   openModal.value = true
 }
 

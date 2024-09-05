@@ -67,11 +67,11 @@ onMounted(async () => {
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl"> Estadísticas mensuales </span>
   </header>
-  <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4">
+  <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
     <StatCard v-for="(stat, index) in home.stats" :stat="stat" :key="index" />
   </main>
 
-  <div class="bg-white p-4">
+  <div class="bg-white p-4 border rounded-lg">
     <div id="chart"></div>
   </div>
 </template>
