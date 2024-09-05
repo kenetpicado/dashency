@@ -105,7 +105,7 @@ export interface IBilling {
   client: string
   packages?: IPackage[]
   packages_ids?: Array<string>
-  paid: number
+  total: number
   reference: string
   bank: string
   summary?: ISummary[]
@@ -144,4 +144,5 @@ export interface IExpenseResponse {
 
 export interface IHome {
   stats: IStatCard[]
+  expenses: Array<any>
 }

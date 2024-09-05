@@ -29,12 +29,7 @@
   <h5 class="text-lg font-bold mb-2">Paquetes</h5>
 
   <div v-if="bill?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard
-      v-for="(item, index) in bill?.packages"
-      :item="item"
-      :key="index"
-      :showIcon="false"
-    />
+    <PackageCard v-for="(item, index) in bill?.packages" :item="item" :key="index" :showIcon="false" />
   </div>
 </template>
 
@@ -73,7 +68,7 @@ const stats = computed(
       },
       {
         title: 'Facturado',
-        value: '$ ' + bill.value?.paid || '0',
+        value: '$ ' + bill.value?.total || '0',
         icon: IconCurrencyDollar
       },
       {

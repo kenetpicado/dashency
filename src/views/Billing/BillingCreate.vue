@@ -53,7 +53,7 @@
         </template>
       </TheTable>
 
-      <InputForm text="Total pagado" name="total" v-model.number="form.paid" />
+      <InputForm text="Total pagado" name="total" v-model.number="form.total" />
 
       <div class="grid grid-cols-2 gap-4">
         <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
@@ -114,7 +114,7 @@ const total = ref<ISummary[]>([
 const form = ref<IBilling>({
   client: '',
   packages_ids: [],
-  paid: 0,
+  total: 0,
   reference: '',
   bank: '',
   summary: []
@@ -197,7 +197,7 @@ function calculateTotal() {
     }
   })
 
-  form.value.paid = Math.round(total.value.reduce((acc, item) => acc + item.amount, 0) * 100) / 100
+  form.value.total = Math.round(total.value.reduce((acc, item) => acc + item.amount, 0) * 100) / 100
 
   const summaryTotal = total.value.find((item) => item.type === 'TOTAL')
 
@@ -205,7 +205,7 @@ function calculateTotal() {
     summaryTotal.weight =
       Math.round(total.value.reduce((acc, item) => acc + item.weight, 0) * 100) / 100
     summaryTotal.count = selectedPackages.value.length
-    summaryTotal.amount = form.value.paid
+    summaryTotal.amount = form.value.total
   }
 }
 

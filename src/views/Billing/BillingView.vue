@@ -7,7 +7,6 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Fecha" name="date" v-model="queryParams.date" type="date" />
     <SelectForm text="Banco" name="bank" v-model="queryParams.bank">
       <option value="">Todos</option>
       <option v-for="item in banks" :value="item" :key="item">
@@ -43,7 +42,7 @@
         <td>
           {{ item.client }}
         </td>
-        <td>${{ item.paid }}</td>
+        <td>${{ item.total }}</td>
         <td>
           <div class="flex gap-4">
             <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">

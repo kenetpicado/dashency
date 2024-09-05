@@ -9,10 +9,16 @@ export default function useHome() {
   const { home } = storeToRefs(useHomeStore())
   const processing = ref<boolean>(false)
 
-  function getHome() {
-    api.get('/home').then((response) => {
-      setHome(response.data as IHome)
-    })
+  async function getHome() {
+    await api
+      .get('/home', {
+        params: {
+          timezoneOffset: new Date().getTimezoneOffset()
+        }
+      })
+      .then((response) => {
+        setHome(response.data as IHome)
+      })
   }
 
   return { getHome, home, processing }

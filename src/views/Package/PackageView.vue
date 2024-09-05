@@ -13,7 +13,7 @@
     </SelectForm>
     <SelectForm text="Estado" name="status" v-model="queryParams.status">
       <option value="">Todos</option>
-      <option value="REGISTRADO">REGISTRADO</option>
+      <option v-for="item in status" :value="item" :key="item">{{ item }}</option>
     </SelectForm>
     <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
@@ -37,6 +37,7 @@ import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
 import PackageCard from '@/components/PackageCard.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
+import status from '@/utils/status'
 
 const { getPackages, packages, queryParams } = usePackage()
 

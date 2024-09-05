@@ -4,7 +4,8 @@ import type { IHome } from '@/types'
 
 export const useHomeStore = defineStore('home', () => {
   const home = ref<IHome>({
-    stats: []
+    stats: [],
+    expenses: []
   })
 
   function setHome(data: IHome) {
