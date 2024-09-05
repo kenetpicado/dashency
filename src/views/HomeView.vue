@@ -41,10 +41,10 @@ onMounted(async () => {
     },
     series: [{
       name: 'Gastos',
-      //data: arrayDays.map((day) => home.value.expenses.find((r) => r._id === day)?.total || 0),
+      data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0),
     }, {
       name: 'Ingresos',
-      data: arrayDays.map((day) => day * 1000),
+      data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0),
     }],
     xaxis: {
       categories: arrayDays,
@@ -61,7 +61,6 @@ onMounted(async () => {
   chart.render();
 })
 
-
 </script>
 
 <template>
@@ -71,7 +70,7 @@ onMounted(async () => {
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4">
     <StatCard v-for="(stat, index) in home.stats" :stat="stat" :key="index" />
   </main>
-  <pre>{{ home }}</pre>
+
   <div class="bg-white p-4">
     <div id="chart"></div>
   </div>
