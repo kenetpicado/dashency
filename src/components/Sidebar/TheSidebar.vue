@@ -1,19 +1,14 @@
 <template>
-  <aside class="w-72 min-h-screen p-0 m-0 bg-white flex flex-col border-r">
-    <div class="h-full px-3 py-4 overflow-y-auto">
+  <aside class="min-h-screen p-0 m-0 bg-white flex flex-col border-r">
+    <div class="h-full px-3 py-4 overflow-y-auto w-56">
       <div class="h-14 w-14 mx-auto my-6">
-        <img src="/gh.png" class="h-full w-full" alt="" />
+        <IconDeviceDesktopAnalytics class="text-edo-950" />
       </div>
 
       <ul class="space-y-1">
         <li v-for="(item, index) in items" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink
-            v-else
-            :item="item"
-            :active="selected == item.to.name"
-            @click="selected = item.to.name"
-          />
+          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -32,7 +27,8 @@ import {
   IconUsersGroup,
   IconUser,
   IconDatabaseDollar,
-  IconTransferOut
+  IconTransferOut,
+  IconDeviceDesktopAnalytics
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
