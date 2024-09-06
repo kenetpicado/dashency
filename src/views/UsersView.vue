@@ -17,7 +17,7 @@ const openModal = ref(false)
 const user = ref<IUser>()
 const { updateUser, processing } = useUser()
 
-const roles = ['USUARIO', 'ADMINISTRADOR', 'CAJERO']
+const roles = ['ADMINISTRADOR', 'CAJERO']
 const status = ['REGISTRADO', 'ACTIVO', 'INACTIVO']
 
 onMounted(() => {

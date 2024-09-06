@@ -24,6 +24,7 @@ export default function useAuth() {
       .post('/login', data)
       .then((response) => {
         setToken(response.data.token)
+        setAuthData(response.data.user)
         router.push({ name: 'home' })
       })
       .catch((error: any) => {

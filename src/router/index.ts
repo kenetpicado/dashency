@@ -3,6 +3,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import UsersView from '@/views/UsersView.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useStorage } from '@vueuse/core'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -96,13 +97,27 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = useAuthStore().getToken()
+  const auth = useAuthStore().getAuth()
+  const selected = useStorage('selected', 'home')
 
   if (to.meta.requiresAuth && !token) {
     //Si no hay token y la ruta requiere autenticación
     next({ name: 'login' })
   } else if (!to.meta.requiresAuth && token) {
-    //Rutas login y register
-    next({ name: 'home' })
+    //Rutas login y register cuando ya hay token
+    if (auth?.role === 'CAJERO') {
+      next({ name: 'billing' })
+    } else {
+      next({ name: 'home' })
+    }
+  } else if (auth?.role === 'CAJERO') {
+    //este usuario solo puede acceder a facturación: billing, billing.create, billing.show y perfil
+    if (!to.name?.toString().startsWith('billing') && to.name !== 'profile') {
+      selected.value = 'billing'
+      next({ name: 'billing' })
+    } else {
+      next()
+    }
   } else {
     next()
   }

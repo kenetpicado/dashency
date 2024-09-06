@@ -41,9 +41,17 @@ const selected = useStorage('selected', 'home')
 
 const items = [
   {
+    title: 'Administración'
+  },
+  {
     title: 'Inicio',
     to: { name: 'home' },
     icon: IconHome
+  },
+  {
+    title: 'Usuarios',
+    to: { name: 'users' },
+    icon: IconUsersGroup
   },
   {
     title: 'Lotes',
@@ -66,12 +74,7 @@ const items = [
     icon: IconTransferOut
   },
   {
-    title: 'Administración'
-  },
-  {
-    title: 'Usuarios',
-    to: { name: 'users' },
-    icon: IconUsersGroup
+    title: 'Configuración'
   },
   {
     title: 'Perfil',

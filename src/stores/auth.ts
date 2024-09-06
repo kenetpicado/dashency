@@ -25,7 +25,11 @@ export const useAuthStore = defineStore(
       return token.value
     }
 
-    return { auth, setAuthData, clearData, setToken, token, getToken }
+    function getAuth() {
+      return auth.value
+    }
+
+    return { auth, setAuthData, clearData, setToken, token, getToken, getAuth }
   },
   {
     persist: true
