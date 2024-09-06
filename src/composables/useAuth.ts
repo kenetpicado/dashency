@@ -8,7 +8,7 @@ import toast from '@/utils/toast'
 
 export default function useAuth() {
   const processing = ref(false)
-  const { setAuthData } = useAuthStore()
+  const { setAuthData, setToken, clearData } = useAuthStore()
   const { auth } = storeToRefs(useAuthStore())
 
   function getProfile() {
@@ -23,7 +23,7 @@ export default function useAuth() {
     api
       .post('/login', data)
       .then((response) => {
-        localStorage.setItem('token', response.data.token)
+        setToken(response.data.token)
         router.push({ name: 'home' })
       })
       .catch((error: any) => {
@@ -35,7 +35,7 @@ export default function useAuth() {
   }
 
   function logout() {
-    localStorage.removeItem('token')
+    clearData()
     router.push({ name: 'login' })
   }
 

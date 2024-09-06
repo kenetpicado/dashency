@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { config } from '@/config/config'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
+import toast from '@/utils/toast'
 
 const api = axios.create({
   baseURL: config.base_url,
@@ -9,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   function (conf) {
-    const token = localStorage.getItem('token')
+    const token = useAuthStore().getToken()
     if (token) conf.headers.Authorization = `Bearer ${token}`
 
     return conf
@@ -25,11 +27,10 @@ api.interceptors.response.use(
   },
   function (error) {
     if (error.response.status === 401) {
-      localStorage.removeItem('token')
+      useAuthStore().clearData()
+      toast.error('Sesión expirada')
       router.push({ name: 'login' })
     }
-
-    //si es  || error.response.status === 403
 
     return Promise.reject(error)
   }

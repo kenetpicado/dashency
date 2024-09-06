@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import UsersView from '@/views/UsersView.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +14,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: HomeView,
+          component: () => import('../views/HomeView.vue'),
           name: 'home'
         },
         {
@@ -95,11 +95,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
+  const token = useAuthStore().getToken()
 
   if (to.meta.requiresAuth && !token) {
+    //Si no hay token y la ruta requiere autenticación
     next({ name: 'login' })
   } else if (!to.meta.requiresAuth && token) {
+    //Rutas login y register
     next({ name: 'home' })
   } else {
     next()
