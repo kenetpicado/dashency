@@ -21,6 +21,7 @@ onMounted(async () => {
     chart: {
       type: 'area',
       height: 650,
+      width: '98%',
       toolbar: {
         show: false
       },

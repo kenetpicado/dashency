@@ -6,7 +6,7 @@
       </div>
 
       <ul class="space-y-1">
-        <li v-for="(item, index) in items" :key="index">
+        <li v-for="(item, index) in items.filter(i => i.show || i.show == undefined)" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
           <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
@@ -34,9 +34,11 @@ import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
 import useAuth from '@/composables/useAuth'
+import { useAuthStore } from "@/stores/auth.ts"
 import { useStorage } from '@vueuse/core'
 
 const { logout } = useAuth()
+const { hasRoles } = useAuthStore()
 const selected = useStorage('selected', 'home')
 
 const items = [
@@ -46,32 +48,38 @@ const items = [
   {
     title: 'Inicio',
     to: { name: 'home' },
-    icon: IconHome
+    icon: IconHome,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
     title: 'Usuarios',
     to: { name: 'users' },
-    icon: IconUsersGroup
+    icon: IconUsersGroup,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
     title: 'Lotes',
     to: { name: 'batches' },
-    icon: IconPackages
+    icon: IconPackages,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
     title: 'Paquetes',
     to: { name: 'packages' },
-    icon: IconPackage
+    icon: IconPackage,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
     title: 'Facturación',
     to: { name: 'billing' },
-    icon: IconDatabaseDollar
+    icon: IconDatabaseDollar,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
   },
   {
     title: 'Gastos',
     to: { name: 'expenses' },
-    icon: IconTransferOut
+    icon: IconTransferOut,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
     title: 'Configuración'
@@ -79,7 +87,8 @@ const items = [
   {
     title: 'Perfil',
     to: { name: 'profile' },
-    icon: IconUser
+    icon: IconUser,
+    show: true
   }
 ]
 </script>

@@ -29,7 +29,11 @@ export const useAuthStore = defineStore(
       return auth.value
     }
 
-    return { auth, setAuthData, clearData, setToken, token, getToken, getAuth }
+    function hasRoles(names: array<string>) {
+      return names.includes(auth.value.role)
+    }
+
+    return { auth, setAuthData, clearData, setToken, token, getToken, getAuth, hasRoles }
   },
   {
     persist: true
