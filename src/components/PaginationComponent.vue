@@ -21,7 +21,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['selected'])
 
-function selectThisPage(selected) {
+function selectThisPage(selected: number) {
   if (selected === props.page) return
   emit('selected', selected)
 }

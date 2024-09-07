@@ -122,7 +122,7 @@ function onSubmit() {
 
 watchDebounced(queryParams.value, () => getBatches(), { debounce: 500, maxWait: 1000 })
 
-function getThisPage(selected) {
+function getThisPage(selected: number) {
   queryParams.value.page = selected * 1
 }
 </script>

@@ -8,7 +8,7 @@ import { RouterView } from 'vue-router'
   <div class="flex w-full">
     <TheSidebar />
 
-    <div class="bg-gray-50 w-full">
+    <div class="bg-gray-100 w-full">
       <TheHeader />
       <main class="p-6">
         <RouterView />

@@ -34,7 +34,7 @@ import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
 import useAuth from '@/composables/useAuth'
-import { useAuthStore } from "@/stores/auth.ts"
+import { useAuthStore } from "@/stores/auth"
 import { useStorage } from '@vueuse/core'
 
 const { logout } = useAuth()

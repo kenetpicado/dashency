@@ -95,8 +95,10 @@ function onSubmit() {
 watch(
   () => auth.value,
   (value) => {
-    profile.value.name = value.name
-    profile.value.email = value.email
+    if (value) {
+      profile.value.name = value.name
+      profile.value.email = value.email
+    }
   }
 )
 </script>
