@@ -14,7 +14,7 @@
     <template #header>
       <th>Usuario</th>
       <th>Creado</th>
-      <th>Dia de arqueo</th>
+      <th>Fecha</th>
       <th>Total</th>
       <th>Acciones</th>
     </template>
