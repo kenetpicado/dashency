@@ -6,9 +6,17 @@
       </div>
 
       <ul class="space-y-1">
-        <li v-for="(item, index) in items.filter(i => i.show || i.show == undefined)" :key="index">
+        <li
+          v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)"
+          :key="index"
+        >
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
+          <ItemSidebarLink
+            v-else
+            :item="item"
+            :active="selected == item.to.name"
+            @click="selected = item.to.name"
+          />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -34,7 +42,7 @@ import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
 import useAuth from '@/composables/useAuth'
-import { useAuthStore } from "@/stores/auth"
+import { useAuthStore } from '@/stores/auth'
 import { useStorage } from '@vueuse/core'
 
 const { logout } = useAuth()

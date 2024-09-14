@@ -9,12 +9,8 @@
 
   <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col gap-4">
-      <div class="font-bold text-xl">
-        Transacciones
-      </div>
-      <div v-if="!billing.data.length" class="text-center text-gray-400">
-        No hay transacciones
-      </div>
+      <div class="font-bold text-xl">Transacciones</div>
+      <div v-if="!billing.data.length" class="text-center text-gray-400">No hay transacciones</div>
       <div v-for="item in billing.data" :key="item.id" class="bg-white p-4 rounded-lg border">
         <div class="text-gray-400 text-xs mb-2">
           {{ getFormattedDate(item.createdAt) }}
@@ -23,19 +19,13 @@
           {{ item.client }}
         </div>
         <div class="flex justify-between">
-          <div>
-            {{ item.bank }}: {{ item.reference }}
-          </div>
-          <div class="text-xl">
-            ${{ item.total }}
-          </div>
+          <div>{{ item.bank }}: {{ item.reference }}</div>
+          <div class="text-xl">${{ item.total }}</div>
         </div>
       </div>
     </div>
     <div class="flex flex-col gap-4">
-      <div class="font-bold text-xl">
-        Resumen
-      </div>
+      <div class="font-bold text-xl">Resumen</div>
       <TheTable>
         <template #header>
           <th>Tipo</th>
@@ -54,12 +44,8 @@
             <td>
               {{ item.count }}
             </td>
-            <td>
-              {{ item.weight }} lbs
-            </td>
-            <td>
-              ${{ item.amount }}
-            </td>
+            <td>{{ item.weight }} lbs</td>
+            <td>${{ item.amount }}</td>
           </tr>
         </template>
       </TheTable>
@@ -112,18 +98,21 @@ const bankSummary = ref<IBankSummary[]>([])
 const summary = ref<ISummary[]>([])
 
 const form = ref<IArching>({
-  date: "",
+  date: '',
   total: 0,
   summary: [],
   summaryBanks: [],
   billing_ids: []
 })
 
-watch(() => billingParams.value.date, async () => {
-  await getBillingDay()
-  setBankSummary()
-  setSummary()
-})
+watch(
+  () => billingParams.value.date,
+  async () => {
+    await getBillingDay()
+    setBankSummary()
+    setSummary()
+  }
+)
 
 onMounted(async () => {
   billingParams.value.date = getFormattedDate(new Date(), 'YYYY-MM-DD')
@@ -156,7 +145,10 @@ function setBankSummary() {
 }
 
 function setSummary() {
-  const flatSummary = billing.value.data.filter((item) => item.summary !== undefined && item.summary.length > 1).map((item) => item.summary).flat() as ISummary[]
+  const flatSummary = billing.value.data
+    .filter((item) => item.summary !== undefined && item.summary.length > 1)
+    .map((item) => item.summary)
+    .flat() as ISummary[]
   const temporalSummary: ISummary[] = []
 
   const uniqueTypes = [...new Set(flatSummary.map((item) => item.type))].sort()
@@ -177,7 +169,7 @@ function setSummary() {
 
 function onSubmit() {
   if (!billing.value.data.length) {
-    toast.error("No hay transacciones que guardar")
+    toast.error('No hay transacciones que guardar')
   }
 
   form.value.date = billingParams.value.date
@@ -185,17 +177,16 @@ function onSubmit() {
   form.value.summaryBanks = bankSummary.value
   form.value.billing_ids = billing.value.data.map((item) => item.id as string)
 
-  const totalItem = bankSummary.value.find((item) => item.bank === "TOTAL")
+  const totalItem = bankSummary.value.find((item) => item.bank === 'TOTAL')
 
   if (totalItem) {
     form.value.total = totalItem.total
   }
 
   if (form.value.total < 1) {
-    toast.error("El total es requerido")
+    toast.error('El total es requerido')
   }
 
   storeArching(form.value)
 }
-
 </script>

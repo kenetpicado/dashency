@@ -13,9 +13,20 @@
         {{ item }}
       </option>
     </SelectForm>
-    <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
-      placeholder="Buscar código o referencia" />
-    <InputForm text="Cliente" name="client" v-model="queryParams.client" type="search" placeholder="Buscar cliente" />
+    <InputForm
+      text="Código o referencia"
+      name="reference"
+      v-model="queryParams.reference"
+      type="search"
+      placeholder="Buscar código o referencia"
+    />
+    <InputForm
+      text="Cliente"
+      name="client"
+      v-model="queryParams.client"
+      type="search"
+      placeholder="Buscar cliente"
+    />
   </div>
 
   <TheTable>

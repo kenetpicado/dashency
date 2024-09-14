@@ -17,7 +17,7 @@ onMounted(async () => {
   await getProfile()
   await getHome()
 
-  var chart = new ApexCharts(document.getElementById("chart"), {
+  var chart = new ApexCharts(document.getElementById('chart'), {
     chart: {
       type: 'area',
       height: 650,
@@ -26,39 +26,41 @@ onMounted(async () => {
         show: false
       },
       zoom: {
-        enabled: false,
+        enabled: false
       }
     },
     colors: ['#dc2626', '#0C1B6E'],
     dataLabels: {
-      enabled: false,
+      enabled: false
     },
     stroke: {
       curve: 'smooth',
-      width: 2,
+      width: 2
     },
-    series: [{
-      name: 'Gastos',
-      data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0),
-    }, {
-      name: 'Ingresos',
-      data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0),
-    }],
+    series: [
+      {
+        name: 'Gastos',
+        data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0)
+      },
+      {
+        name: 'Ingresos',
+        data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0)
+      }
+    ],
     xaxis: {
-      categories: arrayDays,
+      categories: arrayDays
     },
     yaxis: {
       labels: {
         formatter: function (value: string) {
-          return "$ " + value.toLocaleString();
+          return '$ ' + value.toLocaleString()
         }
       }
     }
-  });
+  })
 
-  chart.render();
+  chart.render()
 })
-
 </script>
 
 <template>
@@ -67,8 +69,11 @@ onMounted(async () => {
   </header>
 
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard v-for="(stat, index) in home.stats" :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index" />
+    <StatCard
+      v-for="(stat, index) in home.stats"
+      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
+      :key="index"
+    />
   </main>
 
   <div class="bg-white p-4 border rounded-lg">

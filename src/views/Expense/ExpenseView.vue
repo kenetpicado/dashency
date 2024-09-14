@@ -13,7 +13,12 @@
         </option>
       </SelectForm>
 
-      <InputForm v-if="!conceptSelected" text="Especificar concepto" name="concept" v-model="form.concept" />
+      <InputForm
+        v-if="!conceptSelected"
+        text="Especificar concepto"
+        name="concept"
+        v-model="form.concept"
+      />
 
       <InputForm text="Descripción (Opcional)" name="description" v-model="form.description" />
 

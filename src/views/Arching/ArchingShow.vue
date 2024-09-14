@@ -2,9 +2,7 @@
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">
       Detalles del arqueo
-      <label v-if="arching">
-        : {{ getBaseDate(arching.date) }}
-      </label>
+      <label v-if="arching"> : {{ getBaseDate(arching.date) }} </label>
     </span>
     <RouterLink :to="{ name: 'billing.create' }">
       <BtnPrimary> Nueva </BtnPrimary>
@@ -24,7 +22,6 @@
   </main>
 
   <div class="mb-4 bg-white p-4 rounded-xl border">
-
     <div class="mb-2">Creado por:</div>
     <UserInfo v-if="arching?.user" :item="arching.user" />
   </div>
@@ -54,7 +51,6 @@
       </tr>
     </template>
   </TheTable>
-
 </template>
 
 <script setup lang="ts">
@@ -79,7 +75,7 @@ const summary = computed(() => {
   if (!arching.value?.summary) return []
 
   return arching.value.summary.map((item) => ({
-    title: item.type + " (" + item.weight + " lbs)",
+    title: item.type + ' (' + item.weight + ' lbs)',
     value: '$ ' + item.amount
   }))
 })
