@@ -15,18 +15,18 @@
     <StatCard v-for="(stat, index) in summary" :stat="stat" :key="index" />
   </main>
 
-  <h5 class="text-lg font-bold mb-2">Resumen</h5>
+  <h5 class="text-lg font-bold mb-2">Transferencias</h5>
 
   <main class="grid grid-cols-4 gap-2 mb-4">
     <StatCard v-for="(stat, index) in summaryBanks" :stat="stat" :key="index" />
   </main>
 
   <div class="mb-4 bg-white p-4 rounded-xl border">
-    <div class="mb-2">Creado por:</div>
+    <!-- <div class="mb-2">Creado por:</div> -->
     <UserInfo v-if="arching?.user" :item="arching.user" />
   </div>
 
-  <h5 class="text-lg font-bold mb-2">Transacciones</h5>
+  <h5 class="text-lg font-bold mb-2">Facturas</h5>
 
   <TheTable>
     <template #header>
