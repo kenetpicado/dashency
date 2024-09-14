@@ -44,7 +44,10 @@
           <th>Total a pagar</th>
         </template>
         <template #body>
-          <tr v-for="(item, index) in total" :key="index">
+          <tr v-if="summary.length == 0">
+            <td colspan="4" class="text-center">No hay datos que mostrar</td>
+          </tr>
+          <tr v-for="(item, index) in summary" :key="index">
             <td>{{ item.type }}</td>
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
@@ -100,16 +103,13 @@ const selectedPackages = ref<IPackage[]>([])
 const { getPackages, packages, queryParams, processing: searching } = usePackage()
 const { storeBilling, processing } = useBilling()
 
+// TODO: dynamic prices
 const prices = [
   { type: 'AEREO', value: 7 },
   { type: 'MARITIMO', value: 3 }
 ]
 
-const total = ref<ISummary[]>([
-  { type: 'AEREO', weight: 0, amount: 0, count: 0 },
-  { type: 'MARITIMO', weight: 0, amount: 0, count: 0 },
-  { type: 'TOTAL', weight: 0, amount: 0, count: 0 }
-])
+const summary = ref<ISummary[]>([])
 
 const form = ref<IBilling>({
   client: '',
@@ -127,7 +127,7 @@ function addPackage(item: IPackage) {
     form.value.client = item.client
   }
 
-  calculateTotal()
+  updateSummary()
 }
 
 function removePackage(index: number) {
@@ -137,7 +137,7 @@ function removePackage(index: number) {
     form.value.client = ''
   }
 
-  calculateTotal()
+  updateSummary()
 }
 
 const filteredPackages = computed(() => {
@@ -167,46 +167,56 @@ function onSubmit() {
     return
   }
 
-  form.value.summary = total.value
+  form.value.summary = summary.value
   form.value.packages_ids = selectedPackages.value.map((item) => item.id) as string[]
 
   storeBilling(form.value)
 }
 
-function calculateTotal() {
-  prices.forEach((price) => {
-    const filtered = selectedPackages.value.filter((item) => item.type === price.type)
-    const totalWeight = filtered.reduce((acc, item) => acc + item.grossWeight, 0)
+function updateSummary() {
+  //Separar los paquetes por tipo
+  const uniqueTypes = new Set(selectedPackages.value.map((item) => item.type))
+  const temporalSummary = ref<ISummary[]>([])
 
-    const currentTotal = total.value.find((item) => item.type === price.type)
+  uniqueTypes.forEach((type) => {
+    //Obtener el precio del tipo de envio actual
+    const priceType = prices.find((item) => item.type === type)?.value || 0
 
-    if (!currentTotal) return
+    //Obtener todos los paquetes del tipo actual
+    const currentTypePackages = selectedPackages.value.filter((item) => item.type === type)
 
-    currentTotal.weight = Math.round(totalWeight * 100) / 100
-    currentTotal.count = filtered.length
+    //Obtener el peso total de los paquetes del tipo actual
+    const totalWeight = currentTypePackages.reduce((acc, item) => acc + item.grossWeight, 0)
+    const roundedWeight = Math.round(totalWeight * 100) / 100
 
-    if (totalWeight == 0) {
-      currentTotal.amount = 0
-      return
+    const finishPrice = roundedWeight < 1 ? priceType : priceType * roundedWeight
+    const roundedPrice = Math.round(finishPrice * 100) / 100
+
+    const data = {
+      type: type as string,
+      weight: roundedWeight,
+      count: currentTypePackages.length,
+      amount: roundedPrice
     }
 
-    if (totalWeight < 1) {
-      currentTotal.amount = price.value
-    } else {
-      currentTotal.amount = Math.round(price.value * totalWeight * 100) / 100
-    }
+    temporalSummary.value.push(data)
   })
 
-  form.value.total = Math.round(total.value.reduce((acc, item) => acc + item.amount, 0) * 100) / 100
+  //obtener el total de los paquetes donde type sea diferente a TOTAL
+  const totalSummaryWeight = temporalSummary.value.reduce((acc, item) => acc + item.weight, 0)
+  const totalSummaryAmount = temporalSummary.value.reduce((acc, item) => acc + item.amount, 0)
 
-  const summaryTotal = total.value.find((item) => item.type === 'TOTAL')
-
-  if (summaryTotal) {
-    summaryTotal.weight =
-      Math.round(total.value.reduce((acc, item) => acc + item.weight, 0) * 100) / 100
-    summaryTotal.count = selectedPackages.value.length
-    summaryTotal.amount = form.value.total
+  const data = {
+    type: 'TOTAL',
+    weight: Math.round(totalSummaryWeight * 100) / 100,
+    count: selectedPackages.value.length,
+    amount: Math.round(totalSummaryAmount * 100) / 100
   }
+
+  temporalSummary.value.push(data)
+
+  form.value.total = data.amount
+  summary.value = temporalSummary.value
 }
 
 function search() {

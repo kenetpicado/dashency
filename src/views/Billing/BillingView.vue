@@ -33,7 +33,7 @@
       </tr>
       <tr v-for="(item, index) in billing.data" :key="index" class="hover:bg-gray-50">
         <td>
-          <UserInfo v-if="item.user" :item="item.user" />
+          <UserInfo v-if="item.user && typeof item.user !== 'string'" :item="item.user" />
         </td>
         <td>
           {{ getFormattedDate(item.createdAt) }}

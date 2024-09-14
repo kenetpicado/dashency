@@ -14,7 +14,7 @@ const arrayDays = Array.from({ length: 31 }, (_, i) => i + 1)
 
 onMounted(async () => {
   selected.value = 'home'
-  getProfile()
+  await getProfile()
   await getHome()
 
   var chart = new ApexCharts(document.getElementById("chart"), {

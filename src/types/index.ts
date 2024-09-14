@@ -147,3 +147,27 @@ export interface IHome {
   expenses: Array<any>
   incomes: Array<any>
 }
+
+export interface IArching {
+  id?: string
+  date: string
+  billings?: IBilling[]
+  billing_ids?: Array<string>
+  total: number
+  createdAt?: Date
+  user?: IUserInfo
+  summary: ISummary[]
+  summaryBanks: IBankSummary[]
+}
+
+export interface IArchingResponse {
+  data: IArching[]
+  pages: number
+  current: number
+}
+
+export interface IBankSummary {
+  bank: string
+  total: number
+  references: string[]
+}

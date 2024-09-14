@@ -76,6 +76,12 @@ const items = [
     show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
   },
   {
+    title: 'Arqueos',
+    to: { name: 'archings' },
+    icon: IconDatabaseDollar,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+  },
+  {
     title: 'Gastos',
     to: { name: 'expenses' },
     icon: IconTransferOut,

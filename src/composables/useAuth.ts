@@ -11,8 +11,8 @@ export default function useAuth() {
   const { setAuthData, setToken, clearData } = useAuthStore()
   const { auth } = storeToRefs(useAuthStore())
 
-  function getProfile() {
-    api.get('/profile').then((response) => {
+  async function getProfile() {
+    await api.get('/profile').then((response) => {
       setAuthData(response.data as IUser)
     })
   }

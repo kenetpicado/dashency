@@ -64,6 +64,21 @@ const router = createRouter({
           name: 'expenses'
         },
         {
+          path: 'arqueos',
+          component: () => import('../views/Arching/ArchingView.vue'),
+          name: 'archings'
+        },
+        {
+          path: 'arqueos/crear',
+          component: () => import('../views/Arching/ArchingCreate.vue'),
+          name: 'archings.create'
+        },
+        {
+          path: 'arqueos/:id',
+          component: () => import('../views/Arching/ArchingShow.vue'),
+          name: 'archings.show'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'

@@ -18,12 +18,14 @@ export default function useBilling() {
     client: string
     bank: string
     page: number
+    timezoneOffset: number
   }>({
     date: '',
     reference: '',
     client: '',
     bank: '',
-    page: 1
+    page: 1,
+    timezoneOffset: new Date().getTimezoneOffset()
   })
 
   function getBilling() {
@@ -33,6 +35,25 @@ export default function useBilling() {
       .get('/billing', { params })
       .then((response) => {
         setBilling(response.data as IBillingResponse)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  async function getBillingDay() {
+    const params = cleanQueryParams(queryParams.value)
+
+    await api
+      .get('/billing-day', { params })
+      .then((response) => {
+        const customResponse = {
+          data: response.data,
+          pages: 1,
+          current: 1
+        }
+
+        setBilling(customResponse as IBillingResponse)
       })
       .catch((error) => {
         console.log(error)
@@ -64,5 +85,14 @@ export default function useBilling() {
       })
   }
 
-  return { getBilling, billing, processing, storeBilling, queryParams, getBill, bill }
+  return {
+    getBilling,
+    billing,
+    processing,
+    storeBilling,
+    queryParams,
+    getBill,
+    bill,
+    getBillingDay
+  }
 }
