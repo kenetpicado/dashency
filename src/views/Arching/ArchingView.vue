@@ -6,9 +6,9 @@
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <!-- <div class="grid grid-cols-4 gap-4 mb-4">
     <InputForm text="Fecha" name="date" v-model="queryParams.date" type="date" />
-  </div>
+  </div> -->
 
   <TheTable>
     <template #header>
@@ -63,8 +63,6 @@ const { getArchings, archings, queryParams } = useArching()
 onMounted(() => {
   getArchings()
 })
-
-//watchDebounced(queryParams.value, () => getBilling(), { debounce: 500, maxWait: 1000 })
 
 function getThisPage(selected: number) {
   queryParams.value.page = selected * 1
