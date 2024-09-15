@@ -6,17 +6,9 @@
       </div>
 
       <ul class="space-y-1">
-        <li
-          v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)"
-          :key="index"
-        >
+        <li v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink
-            v-else
-            :item="item"
-            :active="selected == item.to.name"
-            @click="selected = item.to.name"
-          />
+          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -36,7 +28,10 @@ import {
   IconUser,
   IconDatabaseDollar,
   IconTransferOut,
-  IconDeviceDesktopAnalytics
+  IconDeviceDesktopAnalytics,
+  IconBooks,
+  IconReceipt2,
+  IconLogs
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
@@ -86,7 +81,7 @@ const items = [
   {
     title: 'Arqueos',
     to: { name: 'archings' },
-    icon: IconDatabaseDollar,
+    icon: IconLogs,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
@@ -101,7 +96,13 @@ const items = [
   {
     title: 'Precios',
     to: { name: 'prices' },
-    icon: IconTransferOut,
+    icon: IconReceipt2,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+  },
+  {
+    title: 'Cuentas',
+    to: { name: 'accounts' },
+    icon: IconBooks,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {

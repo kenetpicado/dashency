@@ -1,13 +1,22 @@
 <template>
   <header class="flex items-center justify-between mb-8 h-14">
-    <span class="font-bold text-2xl">Precios</span>
-    <BtnPrimary @click="openModal = true"> Nuevo </BtnPrimary>
+    <span class="font-bold text-2xl">Cuentas</span>
+    <BtnPrimary @click="openModal = true"> Nueva </BtnPrimary>
   </header>
 
   <DialogForm title="Precio" :isOpen="openModal" @onClose="resetValues">
     <form @submit.prevent="onSubmit()">
-      <InputForm text="Tipo" name="type" v-model="form.type" />
-      <InputForm text="Precio" name="value" v-model="form.value" type="number" />
+      <InputForm text="Tipo (Banco)" name="type" v-model="form.type" />
+
+      <InputForm text="Cuenta" name="number" v-model="form.number" />
+
+      <InputForm text="Propietario" name="holder" v-model="form.holder" />
+
+      <SelectForm v-if="form.id" text="Estado" name="status" v-model="form.status">
+        <option value="ACTIVO">Activo</option>
+        <option value="INACTIVO">Inactivo</option>
+      </SelectForm>
+
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing">
@@ -21,21 +30,31 @@
     <template #header>
       <th>#</th>
       <th>Tipo</th>
-      <th>Valor</th>
+      <th>Cuenta</th>
+      <th>Propietario</th>
+      <th>Estado</th>
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!prices.length">
-        <td colspan="3" class="text-center">No hay datos que mostrar</td>
+      <tr v-if="!accounts.length">
+        <td colspan="5" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in prices" :key="index" class="hover:bg-gray-50">
+      <tr v-for="(item, index) in accounts" :key="index" class="hover:bg-gray-50">
         <td>
           {{ index + 1 }}
         </td>
         <td>
           {{ item.type }}
         </td>
-        <td>${{ item.value.toLocaleString() }}</td>
+        <td>
+          {{ item.number }}
+        </td>
+        <td>
+          {{ item.holder }}
+        </td>
+        <td>
+          <span class="bg-edo-50 px-2 py-1 rounded-lg">{{ item.status }}</span>
+        </td>
         <td>
           <div class="flex gap-4">
             <button type="button" @click="edit(item)">
@@ -56,26 +75,29 @@ import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
+import SelectForm from '@/components/Form/SelectForm.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import usePrice from '@/composables/usePrice'
-import type { IPrice } from '@/types'
+import useAccount from '@/composables/useAccount'
+import type { IAccount } from '@/types'
 import toast from '@/utils/toast'
 import { IconEdit, IconTrash } from '@tabler/icons-vue'
 import { onMounted, ref } from 'vue'
 
-const { getPrices, prices, storePrice, processing, updatePrice, destroyPrice } = usePrice()
+const { getAccounts, accounts, storeAccount, processing, updateAccount, destroyAccount } = useAccount()
 
 const openModal = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
 
 onMounted(() => {
-  getPrices()
+  getAccounts()
 })
 
-const form = ref<IPrice>({
+const form = ref<IAccount>({
   id: '',
   type: '',
-  value: 0
+  number: '',
+  holder: '',
+  status: ''
 })
 
 const resetValues = () => {
@@ -85,7 +107,9 @@ const resetValues = () => {
   form.value = {
     id: '',
     type: '',
-    value: 0
+    number: '',
+    holder: '',
+    status: ''
   }
 }
 
@@ -95,36 +119,32 @@ function onSubmit() {
     return
   }
 
-  form.value.type = form.value.type.trim().toLocaleUpperCase()
-
-  const exist = prices.value.find((price) => price.type === form.value.type)
-
-  if (exist && exist.id !== form.value.id) {
-    toast.error('Ya existe un precio con este tipo')
+  if (!form.value.number) {
+    toast.error('La cuenta es requerida')
     return
   }
 
-  if (form.value.value < 1) {
-    toast.error('El precio debe ser mayor a 0')
+  if (!form.value.holder) {
+    toast.error('El propietario es requerido')
     return
   }
 
   if (isEdit.value) {
-    updatePrice(form.value, () => resetValues())
+    updateAccount(form.value, () => resetValues())
   } else {
-    storePrice(form.value, () => resetValues())
+    storeAccount(form.value, () => resetValues())
   }
 }
 
-function edit(item: IPrice) {
+function edit(item: IAccount) {
   form.value = { ...item }
   isEdit.value = true
   openModal.value = true
 }
 
 function destroy(id: string) {
-  if (confirm('¿Estás seguro de eliminar este precio?')) {
-    destroyPrice(id)
+  if (confirm('¿Estás seguro de eliminar esta cuenta?')) {
+    destroyAccount(id)
   }
 }
 </script>

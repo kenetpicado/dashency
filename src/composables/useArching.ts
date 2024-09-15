@@ -1,4 +1,4 @@
-import type { IArching, IArchingResponse, IBilling } from '@/types'
+import type { IArching, IArchingResponse } from '@/types'
 import { useArchingStore } from '@/stores/arching'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'

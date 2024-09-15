@@ -7,26 +7,15 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <SelectForm text="Banco" name="bank" v-model="queryParams.bank">
+    <SelectForm text="Banco" name="bank" v-model="queryParams.account">
       <option value="">Todos</option>
       <option v-for="item in banks" :value="item" :key="item">
         {{ item }}
       </option>
     </SelectForm>
-    <InputForm
-      text="Código o referencia"
-      name="reference"
-      v-model="queryParams.reference"
-      type="search"
-      placeholder="Buscar código o referencia"
-    />
-    <InputForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      type="search"
-      placeholder="Buscar cliente"
-    />
+    <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
+      placeholder="Buscar código o referencia" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" type="search" placeholder="Buscar cliente" />
   </div>
 
   <TheTable>
@@ -49,7 +38,14 @@
         <td>
           {{ getFormattedDate(item.createdAt) }}
         </td>
-        <td>{{ item.bank }}: {{ item.reference }}</td>
+        <td>
+          <span v-if="item.account && typeof item.account !== 'string'">
+            {{ item.account.type }}: {{ item.account.number }}
+          </span>
+          <div class="text-gray-400 text-sm">
+            {{ item.reference }}
+          </div>
+        </td>
         <td>
           {{ item.client }}
         </td>

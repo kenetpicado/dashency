@@ -84,6 +84,11 @@ const router = createRouter({
           name: 'prices'
         },
         {
+          path: 'cuentas',
+          component: () => import('../views/Account/AccountView.vue'),
+          name: 'accounts'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'

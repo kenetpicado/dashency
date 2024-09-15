@@ -16,14 +16,14 @@ export default function useBilling() {
     date: string
     reference: string
     client: string
-    bank: string
+    account: string
     page: number
     timezoneOffset: number
   }>({
     date: '',
     reference: '',
     client: '',
-    bank: '',
+    account: '',
     page: 1,
     timezoneOffset: new Date().getTimezoneOffset()
   })

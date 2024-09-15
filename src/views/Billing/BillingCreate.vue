@@ -10,31 +10,16 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm
-          text="Cliente"
-          name="search"
-          v-model="queryParams.client"
-          placeholder="Nombre del cliente"
-        />
-        <InputForm
-          text="Guía"
-          name="search"
-          v-model="queryParams.guide"
-          placeholder="Número de guía"
-        />
+        <InputForm text="Cliente" name="search" v-model="queryParams.client" placeholder="Nombre del cliente" />
+        <InputForm text="Guía" name="search" v-model="queryParams.guide" placeholder="Número de guía" />
         <BtnPrimary class="mb-12" @click="search" :loading="processing"> Buscar </BtnPrimary>
       </div>
       <div v-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
 
@@ -42,17 +27,12 @@
       <div class="text-lg mb-2 font-bold">Factura</div>
 
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm
-          text="Cliente"
-          name="client"
-          v-model="form.client"
-          placeholder="Nombre del cliente"
-        />
+        <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" />
         <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
-        <SelectForm text="Banco" name="bank" v-model="form.bank">
-          <option value="">Seleccionar banco</option>
-          <option v-for="item in banks" :value="item" :key="item">
-            {{ item }}
+        <SelectForm text="Cuenta" name="account" v-model="form.account">
+          <option value="">Seleccionar cuenta</option>
+          <option v-for="item in accounts" :value="item.id" :key="item.id">
+            {{ item.type }} - {{ item.number }}
           </option>
         </SelectForm>
         <InputForm text="Total pagado" name="total" v-model.number="form.total" />
@@ -63,14 +43,8 @@
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -135,14 +109,15 @@ import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
-import banks from '@/utils/banks'
 import usePrice from '@/composables/usePrice'
+import useAccount from '@/composables/useAccount'
 
 const selectedPackages = ref<IPackage[]>([])
 
 const { getPackages, packages, queryParams, processing: searching } = usePackage()
 const { storeBilling, processing } = useBilling()
 const { prices, getPrices } = usePrice()
+const { accounts, getAccounts, queryParams: accountParams } = useAccount()
 
 const summary = ref<ISummary[]>([])
 const errorMessage = ref<string>('')
@@ -152,7 +127,7 @@ const form = ref<IBilling>({
   packages_ids: [],
   total: 0,
   reference: '',
-  bank: '',
+  account: '',
   summary: []
 })
 
@@ -198,8 +173,8 @@ function onSubmit() {
     return
   }
 
-  if (!form.value.bank) {
-    toast.error('Seleccione un banco')
+  if (!form.value.account) {
+    toast.error('Seleccione una cuenta')
     return
   }
 
@@ -275,6 +250,8 @@ function search() {
 
 onMounted(() => {
   packages.value.data = []
+  accountParams.value.status = 'ACTIVO'
   getPrices()
+  getAccounts()
 })
 </script>

@@ -107,7 +107,7 @@ export interface IBilling {
   packages_ids?: Array<string>
   total: number
   reference: string
-  bank: string
+  account: string | IAccount
   summary?: ISummary[]
   createdAt?: Date
   user?: IUserInfo
@@ -176,4 +176,12 @@ export interface IPrice {
   id?: string
   type: string
   value: number
+}
+
+export interface IAccount {
+  id?: string
+  type: string
+  number: string
+  holder: string
+  status: string
 }
