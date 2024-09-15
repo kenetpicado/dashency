@@ -9,19 +9,17 @@
     </BtnSecondary>
   </header>
 
-  <input
-    type="file"
-    id="excelFileInput"
-    class="hidden"
+  <input type="file" id="excelFileInput" class="hidden"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-    @change="onChange"
-  />
+    @change="onChange" />
 
-  <div v-if="workerStatus == 'ERROR'" class="bg-red-50 p-4 rounded-lg text-red-600">
+  <div v-if="workerStatus == 'ERROR'" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a intentarlo.
+    <br>
+    {{ errorMesage }}
   </div>
 
-  <TheTable v-else class="mb-4">
+  <TheTable class="mb-4">
     <template #header>
       <th>Guia</th>
       <th>Descripción</th>
@@ -45,18 +43,12 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input
-            type="number"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.grossWeight"
-          />
+          <input type="number" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.grossWeight" />
         </td>
         <td>
-          <input
-            type="text"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.client"
-          />
+          <input type="text" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.client" />
         </td>
         <td>
           {{ item.entryDate }}
@@ -69,8 +61,7 @@
     <InputForm text="Código o referencia" name="code" v-model="form.code" />
     <SelectForm text="Tipo de lote" name="type" v-model="form.type">
       <option value="">Selecciona un tipo</option>
-      <option value="AEREO">AEREO</option>
-      <option value="MARITIMO">MARITIMO</option>
+      <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
     </SelectForm>
   </div>
   <div class="flex justify-end gap-4">
@@ -82,7 +73,7 @@
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconUpload } from '@tabler/icons-vue'
@@ -94,10 +85,14 @@ import 'vue-loading-overlay/dist/css/index.css'
 import * as XLSX from 'xlsx'
 import { useWebWorkerFn } from '@vueuse/core'
 import SelectForm from '@/components/Form/SelectForm.vue'
+import usePrice from '@/composables/usePrice'
 
 const isLoading = ref<boolean>(false)
 
 const { storeBatch, processing } = useBatch()
+const { prices, getPrices } = usePrice()
+
+const errorMesage = ref<string>('')
 
 const form = ref<IBatch>({
   total: 0,
@@ -106,20 +101,35 @@ const form = ref<IBatch>({
   code: ''
 })
 
+onMounted(() => {
+  getPrices()
+})
+
 const { workerFn, workerStatus } = useWebWorkerFn(
   async (file: File) => {
     const data = await file.arrayBuffer()
-    const workbook = XLSX.read(data, { type: 'array' })
+    const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy', })
     const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
+
+    const requiredFields = ['Guide', 'Description', 'Pieces', 'Gross Weight', 'Client', 'FechaIngreso']
 
     return jsonData
       .filter((item: any) => item.Guide)
       .map((item: any) => {
-        const dateArray = item['FechaIngreso'].split('/')
+        const missingFields = requiredFields.filter((field) => !(field in item))
 
-        const day = dateArray[0].padStart(2, '0')
-        const month = dateArray[1].padStart(2, '0')
-        const year = dateArray[2]
+        if (missingFields.length) {
+          throw new Error('Los campos ' + missingFields.join(', ') + ' son requeridos')
+        }
+
+        let formattedDate = ""
+
+        if (typeof item['FechaIngreso'] === 'string') {
+          const dateArray = item['FechaIngreso'].split('/').map((item) => item.padStart(2, '0'))
+          formattedDate = `${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`
+        } else {
+          formattedDate = `${item['FechaIngreso'].getFullYear()}-${(item['FechaIngreso'].getMonth() + 1).toString().padStart(2, '0')}-${item['FechaIngreso'].getDate().toString().padStart(2, '0')}`
+        }
 
         return {
           guide: item['Guide'],
@@ -127,16 +137,17 @@ const { workerFn, workerStatus } = useWebWorkerFn(
           pieces: item['Pieces'],
           grossWeight: item['Gross Weight'],
           client: item['Client'].toString().trim(),
-          entryDate: `${year}-${month}-${day}`
+          entryDate: formattedDate
         } as IPackage
-      })
+      }) as IPackage[]
   },
   {
-    dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
+    dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'],
   }
 )
 
 function onChange(event: any) {
+  errorMesage.value = ''
   isLoading.value = true
 
   workerFn(event.target.files[0])
@@ -144,7 +155,7 @@ function onChange(event: any) {
       form.value.packages = packages as IPackage[]
     })
     .catch((error: any) => {
-      console.error(error)
+      errorMesage.value = error.message
     })
     .finally(() => {
       isLoading.value = false

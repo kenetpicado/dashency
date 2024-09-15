@@ -14,17 +14,13 @@
     </div>
     <div class="text-sm text-gray-400 mb-4 flex-1">{{ item.description }} ({{ item.pieces }})</div>
     <div class="flex items-center justify-between">
-      <span>
-        {{ item.type == 'AEREO' ? '✈️' : '🚢' }}
+      <span class="bg-edo-50 px-2 py-1 rounded-lg">
+        {{ item.type }}
       </span>
       <span class="flex items-center gap-2">
         <span class="text-xl text-edo-950">{{ item.grossWeight }} lbs</span>
-        <button
-          v-if="showIcon"
-          type="button"
-          @click="emit('selectedItem', item)"
-          class="bg-edo-950 rounded-full p-1 text-white"
-        >
+        <button v-if="showIcon" type="button" @click="emit('selectedItem', item)"
+          class="bg-edo-950 rounded-full p-1 text-white">
           <component :is="icon ?? IconArrowRight" size="22" />
         </button>
       </span>

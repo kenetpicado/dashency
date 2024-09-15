@@ -79,6 +79,11 @@ const router = createRouter({
           name: 'archings.show'
         },
         {
+          path: 'precios',
+          component: () => import('../views/Price/PriceView.vue'),
+          name: 'prices'
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile'

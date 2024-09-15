@@ -171,3 +171,9 @@ export interface IBankSummary {
   total: number
   references: string[]
 }
+
+export interface IPrice {
+  id?: string
+  type: string
+  value: number
+}
