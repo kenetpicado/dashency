@@ -9,22 +9,22 @@
   <div class="grid grid-cols-2 gap-4">
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
-      <InputForm
-        text="Cliente"
-        name="search"
-        v-model="queryParams.client"
-        placeholder="Nombre del cliente"
-      />
-      <div class="grid grid-cols-2 gap-4 items-end">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <InputForm
+          text="Cliente"
+          name="search"
+          v-model="queryParams.client"
+          placeholder="Nombre del cliente"
+        />
         <InputForm
           text="Guía"
           name="search"
           v-model="queryParams.guide"
           placeholder="Número de guía"
         />
-        <BtnPrimary class="mb-5" @click="search" :loading="processing"> Buscar </BtnPrimary>
+        <BtnPrimary class="mb-12" @click="search" :loading="processing"> Buscar </BtnPrimary>
       </div>
-      <div v-if="!filteredPackages.length" class="text-center text-gray-400 mt-5">
+      <div v-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -37,15 +37,26 @@
         />
       </div>
     </div>
+
     <div>
       <div class="text-lg mb-2 font-bold">Factura</div>
 
-      <InputForm
-        text="Cliente"
-        name="client"
-        v-model="form.client"
-        placeholder="Nombre del cliente"
-      />
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <InputForm
+          text="Cliente"
+          name="client"
+          v-model="form.client"
+          placeholder="Nombre del cliente"
+        />
+        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
+        <SelectForm text="Banco" name="bank" v-model="form.bank">
+          <option value="">Seleccionar banco</option>
+          <option v-for="item in banks" :value="item" :key="item">
+            {{ item }}
+          </option>
+        </SelectForm>
+        <InputForm text="Total pagado" name="total" v-model.number="form.total" />
+      </div>
 
       <div v-if="!selectedPackages.length" class="text-center text-gray-400">
         No hay paquetes seleccionados
@@ -82,24 +93,26 @@
         </template>
       </TheTable>
 
-      <InputForm text="Total pagado" name="total" v-model.number="form.total" />
-
-      <div class="grid grid-cols-2 gap-4">
-        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
-        <SelectForm text="Banco" name="bank" v-model="form.bank">
-          <option value="">Seleccionar banco</option>
-          <option v-for="item in banks" :value="item" :key="item">
-            {{ item }}
-          </option>
-        </SelectForm>
+      <div class="text-gray-400 text-sm mb-4">
+        El calculo del total a pagar se realiza con base al peso total de los paquetes seleccionados
+        y los siguientes precios:
+        <ul class="mt-1">
+          <li v-for="item in prices" :key="item.id">
+            {{ item.type }}: ${{ item.value }} por libra
+          </li>
+        </ul>
       </div>
 
-      <div class="text-sm text-red-400 mb-4">
+      <div class="text-sm text-gray-400 mb-4">
         Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
         posteriormente.
       </div>
 
-      <div class="flex justify-end gap-4">
+      <div v-if="errorMessage" class="bg-red-100 p-4 rounded-lg text-red-600">
+        {{ errorMessage }}
+      </div>
+
+      <div v-else class="flex justify-end gap-4">
         <BtnSecondary>Cancelar</BtnSecondary>
         <BtnPrimary @click="onSubmit" :loading="processing"> Guardar </BtnPrimary>
       </div>
@@ -123,19 +136,16 @@ import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
 import banks from '@/utils/banks'
+import usePrice from '@/composables/usePrice'
 
 const selectedPackages = ref<IPackage[]>([])
 
 const { getPackages, packages, queryParams, processing: searching } = usePackage()
 const { storeBilling, processing } = useBilling()
-
-// TODO: dynamic prices
-const prices = [
-  { type: 'AEREO', value: 7 },
-  { type: 'MARITIMO', value: 3 }
-]
+const { prices, getPrices } = usePrice()
 
 const summary = ref<ISummary[]>([])
+const errorMessage = ref<string>('')
 
 const form = ref<IBilling>({
   client: '',
@@ -200,13 +210,20 @@ function onSubmit() {
 }
 
 function updateSummary() {
+  errorMessage.value = ''
+
   //Separar los paquetes por tipo
   const uniqueTypes = new Set(selectedPackages.value.map((item) => item.type))
   const temporalSummary = ref<ISummary[]>([])
 
   uniqueTypes.forEach((type) => {
     //Obtener el precio del tipo de envio actual
-    const priceType = prices.find((item) => item.type === type)?.value || 0
+    const priceType = prices.value.find((item) => item.type === type)?.value || 0
+
+    if (!priceType) {
+      errorMessage.value = `No se encontró un precio para el tipo de envío ${type}, por favor registre uno`
+      return
+    }
 
     //Obtener todos los paquetes del tipo actual
     const currentTypePackages = selectedPackages.value.filter((item) => item.type === type)
@@ -258,5 +275,6 @@ function search() {
 
 onMounted(() => {
   packages.value.data = []
+  getPrices()
 })
 </script>
