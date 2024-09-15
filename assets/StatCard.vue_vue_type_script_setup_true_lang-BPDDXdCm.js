@@ -1,4 +1,4 @@
-import{A as o,b as n,j as s,e as c,i as e,k as i,bg as r,f as l,x as a}from"./index-CLiKuHAO.js";/**
+import{A as o,b as n,j as s,e as c,i as e,k as i,bg as r,f as l,x as a}from"./index-yVOrI8SX.js";/**
  * @license @tabler/icons-vue v3.12.0 - MIT
  *
  * This source code is licensed under the MIT license.
