@@ -20,7 +20,7 @@ onMounted(async () => {
   const cx = document.getElementById('chart')
 
   if (cx) {
-    var chart = new ApexCharts(document.getElementById('chart'), {
+    var chart = new ApexCharts(cx, {
       chart: {
         type: 'area',
         height: 650,
@@ -53,13 +53,6 @@ onMounted(async () => {
       xaxis: {
         categories: arrayDays
       },
-      // yaxis: {
-      //   labels: {
-      //     formatter: function (value: string) {
-      //       return '$ ' + value.toLocaleString()
-      //     }
-      //   }
-      // }
     })
 
     chart.render()
