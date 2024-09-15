@@ -17,49 +17,53 @@ onMounted(async () => {
   await getProfile()
   await getHome()
 
-  // var chart = new ApexCharts(document.getElementById('chart'), {
-  //   chart: {
-  //     type: 'area',
-  //     height: 650,
-  //     width: '98%',
-  //     toolbar: {
-  //       show: false
-  //     },
-  //     zoom: {
-  //       enabled: false
-  //     }
-  //   },
-  //   colors: ['#dc2626', '#0C1B6E'],
-  //   dataLabels: {
-  //     enabled: false
-  //   },
-  //   stroke: {
-  //     curve: 'smooth',
-  //     width: 2
-  //   },
-  //   series: [
-  //     {
-  //       name: 'Gastos',
-  //       data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0)
-  //     },
-  //     {
-  //       name: 'Ingresos',
-  //       data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0)
-  //     }
-  //   ],
-  //   xaxis: {
-  //     categories: arrayDays
-  //   },
-  //   yaxis: {
-  //     labels: {
-  //       formatter: function (value: string) {
-  //         return '$ ' + value.toLocaleString()
-  //       }
-  //     }
-  //   }
-  // })
+  const cx = document.getElementById('chart')
 
-  // chart.render()
+  if (cx) {
+    var chart = new ApexCharts(document.getElementById('chart'), {
+      chart: {
+        type: 'area',
+        height: 650,
+        width: '98%',
+        toolbar: {
+          show: false
+        },
+        zoom: {
+          enabled: false
+        }
+      },
+      colors: ['#dc2626', '#0C1B6E'],
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 2
+      },
+      series: [
+        {
+          name: 'Gastos',
+          data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0)
+        },
+        {
+          name: 'Ingresos',
+          data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0)
+        }
+      ],
+      xaxis: {
+        categories: arrayDays
+      },
+      // yaxis: {
+      //   labels: {
+      //     formatter: function (value: string) {
+      //       return '$ ' + value.toLocaleString()
+      //     }
+      //   }
+      // }
+    })
+
+    chart.render()
+  }
 })
 </script>
 
