@@ -18,8 +18,15 @@
         <div class="mb-1">
           {{ item.client }}
         </div>
-        <div class="flex justify-between">
-          <div>{{ item.bank }}: {{ item.reference }}</div>
+        <div class="flex justify-between items-end">
+          <div>
+            <span v-if="item.account && typeof item.account !== 'string'">
+              {{ item.account.type }}: {{ item.account.number }}
+            </span>
+            <div class="text-gray-400 text-sm">
+              {{ item.reference }}
+            </div>
+          </div>
           <div class="text-xl">${{ item.total }}</div>
         </div>
       </div>
@@ -61,7 +68,7 @@
           </tr>
           <tr v-for="(item, index) in bankSummary" :key="index" class="hover:bg-gray-50">
             <td>
-              {{ item.bank }}
+              {{ item.account_key }}
             </td>
             <td>
               {{ item.references.length }}
@@ -122,21 +129,21 @@ onMounted(async () => {
 })
 
 function setBankSummary() {
-  const uniqueBanks = new Set(billing.value.data.map((item) => item.bank))
+  const uniqueBanks = new Set(billing.value.data.map((item) => item.account_key))
   const temporalSummary: IBankSummary[] = []
 
-  uniqueBanks.forEach((bank) => {
-    const transactions = billing.value.data.filter((item) => item.bank === bank)
+  uniqueBanks.forEach((account_key) => {
+    const transactions = billing.value.data.filter((item) => item.account_key === account_key)
 
     temporalSummary.push({
-      bank,
+      account_key: account_key as string,
       total: Math.round(transactions.reduce((acc, item) => acc + item.total, 0) * 100) / 100,
       references: transactions.map((item) => item.reference)
     })
   })
 
   temporalSummary.push({
-    bank: 'TOTAL',
+    account_key: 'TOTAL',
     total: Math.round(temporalSummary.reduce((acc, item) => acc + item.total, 0) * 100) / 100,
     references: billing.value.data.map((item) => item.reference)
   })
@@ -149,6 +156,7 @@ function setSummary() {
     .filter((item) => item.summary !== undefined && item.summary.length > 1)
     .map((item) => item.summary)
     .flat() as ISummary[]
+
   const temporalSummary: ISummary[] = []
 
   const uniqueTypes = [...new Set(flatSummary.map((item) => item.type))].sort()
@@ -177,7 +185,7 @@ function onSubmit() {
   form.value.summaryBanks = bankSummary.value
   form.value.billing_ids = billing.value.data.map((item) => item.id as string)
 
-  const totalItem = bankSummary.value.find((item) => item.bank === 'TOTAL')
+  const totalItem = bankSummary.value.find((item) => item.account_key === 'TOTAL')
 
   if (totalItem) {
     form.value.total = totalItem.total

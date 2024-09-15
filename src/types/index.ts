@@ -111,6 +111,7 @@ export interface IBilling {
   summary?: ISummary[]
   createdAt?: Date
   user?: IUserInfo
+  account_key?: string
 }
 
 export interface IBillingResponse {
@@ -167,7 +168,7 @@ export interface IArchingResponse {
 }
 
 export interface IBankSummary {
-  bank: string
+  account_key: string
   total: number
   references: string[]
 }

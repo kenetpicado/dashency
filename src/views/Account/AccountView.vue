@@ -83,7 +83,8 @@ import toast from '@/utils/toast'
 import { IconEdit, IconTrash } from '@tabler/icons-vue'
 import { onMounted, ref } from 'vue'
 
-const { getAccounts, accounts, storeAccount, processing, updateAccount, destroyAccount } = useAccount()
+const { getAccounts, accounts, storeAccount, processing, updateAccount, destroyAccount } =
+  useAccount()
 
 const openModal = ref<boolean>(false)
 const isEdit = ref<boolean>(false)

@@ -9,8 +9,8 @@
   <div class="grid grid-cols-4 gap-4 mb-4">
     <SelectForm text="Banco" name="bank" v-model="queryParams.account">
       <option value="">Todos</option>
-      <option v-for="item in banks" :value="item" :key="item">
-        {{ item }}
+      <option v-for="item in accounts" :value="item.id" :key="item.id">
+        {{ item.type }}
       </option>
     </SelectForm>
     <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
@@ -74,14 +74,16 @@ import { IconEye } from '@tabler/icons-vue'
 import UserInfo from '@/components/UserInfo.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
-import banks from '@/utils/banks'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
+import useAccount from '@/composables/useAccount'
 
 const { getBilling, billing, queryParams } = useBilling()
+const { accounts, getAccounts } = useAccount()
 
 onMounted(() => {
   getBilling()
+  getAccounts()
 })
 
 watchDebounced(queryParams.value, () => getBilling(), { debounce: 500, maxWait: 1000 })
