@@ -4,7 +4,7 @@ import { onMounted } from 'vue'
 import useAuth from '@/composables/useAuth'
 import { useStorage } from '@vueuse/core'
 import useHome from '@/composables/useHome'
-// import ApexCharts from 'apexcharts'
+import ApexCharts from 'apexcharts'
 
 const { getProfile } = useAuth()
 const selected = useStorage('selected', 'home')
