@@ -19,8 +19,12 @@
       </span>
       <span class="flex items-center gap-2">
         <span class="text-xl text-edo-950">{{ item.grossWeight }} lbs</span>
-        <button v-if="showIcon" type="button" @click="emit('selectedItem', item)"
-          class="bg-edo-950 rounded-full p-1 text-white">
+        <button
+          v-if="showIcon"
+          type="button"
+          @click="emit('selectedItem', item)"
+          class="bg-edo-950 rounded-full p-1 text-white"
+        >
           <component :is="icon ?? IconArrowRight" size="22" />
         </button>
       </span>

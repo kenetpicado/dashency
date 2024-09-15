@@ -35,9 +35,7 @@
         <td>
           {{ item.type }}
         </td>
-        <td>
-          ${{ item.value.toLocaleString() }}
-        </td>
+        <td>${{ item.value.toLocaleString() }}</td>
         <td>
           <div class="flex gap-4">
             <button type="button" @click="edit(item)">
@@ -77,7 +75,7 @@ onMounted(() => {
 const form = ref<IPrice>({
   id: '',
   type: '',
-  value: 0,
+  value: 0
 })
 
 const resetValues = () => {
@@ -87,7 +85,7 @@ const resetValues = () => {
   form.value = {
     id: '',
     type: '',
-    value: 0,
+    value: 0
   }
 }
 
@@ -120,5 +118,4 @@ function destroy(id: string) {
     destroyPrice(id)
   }
 }
-
 </script>

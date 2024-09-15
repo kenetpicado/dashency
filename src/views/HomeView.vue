@@ -52,7 +52,7 @@ onMounted(async () => {
       ],
       xaxis: {
         categories: arrayDays
-      },
+      }
     })
 
     chart.render()
@@ -66,8 +66,11 @@ onMounted(async () => {
   </header>
 
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard v-for="(stat, index) in home.stats" :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index" />
+    <StatCard
+      v-for="(stat, index) in home.stats"
+      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
+      :key="index"
+    />
   </main>
 
   <div class="bg-white p-4 border rounded-lg">

@@ -5,7 +5,9 @@
       <InputForm text="Código o referencia" name="code" v-model="batch.code" />
       <SelectForm text="Tipo" name="type" v-model="batch.type">
         <option value="">Selecciona un tipo</option>
-        <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
+        <option v-for="price in prices" :value="price.type" :key="price.id">
+          {{ price.type }}
+        </option>
       </SelectForm>
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
@@ -22,8 +24,13 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Código o referencia" name="code" v-model="queryParams.code" type="search"
-      placeholder="Buscar código o referencia" />
+    <InputForm
+      text="Código o referencia"
+      name="code"
+      v-model="queryParams.code"
+      type="search"
+      placeholder="Buscar código o referencia"
+    />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Selecciona un tipo</option>
       <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>

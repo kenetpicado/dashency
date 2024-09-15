@@ -9,13 +9,17 @@
     </BtnSecondary>
   </header>
 
-  <input type="file" id="excelFileInput" class="hidden"
+  <input
+    type="file"
+    id="excelFileInput"
+    class="hidden"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-    @change="onChange" />
+    @change="onChange"
+  />
 
   <div v-if="workerStatus == 'ERROR'" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a intentarlo.
-    <br>
+    <br />
     {{ errorMesage }}
   </div>
 
@@ -43,12 +47,18 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input type="number" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.grossWeight" />
+          <input
+            type="number"
+            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.grossWeight"
+          />
         </td>
         <td>
-          <input type="text" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.client" />
+          <input
+            type="text"
+            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.client"
+          />
         </td>
         <td>
           {{ item.entryDate }}
@@ -108,10 +118,17 @@ onMounted(() => {
 const { workerFn, workerStatus } = useWebWorkerFn(
   async (file: File) => {
     const data = await file.arrayBuffer()
-    const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy', })
+    const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy' })
     const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
 
-    const requiredFields = ['Guide', 'Description', 'Pieces', 'Gross Weight', 'Client', 'FechaIngreso']
+    const requiredFields = [
+      'Guide',
+      'Description',
+      'Pieces',
+      'Gross Weight',
+      'Client',
+      'FechaIngreso'
+    ]
 
     return jsonData
       .filter((item: any) => item.Guide)
@@ -122,7 +139,7 @@ const { workerFn, workerStatus } = useWebWorkerFn(
           throw new Error('Los campos ' + missingFields.join(', ') + ' son requeridos')
         }
 
-        let formattedDate = ""
+        let formattedDate = ''
 
         if (typeof item['FechaIngreso'] === 'string') {
           const dateArray = item['FechaIngreso'].split('/').map((item) => item.padStart(2, '0'))
@@ -142,7 +159,7 @@ const { workerFn, workerStatus } = useWebWorkerFn(
       }) as IPackage[]
   },
   {
-    dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'],
+    dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
   }
 )
 
