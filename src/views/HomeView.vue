@@ -49,6 +49,11 @@ onMounted(async () => {
             radius: 3
           }
         },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
       }
     })
   }
