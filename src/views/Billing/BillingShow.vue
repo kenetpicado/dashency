@@ -5,30 +5,18 @@
 
   <div class="grid grid-cols-2 gap-4 mb-4">
     <div class="bg-white p-4 rounded-xl border flex flex-col gap-3">
-      <div class="text-gray-400">
-        Fecha: {{ getFormattedDate(bill?.createdAt) }}
-      </div>
-      <div>
-        Cliente: {{ bill?.client }}
-      </div>
-      <div>
-        Facturado por: {{ bill?.user?.name }}
-      </div>
-      <div>
-        Cantidad de paquetes: {{ bill?.packages?.length }}
-      </div>
+      <div class="text-gray-400">Fecha: {{ getFormattedDate(bill?.createdAt) }}</div>
+      <div>Cliente: {{ bill?.client }}</div>
+      <div>Facturado por: {{ bill?.user?.name }}</div>
+      <div>Cantidad de paquetes: {{ bill?.packages?.length }}</div>
       <div>
         Cuenta:
         <span v-if="bill?.account && typeof bill?.account !== 'string'">
           {{ bill?.account.type }}: {{ bill?.account.number }}
         </span>
-        <div class="text-gray-400 text-sm">
-          Referencia: {{ bill?.reference }}
-        </div>
+        <div class="text-gray-400 text-sm">Referencia: {{ bill?.reference }}</div>
       </div>
-      <div class="font-bold">
-        Total: ${{ bill?.total }}
-      </div>
+      <div class="font-bold">Total: ${{ bill?.total }}</div>
     </div>
     <div>
       <TheTable>
@@ -60,7 +48,12 @@
   <h5 class="text-lg font-bold mb-2">Paquetes</h5>
 
   <div v-if="bill?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard v-for="(item, index) in bill?.packages" :item="item" :key="index" :showIcon="false" />
+    <PackageCard
+      v-for="(item, index) in bill?.packages"
+      :item="item"
+      :key="index"
+      :showIcon="false"
+    />
   </div>
 </template>
 
@@ -79,5 +72,4 @@ const route = useRoute()
 onMounted(() => {
   getBill(route.params.id as string)
 })
-
 </script>

@@ -53,7 +53,11 @@
           <tr v-if="!arching?.accountSummary?.length">
             <td colspan="4" class="text-center">No hay datos que mostrar</td>
           </tr>
-          <tr v-for="(item, index) in arching?.accountSummary" :key="index" class="hover:bg-gray-50">
+          <tr
+            v-for="(item, index) in arching?.accountSummary"
+            :key="index"
+            class="hover:bg-gray-50"
+          >
             <td>
               {{ item.account_key }}
             </td>

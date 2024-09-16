@@ -9,15 +9,11 @@
     </BtnSecondary>
   </header>
 
-  <input
-    type="file"
-    id="excelFileInput"
-    class="hidden"
+  <input type="file" id="excelFileInput" class="hidden"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-    @change="onChange"
-  />
+    @change="onChange" />
 
-  <div v-if="workerStatus == 'ERROR'" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
+  <div v-if="errorMesage" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
     No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a intentarlo.
     <br />
     {{ errorMesage }}
@@ -47,18 +43,12 @@
           {{ item.pieces }}
         </td>
         <td>
-          <input
-            type="number"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.grossWeight"
-          />
+          <input type="number" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.grossWeight" />
         </td>
         <td>
-          <input
-            type="text"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.client"
-          />
+          <input type="text" class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
+            v-model="item.client" />
         </td>
         <td>
           {{ item.entryDate }}
@@ -93,9 +83,9 @@ import useBatch from '@/composables/useBatch'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import * as XLSX from 'xlsx'
-import { useWebWorkerFn } from '@vueuse/core'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import usePrice from '@/composables/usePrice'
+import { format } from '@formkit/tempo'
 
 const isLoading = ref<boolean>(false)
 
@@ -115,59 +105,11 @@ onMounted(() => {
   getPrices()
 })
 
-const { workerFn, workerStatus } = useWebWorkerFn(
-  async (file: File) => {
-    const data = await file.arrayBuffer()
-    const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy' })
-    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]])
-
-    const requiredFields = [
-      'Guide',
-      'Description',
-      'Pieces',
-      'Gross Weight',
-      'Client',
-      'FechaIngreso'
-    ]
-
-    return jsonData
-      .filter((item: any) => item.Guide)
-      .map((item: any) => {
-        const missingFields = requiredFields.filter((field) => !(field in item))
-
-        if (missingFields.length) {
-          throw new Error('Los campos ' + missingFields.join(', ') + ' son requeridos')
-        }
-
-        let formattedDate = ''
-
-        if (typeof item['FechaIngreso'] === 'string') {
-          const dateArray = item['FechaIngreso'].split('/').map((item) => item.padStart(2, '0'))
-          formattedDate = `${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`
-        } else {
-          formattedDate = `${item['FechaIngreso'].getFullYear()}-${(item['FechaIngreso'].getMonth() + 1).toString().padStart(2, '0')}-${item['FechaIngreso'].getDate().toString().padStart(2, '0')}`
-        }
-
-        return {
-          guide: item['Guide'],
-          description: item['Description'].toString().trim(),
-          pieces: item['Pieces'],
-          grossWeight: item['Gross Weight'],
-          client: item['Client'].toString().trim(),
-          entryDate: formattedDate
-        } as IPackage
-      }) as IPackage[]
-  },
-  {
-    dependencies: ['https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js']
-  }
-)
-
-function onChange(event: any) {
+async function onChange(event: any) {
   errorMesage.value = ''
   isLoading.value = true
 
-  workerFn(event.target.files[0])
+  processFile(event.target.files[0])
     .then((packages: any) => {
       form.value.packages = packages as IPackage[]
     })
@@ -209,5 +151,66 @@ function onSubmit() {
 
 function openInputFile() {
   document.getElementById('excelFileInput')?.click()
+}
+
+function processFile(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = (event) => {
+      try {
+        const data = event.target?.result
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true })
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const jsonData = XLSX.utils.sheet_to_json(sheet)
+
+        const requiredFields = [
+          'Guide',
+          'Description',
+          'Pieces',
+          'Gross Weight',
+          'Client',
+          'FechaIngreso'
+        ]
+
+        const packages = jsonData
+          .filter((item: any) => item.Guide)
+          .map((item: any) => {
+            const missingFields = requiredFields.filter((field) => !(field in item))
+
+            if (missingFields.length > 0) {
+              throw new Error(`Los campos ${missingFields.join(', ')} son requeridos`)
+            }
+
+            const formattedDate = formatDate(item['FechaIngreso'])
+
+            return {
+              guide: item['Guide'],
+              description: item['Description'].toString().trim(),
+              pieces: item['Pieces'],
+              grossWeight: item['Gross Weight'],
+              client: item['Client'].toString().trim(),
+              entryDate: formattedDate
+            }
+          })
+
+        resolve(packages)
+      } catch (error) {
+        reject(error)
+      }
+    }
+
+    reader.onerror = (error) => reject(error)
+
+    reader.readAsArrayBuffer(file)
+  })
+}
+
+function formatDate(date: any): string {
+  if (typeof date === 'string') {
+    const [day, month, year] = date.split('/').map((part) => part.padStart(2, '0'))
+    return `${year}-${month}-${day}`
+  }
+  return format(date, 'YYYY-MM-DD')
 }
 </script>

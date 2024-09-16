@@ -4,7 +4,7 @@ import { onMounted } from 'vue'
 import useAuth from '@/composables/useAuth'
 import { useStorage } from '@vueuse/core'
 import useHome from '@/composables/useHome'
-import ApexCharts from 'apexcharts'
+import Chart, { type ChartItem } from 'chart.js/auto'
 
 const { getProfile } = useAuth()
 const selected = useStorage('selected', 'home')
@@ -20,42 +20,37 @@ onMounted(async () => {
   const cx = document.getElementById('chart')
 
   if (cx) {
-    var chart = new ApexCharts(cx, {
-      chart: {
-        type: 'area',
-        height: 650,
-        width: '98%',
-        toolbar: {
-          show: false
+    new Chart(cx as ChartItem, {
+      type: 'line',
+      data: {
+        labels: arrayDays,
+        datasets: [
+          {
+            label: 'Ingresos',
+            data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0),
+            fill: 'start'
+          },
+          {
+            label: 'Gastos',
+            data: arrayDays.map((day) => (home.value.expenses.find((r) => r.day === day)?.total || 0)),
+            fill: 'start'
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        elements: {
+          line: {
+            tension: 0.4,
+            borderWidth: 2
+          },
+          point: {
+            radius: 3
+          }
         },
-        zoom: {
-          enabled: false
-        }
-      },
-      colors: ['#dc2626', '#0C1B6E'],
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: 'smooth',
-        width: 2
-      },
-      series: [
-        {
-          name: 'Gastos',
-          data: arrayDays.map((day) => home.value.expenses.find((r) => r.day === day)?.total || 0)
-        },
-        {
-          name: 'Ingresos',
-          data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === day)?.total || 0)
-        }
-      ],
-      xaxis: {
-        categories: arrayDays
       }
     })
-
-    chart.render()
   }
 })
 </script>
@@ -66,14 +61,11 @@ onMounted(async () => {
   </header>
 
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard
-      v-for="(stat, index) in home.stats"
-      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index"
-    />
+    <StatCard v-for="(stat, index) in home.stats" :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
+      :key="index" />
   </main>
 
-  <div class="bg-white p-4 border rounded-lg">
-    <div id="chart"></div>
+  <div class="bg-white p-4 border rounded-lg w-[97%] min-h-[30rem]">
+    <canvas id="chart"></canvas>
   </div>
 </template>
