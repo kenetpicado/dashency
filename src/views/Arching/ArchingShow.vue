@@ -9,21 +9,60 @@
     </RouterLink>
   </header>
 
-  <h5 class="text-lg font-bold mb-2">Estadísticas</h5>
-
-  <main class="grid grid-cols-4 gap-2 mb-4">
-    <StatCard v-for="(stat, index) in summary" :stat="stat" :key="index" />
-  </main>
-
-  <h5 class="text-lg font-bold mb-2">Transferencias</h5>
-
-  <main class="grid grid-cols-4 gap-2 mb-4">
-    <StatCard v-for="(stat, index) in summaryBanks" :stat="stat" :key="index" />
-  </main>
-
   <div class="mb-4 bg-white p-4 rounded-xl border">
-    <!-- <div class="mb-2">Creado por:</div> -->
     <UserInfo v-if="arching?.user" :item="arching.user" />
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <h5 class="text-lg font-bold mb-2">Resumen</h5>
+      <TheTable>
+        <template #header>
+          <th>Tipos</th>
+          <th>Peso</th>
+          <th>Cantidad</th>
+          <th>Monto</th>
+        </template>
+        <template #body>
+          <tr v-if="!arching?.summary?.length">
+            <td colspan="4" class="text-center">No hay datos que mostrar</td>
+          </tr>
+          <tr v-for="(item, index) in arching?.summary" :key="index" class="hover:bg-gray-50">
+            <td>
+              {{ item.type }}
+            </td>
+            <td>{{ item.weight }} lbs</td>
+            <td>
+              {{ item.count }}
+            </td>
+            <td>${{ item.amount }}</td>
+          </tr>
+        </template>
+      </TheTable>
+    </div>
+
+    <div>
+      <h5 class="text-lg font-bold mb-2">Transferencias</h5>
+      <TheTable>
+        <template #header>
+          <th>Cuenta</th>
+          <th>Cantidad</th>
+          <th>Monto</th>
+        </template>
+        <template #body>
+          <tr v-if="!arching?.accountSummary?.length">
+            <td colspan="4" class="text-center">No hay datos que mostrar</td>
+          </tr>
+          <tr v-for="(item, index) in arching?.accountSummary" :key="index" class="hover:bg-gray-50">
+            <td>
+              {{ item.account_key }}
+            </td>
+            <td>{{ item.references.length }} lbs</td>
+            <td>${{ item.total }}</td>
+          </tr>
+        </template>
+      </TheTable>
+    </div>
   </div>
 
   <h5 class="text-lg font-bold mb-2">Facturas</h5>
@@ -43,7 +82,14 @@
         <td>
           {{ getFormattedDate(item.createdAt) }}
         </td>
-        <td>{{ item.bank }}: {{ item.reference }}</td>
+        <td>
+          <div v-if="item.account && typeof item.account !== 'string'">
+            {{ item.account.type }}: {{ item.account.number }}
+          </div>
+          <div class="text-gray-400 text-sm">
+            {{ item.reference }}
+          </div>
+        </td>
         <td>
           {{ item.client }}
         </td>
@@ -55,12 +101,11 @@
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import StatCard from '@/components/StatCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import UserInfo from '@/components/UserInfo.vue'
 import useArching from '@/composables/useArching'
 import getFormattedDate, { getBaseDate } from '@/utils/date'
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 const { getArching, arching } = useArching()
@@ -69,23 +114,5 @@ const route = useRoute()
 
 onMounted(() => {
   getArching(route.params.id as string)
-})
-
-const summary = computed(() => {
-  if (!arching.value?.summary) return []
-
-  return arching.value.summary.map((item) => ({
-    title: item.type + ' (' + item.weight + ' lbs)',
-    value: '$ ' + item.amount
-  }))
-})
-
-const summaryBanks = computed(() => {
-  if (!arching.value?.summaryBanks) return []
-
-  return arching.value.summaryBanks.map((item) => ({
-    title: item.bank + ' (' + item.references.length + ')',
-    value: '$ ' + item.total
-  }))
 })
 </script>

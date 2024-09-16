@@ -158,7 +158,7 @@ export interface IArching {
   createdAt?: Date
   user?: IUserInfo
   summary: ISummary[]
-  summaryBanks: IBankSummary[]
+  accountSummary: IAccountSummary[]
 }
 
 export interface IArchingResponse {
@@ -167,7 +167,7 @@ export interface IArchingResponse {
   current: number
 }
 
-export interface IBankSummary {
+export interface IAccountSummary {
   account_key: string
   total: number
   references: string[]

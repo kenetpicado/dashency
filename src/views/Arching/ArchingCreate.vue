@@ -63,10 +63,10 @@
           <th>Total</th>
         </template>
         <template #body>
-          <tr v-if="!bankSummary.length">
+          <tr v-if="!accountSummary.length">
             <td colspan="6" class="text-center">No hay datos que mostrar</td>
           </tr>
-          <tr v-for="(item, index) in bankSummary" :key="index" class="hover:bg-gray-50">
+          <tr v-for="(item, index) in accountSummary" :key="index" class="hover:bg-gray-50">
             <td>
               {{ item.account_key }}
             </td>
@@ -92,7 +92,7 @@ import InputForm from '@/components/Form/InputForm.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import useArching from '@/composables/useArching'
 import useBilling from '@/composables/useBilling'
-import type { IBankSummary, ISummary, IArching } from '@/types'
+import type { IAccountSummary, ISummary, IArching } from '@/types'
 import getFormattedDate from '@/utils/date'
 import toast from '@/utils/toast'
 import { onMounted, ref, watch } from 'vue'
@@ -101,14 +101,14 @@ import 'vue-loading-overlay/dist/css/index.css'
 const { getBillingDay, queryParams: billingParams, billing } = useBilling()
 const { processing, storeArching } = useArching()
 
-const bankSummary = ref<IBankSummary[]>([])
+const accountSummary = ref<IAccountSummary[]>([])
 const summary = ref<ISummary[]>([])
 
 const form = ref<IArching>({
   date: '',
   total: 0,
   summary: [],
-  summaryBanks: [],
+  accountSummary: [],
   billing_ids: []
 })
 
@@ -116,7 +116,7 @@ watch(
   () => billingParams.value.date,
   async () => {
     await getBillingDay()
-    setBankSummary()
+    setAccountSummary()
     setSummary()
   }
 )
@@ -124,13 +124,13 @@ watch(
 onMounted(async () => {
   billingParams.value.date = getFormattedDate(new Date(), 'YYYY-MM-DD')
   await getBillingDay()
-  setBankSummary()
+  setAccountSummary()
   setSummary()
 })
 
-function setBankSummary() {
+function setAccountSummary() {
   const uniqueBanks = new Set(billing.value.data.map((item) => item.account_key))
-  const temporalSummary: IBankSummary[] = []
+  const temporalSummary: IAccountSummary[] = []
 
   uniqueBanks.forEach((account_key) => {
     const transactions = billing.value.data.filter((item) => item.account_key === account_key)
@@ -148,7 +148,7 @@ function setBankSummary() {
     references: billing.value.data.map((item) => item.reference)
   })
 
-  bankSummary.value = temporalSummary
+  accountSummary.value = temporalSummary
 }
 
 function setSummary() {
@@ -182,10 +182,10 @@ function onSubmit() {
 
   form.value.date = billingParams.value.date
   form.value.summary = summary.value
-  form.value.summaryBanks = bankSummary.value
+  form.value.accountSummary = accountSummary.value
   form.value.billing_ids = billing.value.data.map((item) => item.id as string)
 
-  const totalItem = bankSummary.value.find((item) => item.account_key === 'TOTAL')
+  const totalItem = accountSummary.value.find((item) => item.account_key === 'TOTAL')
 
   if (totalItem) {
     form.value.total = totalItem.total
