@@ -16,6 +16,15 @@
         </span>
         <div class="text-gray-400 text-sm">Referencia: {{ bill?.reference }}</div>
       </div>
+      <div class="text-gray-400">Notas: {{ bill?.notes ? bill?.notes : 'No especificado' }}</div>
+      <div>Sub total: ${{ bill?.subTotal }}</div>
+      <div v-if="bill?.fee">Importe extra: ${{ bill?.fee }}</div>
+      <template v-if="bill?.delivery">
+        <div>Costo de envío: ${{ bill?.delivery }}</div>
+        <div class="text-gray-400">
+          Dirección: {{ bill?.address ? bill?.address : 'No especificado' }}
+        </div>
+      </template>
       <div class="font-bold">Total: ${{ bill?.total }}</div>
     </div>
     <div>
@@ -29,7 +38,7 @@
         </template>
         <template #body>
           <tr v-if="!bill?.summary?.length">
-            <td colspan="6" class="text-center">No hay datos que mostrar</td>
+            <td colspan="5" class="text-center">No hay datos que mostrar</td>
           </tr>
           <tr v-for="(item, index) in bill?.summary" :key="index" class="hover:bg-gray-50">
             <td>
@@ -40,9 +49,7 @@
               {{ item.count }}
             </td>
             <td>
-              <span v-if="item.price">
-                ${{ item.price }}
-              </span>
+              <span v-if="item.price"> ${{ item.price }} </span>
             </td>
             <td>${{ item.amount }}</td>
           </tr>
@@ -51,10 +58,15 @@
     </div>
   </div>
 
-  <h5 class="text-lg font-bold mb-2">Paquetes</h5>
+  <h5 class="text-lg font-bold mb-2">Paquetes de la factura</h5>
 
   <div v-if="bill?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard v-for="(item, index) in bill?.packages" :item="item" :key="index" :showIcon="false" />
+    <PackageCard
+      v-for="(item, index) in bill?.packages"
+      :item="item"
+      :key="index"
+      :showIcon="false"
+    />
   </div>
 </template>
 

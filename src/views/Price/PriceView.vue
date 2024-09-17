@@ -26,7 +26,7 @@
     </template>
     <template #body>
       <tr v-if="!prices.length">
-        <td colspan="3" class="text-center">No hay datos que mostrar</td>
+        <td colspan="4" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in prices" :key="index" class="hover:bg-gray-50">
         <td>

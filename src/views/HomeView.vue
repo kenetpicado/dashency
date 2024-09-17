@@ -32,9 +32,11 @@ onMounted(async () => {
           },
           {
             label: 'Gastos',
-            data: arrayDays.map((day) => (home.value.expenses.find((r) => r.day === day)?.total || 0)),
+            data: arrayDays.map(
+              (day) => home.value.expenses.find((r) => r.day === day)?.total || 0
+            ),
             fill: 'start'
-          },
+          }
         ]
       },
       options: {
@@ -66,8 +68,11 @@ onMounted(async () => {
   </header>
 
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard v-for="(stat, index) in home.stats" :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index" />
+    <StatCard
+      v-for="(stat, index) in home.stats"
+      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
+      :key="index"
+    />
   </main>
 
   <div class="bg-white p-4 border rounded-lg w-[97%] min-h-[30rem]">

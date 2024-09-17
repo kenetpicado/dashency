@@ -10,17 +10,32 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm text="Cliente" name="search" type="search" v-model="queryParams.client"
-          placeholder="Nombre del cliente" />
-        <InputForm text="Guía" name="search" type="search" v-model="queryParams.guide" placeholder="Número de guía" />
-        <!-- <BtnPrimary class="mb-12" @click="search" :loading="processing"> Buscar </BtnPrimary> -->
+        <InputForm
+          text="Cliente"
+          name="search"
+          type="search"
+          v-model="queryParams.client"
+          placeholder="Nombre del cliente"
+        />
+        <InputForm
+          text="Guía"
+          name="search"
+          type="search"
+          v-model="queryParams.guide"
+          placeholder="Número de guía"
+        />
       </div>
       <div v-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
-          @selectedItem="addPackage" />
+        <PackageCard
+          v-for="(item, index) in filteredPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          @selectedItem="addPackage"
+        />
       </div>
     </div>
 
@@ -32,8 +47,14 @@
       </div>
 
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
-          :icon="IconTrash" @selectedItem="removePackage(index)" />
+        <PackageCard
+          v-for="(item, index) in selectedPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          :icon="IconTrash"
+          @selectedItem="removePackage(index)"
+        />
       </div>
 
       <TheTable class="mb-4">
@@ -46,48 +67,95 @@
         </template>
         <template #body>
           <tr v-if="summary.length == 0">
-            <td colspan="4" class="text-center">No hay datos que mostrar</td>
+            <td colspan="5" class="text-center">No hay datos que mostrar</td>
           </tr>
           <tr v-for="(item, index) in summary" :key="index">
             <td>{{ item.type }}</td>
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
             <td>
-              <span v-if="item.price">
-                ${{ item.price }}
-              </span>
+              <span v-if="item.price"> ${{ item.price }} </span>
             </td>
             <td>${{ item.amount }}</td>
           </tr>
         </template>
       </TheTable>
 
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" />
-        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
-          placeholder="Código o referencia" />
-        <SelectForm text="Cuenta" name="account" v-model="form.account">
-          <option value="">Seleccionar cuenta</option>
-          <option v-for="item in accounts" :value="item.id" :key="item.id">
-            {{ item.type }} - {{ item.number }}
-          </option>
-        </SelectForm>
-        <InputForm text="Total pagado" name="total" v-model.number="form.total" />
-      </div>
+      <form @submit.prevent="onSubmit()">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <InputForm
+            text="Cliente"
+            name="client"
+            v-model="form.client"
+            placeholder="Nombre del cliente"
+            required
+          />
+          <InputForm
+            text="Notas (Opcional)"
+            name="notes"
+            v-model="form.notes"
+            placeholder="Notas"
+          />
 
-      <div class="text-sm text-gray-400 mb-4">
-        Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
-        posteriormente.
-      </div>
+          <SelectForm text="Cuenta" name="account" v-model="form.account" required>
+            <option value="">Seleccionar cuenta</option>
+            <option v-for="item in accounts" :value="item.id" :key="item.id">
+              {{ item.type }} - {{ item.number }}
+            </option>
+          </SelectForm>
+          <InputForm
+            text="Referencia"
+            name="reference"
+            type="number"
+            v-model="form.reference"
+            placeholder="Código o referencia"
+            required
+          />
 
-      <div v-if="errorMessage" class="bg-red-100 p-4 rounded-lg text-red-600">
-        {{ errorMessage }}
-      </div>
+          <InputForm
+            text="Costo delivery (Opcional)"
+            name="delivery"
+            v-model.number="form.delivery"
+            placeholder="Costo del delivery"
+            type="number"
+          />
+          <InputForm
+            text="Dirección de entrega"
+            name="address"
+            v-model="form.address"
+            placeholder="Direccion de entrega"
+          />
 
-      <div v-else class="flex justify-end gap-4">
-        <BtnSecondary>Cancelar</BtnSecondary>
-        <BtnPrimary @click="onSubmit" :loading="processing"> Guardar </BtnPrimary>
-      </div>
+          <InputForm
+            text="Importe extra (Opcional)"
+            name="fee"
+            v-model.number="form.fee"
+            placeholder="Importe extra"
+            type="number"
+          />
+          <InputForm
+            text="Total pagado"
+            name="total"
+            v-model.number="form.total"
+            type="number"
+            required
+          />
+        </div>
+
+        <div class="text-sm text-gray-400 mb-4">
+          Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
+          posteriormente.
+        </div>
+
+        <div v-if="errorMessage" class="bg-red-100 p-4 rounded-lg text-red-600">
+          {{ errorMessage }}
+        </div>
+
+        <div v-else class="flex justify-end gap-4">
+          <BtnSecondary>Cancelar</BtnSecondary>
+          <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -95,7 +163,7 @@
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
@@ -127,7 +195,12 @@ const form = ref<IBilling>({
   total: 0,
   reference: '',
   account: '',
-  summary: []
+  summary: [],
+  subTotal: 0,
+  delivery: 0,
+  fee: 0,
+  address: '',
+  notes: ''
 })
 
 function addPackage(item: IPackage) {
@@ -233,19 +306,9 @@ function updateSummary() {
 
   temporalSummary.value.push(data)
 
-  form.value.total = data.amount
+  form.value.subTotal = data.amount
+  form.value.total = data.amount + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
   summary.value = temporalSummary.value
-}
-
-function search() {
-  if (!queryParams.value.guide && !queryParams.value.client) {
-    toast.error('Debe ingresar al menos un criterio de búsqueda')
-    return
-  }
-
-  queryParams.value.status = 'REGISTRADO'
-
-  getPackages()
 }
 
 onMounted(() => {
@@ -256,4 +319,11 @@ onMounted(() => {
 })
 
 watchDebounced(queryParams.value, () => getPackages(), { debounce: 500, maxWait: 1000 })
+
+watch(
+  () => [form.value.delivery, form.value.fee],
+  () => {
+    form.value.total = form.value.subTotal + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
+  }
+)
 </script>

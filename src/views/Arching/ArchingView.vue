@@ -20,7 +20,7 @@
     </template>
     <template #body>
       <tr v-if="!archings.data.length">
-        <td colspan="6" class="text-center">No hay datos que mostrar</td>
+        <td colspan="5" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in archings.data" :key="index" class="hover:bg-gray-50">
         <td>

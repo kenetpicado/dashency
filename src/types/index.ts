@@ -113,6 +113,11 @@ export interface IBilling {
   createdAt?: Date
   user?: IUserInfo
   account_key?: string
+  subTotal: number
+  delivery?: number
+  address?: string
+  fee?: number
+  notes?: string
 }
 
 export interface IBillingResponse {
