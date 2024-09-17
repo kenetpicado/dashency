@@ -24,6 +24,7 @@
           <th>Tipos</th>
           <th>Peso</th>
           <th>Cantidad</th>
+          <th>Precio</th>
           <th>Monto</th>
         </template>
         <template #body>
@@ -38,6 +39,11 @@
             <td>
               {{ item.count }}
             </td>
+            <td>
+              <span v-if="item.price">
+                ${{ item.price }}
+              </span>
+            </td>
             <td>${{ item.amount }}</td>
           </tr>
         </template>
@@ -48,12 +54,7 @@
   <h5 class="text-lg font-bold mb-2">Paquetes</h5>
 
   <div v-if="bill?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard
-      v-for="(item, index) in bill?.packages"
-      :item="item"
-      :key="index"
-      :showIcon="false"
-    />
+    <PackageCard v-for="(item, index) in bill?.packages" :item="item" :key="index" :showIcon="false" />
   </div>
 </template>
 

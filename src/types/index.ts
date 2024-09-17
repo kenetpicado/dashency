@@ -96,8 +96,9 @@ export interface IStatCard {
 export interface ISummary {
   type: string
   weight: number
-  amount: number
+  price?: number
   count: number
+  amount: number
 }
 
 export interface IBilling {

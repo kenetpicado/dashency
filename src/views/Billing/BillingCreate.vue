@@ -10,67 +10,30 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm
-          text="Cliente"
-          name="search"
-          v-model="queryParams.client"
-          placeholder="Nombre del cliente"
-        />
-        <InputForm
-          text="Guía"
-          name="search"
-          v-model="queryParams.guide"
-          placeholder="Número de guía"
-        />
-        <BtnPrimary class="mb-12" @click="search" :loading="processing"> Buscar </BtnPrimary>
+        <InputForm text="Cliente" name="search" type="search" v-model="queryParams.client"
+          placeholder="Nombre del cliente" />
+        <InputForm text="Guía" name="search" type="search" v-model="queryParams.guide" placeholder="Número de guía" />
+        <!-- <BtnPrimary class="mb-12" @click="search" :loading="processing"> Buscar </BtnPrimary> -->
       </div>
       <div v-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
 
     <div>
-      <div class="text-lg mb-2 font-bold">Factura</div>
+      <div class="text-lg mb-2 font-bold">Datos de la factura</div>
 
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm
-          text="Cliente"
-          name="client"
-          v-model="form.client"
-          placeholder="Nombre del cliente"
-        />
-        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference" />
-        <SelectForm text="Cuenta" name="account" v-model="form.account">
-          <option value="">Seleccionar cuenta</option>
-          <option v-for="item in accounts" :value="item.id" :key="item.id">
-            {{ item.type }} - {{ item.number }}
-          </option>
-        </SelectForm>
-        <InputForm text="Total pagado" name="total" v-model.number="form.total" />
-      </div>
-
-      <div v-if="!selectedPackages.length" class="text-center text-gray-400">
+      <div v-if="!selectedPackages.length" class="text-center text-gray-400 mb-8">
         No hay paquetes seleccionados
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+      <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -78,6 +41,7 @@
           <th>Tipo</th>
           <th>Peso total</th>
           <th>Paquetes</th>
+          <th>Precio</th>
           <th>Total a pagar</th>
         </template>
         <template #body>
@@ -88,19 +52,27 @@
             <td>{{ item.type }}</td>
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
+            <td>
+              <span v-if="item.price">
+                ${{ item.price }}
+              </span>
+            </td>
             <td>${{ item.amount }}</td>
           </tr>
         </template>
       </TheTable>
 
-      <div class="text-gray-400 text-sm mb-4">
-        El calculo del total a pagar se realiza con base al peso total de los paquetes seleccionados
-        y los siguientes precios:
-        <ul class="mt-1">
-          <li v-for="item in prices" :key="item.id">
-            {{ item.type }}: ${{ item.value }} por libra
-          </li>
-        </ul>
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" />
+        <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
+          placeholder="Código o referencia" />
+        <SelectForm text="Cuenta" name="account" v-model="form.account">
+          <option value="">Seleccionar cuenta</option>
+          <option v-for="item in accounts" :value="item.id" :key="item.id">
+            {{ item.type }} - {{ item.number }}
+          </option>
+        </SelectForm>
+        <InputForm text="Total pagado" name="total" v-model.number="form.total" />
       </div>
 
       <div class="text-sm text-gray-400 mb-4">
@@ -137,6 +109,7 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
 import usePrice from '@/composables/usePrice'
 import useAccount from '@/composables/useAccount'
+import { watchDebounced } from '@vueuse/core'
 
 const selectedPackages = ref<IPackage[]>([])
 
@@ -240,6 +213,7 @@ function updateSummary() {
       type: type as string,
       weight: roundedWeight,
       count: currentTypePackages.length,
+      price: priceType,
       amount: roundedPrice
     }
 
@@ -280,4 +254,6 @@ onMounted(() => {
   getPrices()
   getAccounts()
 })
+
+watchDebounced(queryParams.value, () => getPackages(), { debounce: 500, maxWait: 1000 })
 </script>
