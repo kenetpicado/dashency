@@ -1,6 +1,5 @@
 <template>
   <loading v-model:active="processing" color="#2563eb" loader="dots" />
-  <loading v-model:active="searching" color="#2563eb" loader="dots" />
 
   <header class="flex items-center justify-between mb-4 h-14">
     <span class="font-bold text-2xl">Nueva</span>
@@ -10,32 +9,19 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm
-          text="Cliente"
-          name="search"
-          type="search"
-          v-model="queryParams.client"
-          placeholder="Nombre del cliente"
-        />
-        <InputForm
-          text="Guía"
-          name="search"
-          type="search"
-          v-model="queryParams.guide"
-          placeholder="Número de guía"
-        />
+        <InputForm text="Cliente" name="search" type="search" v-model="queryParams.client"
+          placeholder="Nombre del cliente" />
+        <InputForm text="Guía" name="search" type="search" v-model="queryParams.guide" placeholder="Número de guía" />
       </div>
-      <div v-if="!filteredPackages.length" class="text-center text-gray-400">
+      <div v-if="searching" class="w-full flex justify-center mb-4">
+        <LoadingAnimation class="text-edo-400" />
+      </div>
+      <div v-else-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
+        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
+          @selectedItem="addPackage" />
       </div>
     </div>
 
@@ -47,14 +33,8 @@
       </div>
 
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
+          :icon="IconTrash" @selectedItem="removePackage(index)" />
       </div>
 
       <TheTable class="mb-4">
@@ -83,19 +63,8 @@
 
       <form @submit.prevent="onSubmit()">
         <div class="grid grid-cols-2 gap-4 mb-4">
-          <InputForm
-            text="Cliente"
-            name="client"
-            v-model="form.client"
-            placeholder="Nombre del cliente"
-            required
-          />
-          <InputForm
-            text="Notas (Opcional)"
-            name="notes"
-            v-model="form.notes"
-            placeholder="Notas"
-          />
+          <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" required />
+          <InputForm text="Notas (Opcional)" name="notes" v-model="form.notes" placeholder="Notas" />
 
           <SelectForm text="Cuenta" name="account" v-model="form.account" required>
             <option value="">Seleccionar cuenta</option>
@@ -103,43 +72,17 @@
               {{ item.type }} - {{ item.number }}
             </option>
           </SelectForm>
-          <InputForm
-            text="Referencia"
-            name="reference"
-            type="number"
-            v-model="form.reference"
-            placeholder="Código o referencia"
-            required
-          />
+          <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
+            placeholder="Código o referencia" required />
 
-          <InputForm
-            text="Costo delivery (Opcional)"
-            name="delivery"
-            v-model.number="form.delivery"
-            placeholder="Costo del delivery"
-            type="number"
-          />
-          <InputForm
-            text="Dirección de entrega"
-            name="address"
-            v-model="form.address"
-            placeholder="Direccion de entrega"
-          />
+          <InputForm text="Costo delivery (Opcional)" name="delivery" v-model.number="form.delivery"
+            placeholder="Costo del delivery" type="number" />
+          <InputForm text="Dirección de entrega (Opcional)" name="address" v-model="form.address"
+            placeholder="Direccion de entrega" />
 
-          <InputForm
-            text="Importe extra (Opcional)"
-            name="fee"
-            v-model.number="form.fee"
-            placeholder="Importe extra"
-            type="number"
-          />
-          <InputForm
-            text="Total pagado"
-            name="total"
-            v-model.number="form.total"
-            type="number"
-            required
-          />
+          <InputForm text="Importe extra (Opcional)" name="fee" v-model.number="form.fee" placeholder="Importe extra"
+            type="number" />
+          <InputForm text="Total pagado" name="total" v-model.number="form.total" type="number" required />
         </div>
 
         <div class="text-sm text-gray-400 mb-4">
@@ -178,6 +121,7 @@ import useBilling from '@/composables/useBilling'
 import usePrice from '@/composables/usePrice'
 import useAccount from '@/composables/useAccount'
 import { watchDebounced } from '@vueuse/core'
+import LoadingAnimation from '@/components/Buttons/LoadingAnimation.vue'
 
 const selectedPackages = ref<IPackage[]>([])
 
@@ -312,13 +256,18 @@ function updateSummary() {
 }
 
 onMounted(() => {
+  searching.value = true
   packages.value.data = []
+  queryParams.value.status = 'REGISTRADO'
   accountParams.value.status = 'ACTIVO'
   getPrices()
   getAccounts()
 })
 
-watchDebounced(queryParams.value, () => getPackages(), { debounce: 500, maxWait: 1000 })
+watchDebounced(queryParams.value, () => {
+  queryParams.value.status = 'REGISTRADO'
+  getPackages()
+}, { debounce: 500, maxWait: 1000 })
 
 watch(
   () => [form.value.delivery, form.value.fee],

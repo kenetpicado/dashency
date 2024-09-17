@@ -20,6 +20,8 @@ export default function usePackage() {
   })
 
   function getPackages() {
+    processing.value = true
+
     const params = cleanQueryParams(queryParams.value)
 
     api
@@ -29,6 +31,9 @@ export default function usePackage() {
       })
       .catch((error) => {
         console.log(error)
+      })
+      .finally(() => {
+        processing.value = false
       })
   }
 
