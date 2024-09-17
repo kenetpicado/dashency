@@ -60,8 +60,8 @@ export default function useBilling() {
       })
   }
 
-  function getBill(id: string) {
-    api
+  async function getBill(id: string) {
+    await api
       .get('/billing/' + id)
       .then((response) => {
         setBill(response.data as IBilling)
