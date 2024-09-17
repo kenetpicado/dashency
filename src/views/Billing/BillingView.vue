@@ -10,23 +10,12 @@
     <SelectForm text="Banco" name="bank" v-model="queryParams.account">
       <option value="">Todos</option>
       <option v-for="item in accounts" :value="item.id" :key="item.id">
-        {{ item.type }}
+        {{ item.type }} - {{ item.number }}
       </option>
     </SelectForm>
-    <InputForm
-      text="Código o referencia"
-      name="reference"
-      v-model="queryParams.reference"
-      type="search"
-      placeholder="Buscar código o referencia"
-    />
-    <InputForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      type="search"
-      placeholder="Buscar cliente"
-    />
+    <InputForm text="Código o referencia" name="reference" v-model="queryParams.reference" type="search"
+      placeholder="Buscar código o referencia" />
+    <InputForm text="Cliente" name="client" v-model="queryParams.client" type="search" placeholder="Buscar cliente" />
   </div>
 
   <TheTable>
