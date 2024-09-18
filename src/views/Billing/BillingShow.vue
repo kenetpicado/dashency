@@ -1,7 +1,7 @@
 <template>
   <header class="flex items-center justify-between mb-8 h-14">
     <span class="font-bold text-2xl">Detalles de la factura</span>
-    <BtnPrimary v-print="printObj">Imprimir</BtnPrimary>
+    <BtnPrimary v-print="printObj" id="btnPrint">Imprimir</BtnPrimary>
   </header>
 
   <div class="w-full flex justify-center">
@@ -16,7 +16,7 @@
           </div>
           <img class="w-[2cm] ml-auto" src="/logo-blue.png" alt="">
         </div>
-
+        <!-- <pre>{{ bill }}</pre> -->
         <div class="text-end flex flex-col gap-1 mb-6">
           <div class="text-gray-400 text-sm">+50581898796 / +15043340891</div>
           <div class="text-gray-400 text-sm">info@enviosdeoccidente.com</div>
@@ -60,7 +60,7 @@
           <tbody>
             <tr v-for="item in bill?.packages" :key="item.id">
               <td colspan="2">
-                {{ item.guide }} - {{ item.description }} ({{ item.pieces }})
+                {{ item.guide }} - ({{ item.pieces }}) {{ item.description }}
               </td>
               <td>
                 {{ item.grossWeight }} lbs
@@ -79,26 +79,26 @@
                 Tipo envío
               </th>
               <th class="bg-gray-50 font-semibold text-sm">
+                Precio lb
+              </th>
+              <th class="bg-gray-50 font-semibold text-sm">
                 Peso
               </th>
               <th class="bg-gray-50 font-semibold text-sm">
-                Precio
-              </th>
-              <th class="bg-gray-50 font-semibold text-sm">
-                Monto
+                Total
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in bill?.summary" :key="index" class="hover:bg-gray-50">
               <td>
-                {{ item.type }} ({{ item.count }})
-              </td>
-              <td>
-                {{ item.weight }} lbs
+                ({{ item.count }}) {{ item.type }}
               </td>
               <td>
                 <span v-if="item.price"> ${{ item.price }} </span>
+              </td>
+              <td>
+                {{ item.weight }} lbs
               </td>
               <td>${{ item.amount }}</td>
             </tr>
@@ -113,7 +113,7 @@
           <thead>
             <tr>
               <th class="bg-gray-50 font-semibold text-sm">
-                Costo envío
+                Envío terrestre
               </th>
               <th class="bg-gray-50 font-semibold text-sm">
                 Importe extra
@@ -154,6 +154,10 @@ const route = useRoute()
 onMounted(async () => {
   await getBill(route.params.id as string)
   document.title = 'Factura-' + bill?.value?.id
+
+  if (route.query.action === 'print') {
+    document.getElementById('btnPrint')?.click()
+  }
 })
 
 const printObj = {

@@ -39,10 +39,10 @@
 
       <TheTable class="mb-4">
         <template #header>
-          <th>Tipo</th>
+          <th>Envío</th>
           <th>Peso total</th>
           <th>Paquetes</th>
-          <th>Precio</th>
+          <th>Precio lb</th>
           <th>Total a pagar</th>
         </template>
         <template #body>
@@ -56,7 +56,11 @@
             <td>
               <span v-if="item.price"> ${{ item.price }} </span>
             </td>
-            <td>${{ item.amount }}</td>
+            <td class="font-bold">
+              <span class="bg-edo-50 px-2 py-1 rounded-lg">
+                ${{ item.amount }}
+              </span>
+            </td>
           </tr>
         </template>
       </TheTable>
@@ -75,14 +79,13 @@
           <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
             placeholder="Código o referencia" required />
 
-          <InputForm text="Costo delivery (Opcional)" name="delivery" v-model.number="form.delivery"
+          <InputForm text="Costo envío terrestre (Opcional)" name="delivery" v-model.number="form.delivery"
             placeholder="Costo del delivery" type="number" />
           <InputForm text="Dirección de entrega (Opcional)" name="address" v-model="form.address"
             placeholder="Direccion de entrega" />
 
           <InputForm text="Importe extra (Opcional)" name="fee" v-model.number="form.fee" placeholder="Importe extra"
             type="number" />
-          <InputForm text="Total pagado" name="total" v-model.number="form.total" type="number" required />
         </div>
 
         <div class="text-sm text-gray-400 mb-4">

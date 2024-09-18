@@ -76,9 +76,13 @@ export default function useBilling() {
 
     api
       .post('/billing', data)
-      .then(() => {
+      .then((response) => {
         toast.success('Factura creada correctamente')
-        router.push({ name: 'billing' })
+        router.push({
+          name: 'billing.show',
+          params: { id: response.data.id },
+          query: { action: 'print' }
+        })
       })
       .finally(() => {
         processing.value = false
