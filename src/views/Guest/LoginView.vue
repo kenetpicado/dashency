@@ -8,8 +8,8 @@ import type { ILoginForm } from '@/types'
 const { login, processing } = useAuth()
 
 const form = ref<ILoginForm>({
-  email: 'ke@gmail.com',
-  password: 'password1A'
+  email: '',
+  password: ''
 })
 </script>
 
@@ -19,15 +19,7 @@ const form = ref<ILoginForm>({
   </div>
 
   <form @submit.prevent="login(form)">
-    <InputForm
-      text="Correo"
-      name="email"
-      v-model="form.email"
-      autofocus
-      required
-      type="email"
-      autocomplete="on"
-    />
+    <InputForm text="Correo" name="email" v-model="form.email" autofocus required type="email" autocomplete="on" />
     <InputForm text="Contraseña" name="password" v-model="form.password" required type="password" />
 
     <div class="mt-10">
