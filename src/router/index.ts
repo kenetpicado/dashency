@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import UsersView from '@/views/UsersView.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
@@ -146,7 +146,7 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'billing.show') {
     document.title = 'Factura-' + to.params.id
   } else {
-    document.title = to.meta.title + ' - ' + import.meta.env.VITE_APP_NAME
+    document.title = to.meta.title + ' - ' + (import.meta.env.VITE_APP_NAME || 'Dashency')
   }
 
   if (to.meta.requiresAuth && !token) {
