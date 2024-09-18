@@ -6,7 +6,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useStorage } from '@vueuse/core'
 
 const router = createRouter({
-  // history: createWebHistory(import.meta.env.BASE_URL),
   history: createWebHashHistory(),
   routes: [
     {
@@ -17,82 +16,98 @@ const router = createRouter({
         {
           path: '',
           component: () => import('../views/HomeView.vue'),
-          name: 'home'
+          name: 'home',
+          meta: { title: 'Inicio' }
         },
         {
           path: 'usuarios',
           component: UsersView,
-          name: 'users'
+          name: 'users',
+          meta: { title: 'Usuarios' }
         },
         {
           path: 'lotes',
           component: () => import('../views/Batch/BatchView.vue'),
-          name: 'batches'
+          name: 'batches',
+          meta: { title: 'Lotes' }
         },
         {
           path: 'lotes/crear',
           component: () => import('../views/Batch/BatchCreate.vue'),
-          name: 'batches.create'
+          name: 'batches.create',
+          meta: { title: 'Crear Lote' }
         },
         {
           path: 'lotes/:id',
           component: () => import('../views/Batch/BatchShow.vue'),
-          name: 'batches.show'
+          name: 'batches.show',
+          meta: { title: 'detalles Lote' }
         },
         {
           path: 'paquetes',
           component: () => import('../views/Package/PackageView.vue'),
-          name: 'packages'
+          name: 'packages',
+          meta: { title: 'Paquetes' }
         },
         {
           path: 'facturacion',
           component: () => import('../views/Billing/BillingView.vue'),
-          name: 'billing'
+          name: 'billing',
+          meta: { title: 'Facturación' }
         },
         {
           path: 'facturacion/crear',
           component: () => import('../views/Billing/BillingCreate.vue'),
-          name: 'billing.create'
+          name: 'billing.create',
+          meta: { title: 'Crear Factura' }
         },
         {
           path: 'facturacion/:id',
           component: () => import('../views/Billing/BillingShow.vue'),
-          name: 'billing.show'
+          name: 'billing.show',
+          meta: { title: 'Factura' }
         },
         {
           path: 'gastos',
           component: () => import('../views/Expense/ExpenseView.vue'),
-          name: 'expenses'
+          name: 'expenses',
+          meta: { title: 'Gastos' }
         },
         {
           path: 'arqueos',
           component: () => import('../views/Arching/ArchingView.vue'),
-          name: 'archings'
+          name: 'archings',
+          meta: { title: 'Arqueos' }
         },
         {
           path: 'arqueos/crear',
           component: () => import('../views/Arching/ArchingCreate.vue'),
-          name: 'archings.create'
+          name: 'archings.create',
+          meta: { title: 'Crear Arqueo' }
         },
         {
           path: 'arqueos/:id',
           component: () => import('../views/Arching/ArchingShow.vue'),
-          name: 'archings.show'
+          name: 'archings.show',
+          meta: { title: 'Arqueo' }
         },
         {
           path: 'precios',
           component: () => import('../views/Price/PriceView.vue'),
-          name: 'prices'
+          name: 'prices',
+          meta: { title: 'Precios' }
         },
         {
           path: 'cuentas',
           component: () => import('../views/Account/AccountView.vue'),
-          name: 'accounts'
+          name: 'accounts',
+          meta: { title: 'Cuentas' }
         },
         {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
-          name: 'profile'
+          name: 'profile',
+          meta: { title: 'Perfil' }
         }
       ]
     },
@@ -104,12 +119,14 @@ const router = createRouter({
         {
           path: 'login',
           component: () => import('../views/Guest/LoginView.vue'),
-          name: 'login'
+          name: 'login',
+          meta: { title: 'Iniciar Sesión' }
         },
         {
           path: 'registrar',
           component: () => import('../views/Guest/RegisterView.vue'),
-          name: 'register'
+          name: 'register',
+          meta: { title: 'Registrarse' }
         }
       ]
     },
@@ -125,6 +142,12 @@ router.beforeEach((to, from, next) => {
   const token = useAuthStore().getToken()
   const auth = useAuthStore().getAuth()
   const selected = useStorage('selected', 'home')
+
+  if (to.name === 'billing.show') {
+    document.title = 'Factura-' + to.params.id
+  } else {
+    document.title = to.meta.title + ' - ' + import.meta.env.VITE_APP_NAME
+  }
 
   if (to.meta.requiresAuth && !token) {
     //Si no hay token y la ruta requiere autenticación
