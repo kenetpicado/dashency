@@ -6,17 +6,9 @@
       </div>
 
       <ul class="space-y-1">
-        <li
-          v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)"
-          :key="index"
-        >
+        <li v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)" :key="index">
           <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink
-            v-else
-            :item="item"
-            :active="selected == item.to.name"
-            @click="selected = item.to.name"
-          />
+          <ItemSidebarLink v-else :item="item" :active="selected == item.to.name" @click="selected = item.to.name" />
         </li>
         <li>
           <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
@@ -81,21 +73,27 @@ const items = [
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
+    title: 'Finanzas'
+  },
+  {
     title: 'Facturación',
     to: { name: 'billing' },
     icon: IconDatabaseDollar,
     show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
   },
   {
-    title: 'Arqueos',
-    to: { name: 'archings' },
-    icon: IconLogs,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
-  },
-  {
     title: 'Gastos',
     to: { name: 'expenses' },
     icon: IconTransferOut,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+  },
+  {
+    title: 'Reportes'
+  },
+  {
+    title: 'Arqueos',
+    to: { name: 'archings' },
+    icon: IconLogs,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {

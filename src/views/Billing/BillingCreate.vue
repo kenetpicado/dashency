@@ -9,9 +9,20 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm text="Cliente" name="search" type="search" v-model="queryParams.client"
-          placeholder="Nombre del cliente" />
-        <InputForm text="Guía" name="search" type="search" v-model="queryParams.guide" placeholder="Número de guía" />
+        <InputForm
+          text="Cliente"
+          name="search"
+          type="search"
+          v-model="queryParams.client"
+          placeholder="Nombre del cliente"
+        />
+        <InputForm
+          text="Guía"
+          name="search"
+          type="search"
+          v-model="queryParams.guide"
+          placeholder="Número de guía"
+        />
       </div>
       <div v-if="searching" class="w-full flex justify-center mb-4">
         <LoadingAnimation class="text-edo-400" />
@@ -20,8 +31,13 @@
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
-          @selectedItem="addPackage" />
+        <PackageCard
+          v-for="(item, index) in filteredPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          @selectedItem="addPackage"
+        />
       </div>
     </div>
 
@@ -33,16 +49,22 @@
       </div>
 
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
-          :icon="IconTrash" @selectedItem="removePackage(index)" />
+        <PackageCard
+          v-for="(item, index) in selectedPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          :icon="IconTrash"
+          @selectedItem="removePackage(index)"
+        />
       </div>
 
       <TheTable class="mb-4">
         <template #header>
-          <th>Tipo</th>
+          <th>Envío</th>
           <th>Peso total</th>
           <th>Paquetes</th>
-          <th>Precio</th>
+          <th>Precio lb</th>
           <th>Total a pagar</th>
         </template>
         <template #body>
@@ -56,15 +78,46 @@
             <td>
               <span v-if="item.price"> ${{ item.price }} </span>
             </td>
-            <td>${{ item.amount }}</td>
+            <td class="font-bold">
+              <span class="bg-edo-50 px-2 py-1 rounded-lg"> ${{ item.amount }} </span>
+            </td>
           </tr>
         </template>
       </TheTable>
 
+      <div class="mb-4">
+        <h4 class="text-xl mb-2 font-bold text-gray-400">Precios por libra</h4>
+        <hr class="mb-4" />
+        <div class="grid grid-cols-2 gap-4">
+          <InputForm
+            v-for="item in localPrices"
+            :key="item.id"
+            :text="item.type"
+            :name="item.type"
+            v-model.number="item.value"
+            placeholder="Precio"
+            type="number"
+          />
+        </div>
+      </div>
+
       <form @submit.prevent="onSubmit()">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" required />
-          <InputForm text="Notas (Opcional)" name="notes" v-model="form.notes" placeholder="Notas" />
+        <h4 class="text-xl mb-2 font-bold text-gray-400">Información del pedido</h4>
+        <hr class="mb-4" />
+        <div class="grid grid-cols-2 gap-4">
+          <InputForm
+            text="Cliente"
+            name="client"
+            v-model="form.client"
+            placeholder="Nombre del cliente"
+            required
+          />
+          <InputForm
+            text="Notas (Opcional)"
+            name="notes"
+            v-model="form.notes"
+            placeholder="Notas"
+          />
 
           <SelectForm text="Cuenta" name="account" v-model="form.account" required>
             <option value="">Seleccionar cuenta</option>
@@ -72,17 +125,36 @@
               {{ item.type }} - {{ item.number }}
             </option>
           </SelectForm>
-          <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
-            placeholder="Código o referencia" required />
+          <InputForm
+            text="Referencia"
+            name="reference"
+            type="number"
+            v-model="form.reference"
+            placeholder="Código o referencia"
+            required
+          />
 
-          <InputForm text="Costo delivery (Opcional)" name="delivery" v-model.number="form.delivery"
-            placeholder="Costo del delivery" type="number" />
-          <InputForm text="Dirección de entrega (Opcional)" name="address" v-model="form.address"
-            placeholder="Direccion de entrega" />
+          <InputForm
+            text="Costo envío terrestre (Opcional)"
+            name="delivery"
+            v-model.number="form.delivery"
+            placeholder="Costo del delivery"
+            type="number"
+          />
+          <InputForm
+            text="Dirección de entrega (Opcional)"
+            name="address"
+            v-model="form.address"
+            placeholder="Direccion de entrega"
+          />
 
-          <InputForm text="Importe extra (Opcional)" name="fee" v-model.number="form.fee" placeholder="Importe extra"
-            type="number" />
-          <InputForm text="Total pagado" name="total" v-model.number="form.total" type="number" required />
+          <InputForm
+            text="Importe extra (Opcional)"
+            name="fee"
+            v-model.number="form.fee"
+            placeholder="Importe extra"
+            type="number"
+          />
         </div>
 
         <div class="text-sm text-gray-400 mb-4">
@@ -110,7 +182,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
-import type { IBilling, IPackage, ISummary } from '@/types'
+import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
@@ -132,6 +204,7 @@ const { accounts, getAccounts, queryParams: accountParams } = useAccount()
 
 const summary = ref<ISummary[]>([])
 const errorMessage = ref<string>('')
+const localPrices = ref<IPrice[]>([])
 
 const form = ref<IBilling>({
   client: '',
@@ -209,7 +282,7 @@ function updateSummary() {
 
   uniqueTypes.forEach((type) => {
     //Obtener el precio del tipo de envio actual
-    const priceType = prices.value.find((item) => item.type === type)?.value || 0
+    const priceType = localPrices.value.find((item) => item.type === type)?.value || 0
 
     if (!priceType) {
       errorMessage.value = `No se encontró un precio para el tipo de envío ${type}, por favor registre uno`
@@ -255,24 +328,38 @@ function updateSummary() {
   summary.value = temporalSummary.value
 }
 
-onMounted(() => {
+onMounted(async () => {
   searching.value = true
   packages.value.data = []
   queryParams.value.status = 'REGISTRADO'
   accountParams.value.status = 'ACTIVO'
-  getPrices()
+  await getPrices()
   getAccounts()
+
+  localPrices.value = prices.value
 })
 
-watchDebounced(queryParams.value, () => {
-  queryParams.value.status = 'REGISTRADO'
-  getPackages()
-}, { debounce: 500, maxWait: 1000 })
+watchDebounced(
+  queryParams.value,
+  () => {
+    queryParams.value.status = 'REGISTRADO'
+    getPackages()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 
 watch(
   () => [form.value.delivery, form.value.fee],
   () => {
     form.value.total = form.value.subTotal + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
   }
+)
+
+watch(
+  () => localPrices.value,
+  () => {
+    updateSummary()
+  },
+  { deep: true }
 )
 </script>
