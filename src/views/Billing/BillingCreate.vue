@@ -65,7 +65,22 @@
         </template>
       </TheTable>
 
+      <div class="mb-4">
+        <h4 class="text-xl mb-2 font-bold text-gray-400">
+          Precios por libra
+        </h4>
+        <hr class="mb-4">
+        <div class="grid grid-cols-2 gap-4">
+          <InputForm v-for="item in localPrices" :key="item.id" :text="item.type" :name="item.type" v-model="item.value"
+            placeholder="Precio" />
+        </div>
+      </div>
+
       <form @submit.prevent="onSubmit()">
+        <h4 class="text-xl mb-2 font-bold text-gray-400">
+          Información del pedido
+        </h4>
+        <hr class="mb-4">
         <div class="grid grid-cols-2 gap-4 mb-4">
           <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" required />
           <InputForm text="Notas (Opcional)" name="notes" v-model="form.notes" placeholder="Notas" />
@@ -113,7 +128,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
-import type { IBilling, IPackage, ISummary } from '@/types'
+import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
@@ -135,6 +150,7 @@ const { accounts, getAccounts, queryParams: accountParams } = useAccount()
 
 const summary = ref<ISummary[]>([])
 const errorMessage = ref<string>('')
+const localPrices = ref<IPrice[]>([])
 
 const form = ref<IBilling>({
   client: '',
@@ -212,7 +228,7 @@ function updateSummary() {
 
   uniqueTypes.forEach((type) => {
     //Obtener el precio del tipo de envio actual
-    const priceType = prices.value.find((item) => item.type === type)?.value || 0
+    const priceType = localPrices.value.find((item) => item.type === type)?.value || 0
 
     if (!priceType) {
       errorMessage.value = `No se encontró un precio para el tipo de envío ${type}, por favor registre uno`
@@ -258,13 +274,15 @@ function updateSummary() {
   summary.value = temporalSummary.value
 }
 
-onMounted(() => {
+onMounted(async () => {
   searching.value = true
   packages.value.data = []
   queryParams.value.status = 'REGISTRADO'
   accountParams.value.status = 'ACTIVO'
-  getPrices()
+  await getPrices()
   getAccounts()
+
+  localPrices.value = prices.value
 })
 
 watchDebounced(queryParams.value, () => {
@@ -277,5 +295,13 @@ watch(
   () => {
     form.value.total = form.value.subTotal + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
   }
+)
+
+watch(
+  () => localPrices.value,
+  () => {
+    updateSummary()
+  },
+  { deep: true }
 )
 </script>

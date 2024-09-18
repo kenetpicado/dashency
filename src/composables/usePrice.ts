@@ -10,8 +10,8 @@ export default function usePrice() {
   const { prices } = storeToRefs(usePriceStore())
   const processing = ref<boolean>(false)
 
-  function getPrices() {
-    api
+  async function getPrices() {
+    await api
       .get('/prices')
       .then((response) => {
         setPrices(response.data as IPrice[])
