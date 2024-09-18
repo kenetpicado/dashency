@@ -9,9 +9,20 @@
     <div>
       <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
-        <InputForm text="Cliente" name="search" type="search" v-model="queryParams.client"
-          placeholder="Nombre del cliente" />
-        <InputForm text="Guía" name="search" type="search" v-model="queryParams.guide" placeholder="Número de guía" />
+        <InputForm
+          text="Cliente"
+          name="search"
+          type="search"
+          v-model="queryParams.client"
+          placeholder="Nombre del cliente"
+        />
+        <InputForm
+          text="Guía"
+          name="search"
+          type="search"
+          v-model="queryParams.guide"
+          placeholder="Número de guía"
+        />
       </div>
       <div v-if="searching" class="w-full flex justify-center mb-4">
         <LoadingAnimation class="text-edo-400" />
@@ -20,8 +31,13 @@
         No hay datos que mostrar
       </div>
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard v-for="(item, index) in filteredPackages" :item="item" :key="index" :showIcon="true"
-          @selectedItem="addPackage" />
+        <PackageCard
+          v-for="(item, index) in filteredPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          @selectedItem="addPackage"
+        />
       </div>
     </div>
 
@@ -33,8 +49,14 @@
       </div>
 
       <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard v-for="(item, index) in selectedPackages" :item="item" :key="index" :showIcon="true"
-          :icon="IconTrash" @selectedItem="removePackage(index)" />
+        <PackageCard
+          v-for="(item, index) in selectedPackages"
+          :item="item"
+          :key="index"
+          :showIcon="true"
+          :icon="IconTrash"
+          @selectedItem="removePackage(index)"
+        />
       </div>
 
       <TheTable class="mb-4">
@@ -57,33 +79,45 @@
               <span v-if="item.price"> ${{ item.price }} </span>
             </td>
             <td class="font-bold">
-              <span class="bg-edo-50 px-2 py-1 rounded-lg">
-                ${{ item.amount }}
-              </span>
+              <span class="bg-edo-50 px-2 py-1 rounded-lg"> ${{ item.amount }} </span>
             </td>
           </tr>
         </template>
       </TheTable>
 
       <div class="mb-4">
-        <h4 class="text-xl mb-2 font-bold text-gray-400">
-          Precios por libra
-        </h4>
-        <hr class="mb-4">
+        <h4 class="text-xl mb-2 font-bold text-gray-400">Precios por libra</h4>
+        <hr class="mb-4" />
         <div class="grid grid-cols-2 gap-4">
-          <InputForm v-for="item in localPrices" :key="item.id" :text="item.type" :name="item.type" v-model="item.value"
-            placeholder="Precio" />
+          <InputForm
+            v-for="item in localPrices"
+            :key="item.id"
+            :text="item.type"
+            :name="item.type"
+            v-model.number="item.value"
+            placeholder="Precio"
+            type="number"
+          />
         </div>
       </div>
 
       <form @submit.prevent="onSubmit()">
-        <h4 class="text-xl mb-2 font-bold text-gray-400">
-          Información del pedido
-        </h4>
-        <hr class="mb-4">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <InputForm text="Cliente" name="client" v-model="form.client" placeholder="Nombre del cliente" required />
-          <InputForm text="Notas (Opcional)" name="notes" v-model="form.notes" placeholder="Notas" />
+        <h4 class="text-xl mb-2 font-bold text-gray-400">Información del pedido</h4>
+        <hr class="mb-4" />
+        <div class="grid grid-cols-2 gap-4">
+          <InputForm
+            text="Cliente"
+            name="client"
+            v-model="form.client"
+            placeholder="Nombre del cliente"
+            required
+          />
+          <InputForm
+            text="Notas (Opcional)"
+            name="notes"
+            v-model="form.notes"
+            placeholder="Notas"
+          />
 
           <SelectForm text="Cuenta" name="account" v-model="form.account" required>
             <option value="">Seleccionar cuenta</option>
@@ -91,16 +125,36 @@
               {{ item.type }} - {{ item.number }}
             </option>
           </SelectForm>
-          <InputForm text="Referencia" name="reference" type="number" v-model="form.reference"
-            placeholder="Código o referencia" required />
+          <InputForm
+            text="Referencia"
+            name="reference"
+            type="number"
+            v-model="form.reference"
+            placeholder="Código o referencia"
+            required
+          />
 
-          <InputForm text="Costo envío terrestre (Opcional)" name="delivery" v-model.number="form.delivery"
-            placeholder="Costo del delivery" type="number" />
-          <InputForm text="Dirección de entrega (Opcional)" name="address" v-model="form.address"
-            placeholder="Direccion de entrega" />
+          <InputForm
+            text="Costo envío terrestre (Opcional)"
+            name="delivery"
+            v-model.number="form.delivery"
+            placeholder="Costo del delivery"
+            type="number"
+          />
+          <InputForm
+            text="Dirección de entrega (Opcional)"
+            name="address"
+            v-model="form.address"
+            placeholder="Direccion de entrega"
+          />
 
-          <InputForm text="Importe extra (Opcional)" name="fee" v-model.number="form.fee" placeholder="Importe extra"
-            type="number" />
+          <InputForm
+            text="Importe extra (Opcional)"
+            name="fee"
+            v-model.number="form.fee"
+            placeholder="Importe extra"
+            type="number"
+          />
         </div>
 
         <div class="text-sm text-gray-400 mb-4">
@@ -285,10 +339,14 @@ onMounted(async () => {
   localPrices.value = prices.value
 })
 
-watchDebounced(queryParams.value, () => {
-  queryParams.value.status = 'REGISTRADO'
-  getPackages()
-}, { debounce: 500, maxWait: 1000 })
+watchDebounced(
+  queryParams.value,
+  () => {
+    queryParams.value.status = 'REGISTRADO'
+    getPackages()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 
 watch(
   () => [form.value.delivery, form.value.fee],
