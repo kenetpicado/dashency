@@ -62,9 +62,8 @@
       <TheTable class="mb-4">
         <template #header>
           <th>Envío</th>
-          <th>Peso total</th>
+          <th>Peso</th>
           <th>Paquetes</th>
-          <th>Precio lb</th>
           <th>Total a pagar</th>
         </template>
         <template #body>
@@ -75,9 +74,6 @@
             <td>{{ item.type }}</td>
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
-            <td>
-              <span v-if="item.price"> ${{ item.price }} </span>
-            </td>
             <td class="font-bold">
               <span class="bg-edo-50 px-2 py-1 rounded-lg"> ${{ item.amount }} </span>
             </td>
