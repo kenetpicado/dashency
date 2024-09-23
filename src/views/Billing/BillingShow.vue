@@ -20,8 +20,8 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="flex flex-col gap-1 mb-4">
             <div>Cliente: {{ bill?.client }}</div>
-            <div>Dirección de envío: {{ bill?.address ? bill?.address : 'No especificado' }}</div>
-            <div class="text-gray-400">Notas: {{ bill?.notes ? bill?.notes : 'Ninguna' }}</div>
+            <div v-if="bill?.address">Dirección de envío: {{ bill?.address }}</div>
+            <div class="text-gray-400" v-if="bill?.notes">Notas: {{ bill?.notes }}</div>
           </div>
           <div class="text-end flex flex-col gap-1">
             <div>Cajero: {{ bill?.user?.name }}</div>
