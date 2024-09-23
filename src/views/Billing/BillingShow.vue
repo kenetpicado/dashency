@@ -5,20 +5,16 @@
   </header>
 
   <div class="w-full flex justify-center">
-    <div class="bg-white p-[1cm]">
-      <div class="w-[210mm] h-[290mm] bg-white" id="printMe">
-        <div class="flex justify-between mb-0">
+    <div class="bg-white p-[0.8cm]">
+      <div class="w-[210mm] min-h-[200mm] bg-white" id="printMe">
+        <div class="flex justify-between mb-6">
           <div class="flex flex-col gap-1">
-            <div class="font-bold text-2xl">Factura</div>
-            <div class="text-gray-400 text-sm">#{{ bill?.id }}</div>
+            <div class="font-bold text-2xl">Factura #{{ bill?.invoice }}</div>
+            <div class="text-gray-400 text-sm">info@enviosdeoccidente.com</div>
+            <div class="text-gray-400 text-sm">+50581898796 / +15043340891</div>
             <div class="text-gray-400 text-sm">{{ getFormattedDate(bill?.createdAt) }}</div>
           </div>
-          <img class="w-[2cm] ml-auto" src="/logo-blue.png" alt="" />
-        </div>
-        <!-- <pre>{{ bill }}</pre> -->
-        <div class="text-end flex flex-col gap-1 mb-6">
-          <div class="text-gray-400 text-sm">+50581898796 / +15043340891</div>
-          <div class="text-gray-400 text-sm">info@enviosdeoccidente.com</div>
+          <img class="w-[2cm] h-[2cm] ml-auto" src="/logo-blue.png" alt="" />
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -80,7 +76,7 @@
 
         <h5 class="font-bold mb-2 text-gray-300">Resumen</h5>
 
-        <table class="print-table mb-4 table-fixed text-sm">
+        <table class="print-table table-fixed text-sm">
           <thead>
             <tr>
               <th class="bg-gray-50 font-semibold text-sm">Envío terrestre</th>
@@ -125,8 +121,8 @@ onMounted(async () => {
 
 const printObj = {
   id: 'printMe',
-  popTitle: 'Factura: ' + bill?.value?.id,
-  printTitle: 'Factura: ' + bill?.value?.id
+  popTitle: 'Factura',
+  printTitle: 'Factura'
 }
 </script>
 

@@ -103,6 +103,7 @@ export interface ISummary {
 
 export interface IBilling {
   id?: string
+  invoice?: Number
   client: string
   packages?: IPackage[]
   packages_ids?: Array<string>
