@@ -71,5 +71,21 @@ export default function useAuth() {
       })
   }
 
-  return { login, logout, getProfile, processing, auth, register, updateProfile }
+  function updatePassword(data: { current_password: string; password: string }) {
+    processing.value = true
+
+    api
+      .put('/password', data)
+      .then(() => {
+        toast.success('Contraseña actualizada')
+      })
+      .catch((error: any) => {
+        toast.error(error.response?.data?.message || error?.message || 'Error')
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  return { login, logout, getProfile, processing, auth, register, updateProfile, updatePassword }
 }
