@@ -156,7 +156,7 @@
             type="number"
           />
         </div>
-
+        <pre>{{ form.total }}</pre>
         <div class="text-sm text-gray-400 mb-4">
           Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
           posteriormente.
@@ -325,6 +325,7 @@ function updateSummary() {
 
   form.value.subTotal = data.amount
   form.value.total = data.amount + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
+  form.value.total = Math.round(form.value.total * 100) / 100
   summary.value = temporalSummary.value
 }
 
