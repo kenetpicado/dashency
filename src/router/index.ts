@@ -41,7 +41,7 @@ const router = createRouter({
           path: 'lotes/:id',
           component: () => import('../views/Batch/BatchShow.vue'),
           name: 'batches.show',
-          meta: { title: 'detalles Lote' }
+          meta: { title: 'Detalles Lote' }
         },
         {
           path: 'paquetes',
