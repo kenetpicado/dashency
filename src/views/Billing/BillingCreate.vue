@@ -156,7 +156,7 @@
             type="number"
           />
         </div>
-        <pre>{{ form.total }}</pre>
+
         <div class="text-sm text-gray-400 mb-4">
           Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
           posteriormente.
