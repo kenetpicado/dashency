@@ -321,6 +321,7 @@ function updateSummary() {
 
   form.value.subTotal = data.amount
   form.value.total = data.amount + (form.value?.delivery ?? 0) + (form.value?.fee ?? 0)
+  form.value.total = Math.round(form.value.total * 100) / 100
   summary.value = temporalSummary.value
 }
 
