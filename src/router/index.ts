@@ -3,7 +3,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import UsersView from '@/views/UsersView.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import { useAuthStore } from '@/stores/auth'
-import { useStorage } from '@vueuse/core'
+import Cookies from 'js-cookie'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -139,9 +139,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = useAuthStore().getToken()
+  const token = Cookies.get('edo_token')
   const auth = useAuthStore().getAuth()
-  const selected = useStorage('selected', 'home')
 
   if (to.name === 'billing.show') {
     document.title = 'Factura-' + to.params.id
@@ -162,7 +161,6 @@ router.beforeEach((to, from, next) => {
   } else if (auth?.role === 'CAJERO') {
     //este usuario solo puede acceder a facturación: billing, billing.create, billing.show y perfil
     if (!to.name?.toString().startsWith('billing') && to.name !== 'profile') {
-      selected.value = 'billing'
       next({ name: 'billing' })
     } else {
       next()

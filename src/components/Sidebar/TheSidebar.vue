@@ -14,8 +14,10 @@
           <ItemSidebarLink
             v-else
             :item="item"
-            :active="selected == item.to.name"
-            @click="selected = item.to.name"
+            :active="
+              item.to.name === route.name ||
+              (item.activeAlso && item.activeAlso.includes(route.name as string))
+            "
           />
         </li>
         <li>
@@ -46,11 +48,11 @@ import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
 import useAuth from '@/composables/useAuth'
 import { useAuthStore } from '@/stores/auth'
-import { useStorage } from '@vueuse/core'
+import { useRoute } from 'vue-router'
 
 const { logout } = useAuth()
 const { hasRoles } = useAuthStore()
-const selected = useStorage('selected', 'home')
+const route = useRoute()
 
 const items = [
   {
@@ -72,7 +74,8 @@ const items = [
     title: 'Lotes',
     to: { name: 'batches' },
     icon: IconPackages,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeAlso: ['batches.create', 'batches.show']
   },
   {
     title: 'Paquetes',
@@ -87,7 +90,8 @@ const items = [
     title: 'Facturación',
     to: { name: 'billing' },
     icon: IconDatabaseDollar,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    activeAlso: ['billing.create', 'billing.show']
   },
   {
     title: 'Gastos',
@@ -102,7 +106,8 @@ const items = [
     title: 'Arqueos',
     to: { name: 'archings' },
     icon: IconLogs,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeAlso: ['archings.create', 'archings.show']
   },
   {
     title: 'Configuración'

@@ -8,13 +8,17 @@
       <InputForm text="Cliente" name="client" v-model="form.client" required />
       <InputForm text="Descripción" name="description" v-model="form.description" required />
       <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-      <InputForm text="Peso (lbs)" name="grossWeight" v-model="form.grossWeight" type="number" required />
+      <InputForm
+        text="Peso (lbs)"
+        name="grossWeight"
+        v-model="form.grossWeight"
+        type="number"
+        required
+      />
 
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
-        <BtnPrimary type="submit" :loading="processing">
-          Actualizar
-        </BtnPrimary>
+        <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
     </form>
   </DialogForm>
@@ -28,8 +32,14 @@
   </div>
 
   <div v-if="batch?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
-    <PackageCard v-for="(item, index) in batch?.packages" :item="item" :key="index"
-      :showIcon="item.status === 'REGISTRADO'" :icon="IconEdit" @selectedItem="editPackage" />
+    <PackageCard
+      v-for="(item, index) in batch?.packages"
+      :item="item"
+      :key="index"
+      :showIcon="item.status === 'REGISTRADO'"
+      :icon="IconEdit"
+      @selectedItem="editPackage"
+    />
   </div>
 </template>
 
@@ -63,7 +73,7 @@ const form = ref<IPackage>({
   description: '',
   pieces: 0,
   grossWeight: 0,
-  entryDate: '',
+  entryDate: ''
 })
 
 const stats = computed(
@@ -104,7 +114,7 @@ function resetValues() {
     description: '',
     pieces: 0,
     grossWeight: 0,
-    entryDate: '',
+    entryDate: ''
   }
   openModal.value = false
 }
