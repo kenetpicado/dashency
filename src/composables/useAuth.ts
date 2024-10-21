@@ -5,10 +5,11 @@ import api from '@/config/axios'
 import type { ILoginForm, IUser, IRegisterForm } from '@/types'
 import { storeToRefs } from 'pinia'
 import toast from '@/utils/toast'
+import Cookie from 'js-cookie'
 
 export default function useAuth() {
   const processing = ref(false)
-  const { setAuthData, setToken, clearData } = useAuthStore()
+  const { setAuthData, clearData } = useAuthStore()
   const { auth } = storeToRefs(useAuthStore())
 
   async function getProfile() {
@@ -23,7 +24,11 @@ export default function useAuth() {
     api
       .post('/login', data)
       .then((response) => {
-        setToken(response.data.token)
+        Cookie.set('edo_token', response.data.token, {
+          expires: 1,
+          secure: true,
+          sameSite: 'Lax'
+        })
         setAuthData(response.data.user)
         router.push({ name: 'home' })
       })
@@ -37,6 +42,7 @@ export default function useAuth() {
 
   function logout() {
     clearData()
+    Cookie.remove('edo_token')
     router.push({ name: 'login' })
   }
 

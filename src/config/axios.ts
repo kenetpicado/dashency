@@ -3,6 +3,7 @@ import { config } from '@/config/config'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import toast from '@/utils/toast'
+import Cookies from 'js-cookie'
 
 const api = axios.create({
   baseURL: config.base_url,
@@ -11,7 +12,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   function (conf) {
-    const token = useAuthStore().getToken()
+    const token = Cookies.get('edo_token')
     if (token) conf.headers.Authorization = `Bearer ${token}`
 
     return conf
@@ -26,8 +27,9 @@ api.interceptors.response.use(
     return response
   },
   function (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       useAuthStore().clearData()
+      Cookies.remove('edo_token')
       toast.error('Sesión expirada')
       router.push({ name: 'login' })
     }

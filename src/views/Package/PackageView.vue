@@ -8,20 +8,35 @@
       <InputForm text="Cliente" name="client" v-model="form.client" required />
       <InputForm text="Descripción" name="description" v-model="form.description" required />
       <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-      <InputForm text="Peso (lbs)" name="grossWeight" v-model="form.grossWeight" type="number" required />
+      <InputForm
+        text="Peso (lbs)"
+        name="grossWeight"
+        v-model="form.grossWeight"
+        type="number"
+        required
+      />
 
       <div class="flex justify-end gap-4">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
-        <BtnPrimary type="submit" :loading="processing">
-          Actualizar
-        </BtnPrimary>
+        <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
     </form>
   </DialogForm>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Guía" name="guide" v-model="queryParams.guide" placeholder="Número de guia" type="number" />
-    <InputForm text="Cliente" name="client" v-model="queryParams.client" placeholder="Nombre del cliente" />
+    <InputForm
+      text="Guía"
+      name="guide"
+      v-model="queryParams.guide"
+      placeholder="Número de guia"
+      type="number"
+    />
+    <InputForm
+      text="Cliente"
+      name="client"
+      v-model="queryParams.client"
+      placeholder="Nombre del cliente"
+    />
     <SelectForm text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
@@ -38,8 +53,14 @@
   </div>
 
   <div v-if="packages.data.length" class="grid grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
-    <PackageCard v-for="(item, index) in packages.data" :item="item" :key="index"
-      :showIcon="item.status === 'REGISTRADO'" :icon="IconEdit" @selectedItem="editPackage" />
+    <PackageCard
+      v-for="(item, index) in packages.data"
+      :item="item"
+      :key="index"
+      :showIcon="item.status === 'REGISTRADO'"
+      :icon="IconEdit"
+      @selectedItem="editPackage"
+    />
   </div>
 
   <PaginationComponent :pages="packages.pages" :page="packages.current" @selected="getThisPage" />
@@ -72,7 +93,7 @@ const form = ref<IPackage>({
   description: '',
   pieces: 0,
   grossWeight: 0,
-  entryDate: '',
+  entryDate: ''
 })
 
 onMounted(() => {
@@ -98,7 +119,7 @@ function resetValues() {
     description: '',
     pieces: 0,
     grossWeight: 0,
-    entryDate: '',
+    entryDate: ''
   }
   openModal.value = false
 }

@@ -6,7 +6,6 @@ export const useAuthStore = defineStore(
   'auth',
   () => {
     const auth = ref<IUser>()
-    const token = ref<string>()
 
     function setAuthData(data: IUser) {
       auth.value = data
@@ -14,15 +13,10 @@ export const useAuthStore = defineStore(
 
     function clearData() {
       auth.value = undefined
-      token.value = undefined
-    }
-
-    function setToken(t: string) {
-      token.value = t
-    }
-
-    function getToken() {
-      return token.value
+      //Eliminar lego que se asegure
+      //que se ha completado la integracion
+      //de las cookies
+      localStorage.clear()
     }
 
     function getAuth() {
@@ -37,7 +31,7 @@ export const useAuthStore = defineStore(
       return false
     }
 
-    return { auth, setAuthData, clearData, setToken, token, getToken, getAuth, hasRoles }
+    return { auth, setAuthData, clearData, getAuth, hasRoles }
   },
   {
     persist: true

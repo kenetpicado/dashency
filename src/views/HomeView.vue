@@ -2,13 +2,11 @@
 import StatCard from '@/components/StatCard.vue'
 import { onMounted } from 'vue'
 import useAuth from '@/composables/useAuth'
-import { useStorage } from '@vueuse/core'
 import useHome from '@/composables/useHome'
 import Chart, { type ChartItem } from 'chart.js/auto'
 import getFormattedDate from '@/utils/date'
 
 const { getProfile } = useAuth()
-const selected = useStorage('selected', 'home')
 const { getHome, home } = useHome()
 
 const arrayDays = Array.from({ length: 31 }, (_, i) => i + 1)
@@ -20,7 +18,6 @@ const getDay = (day: number) => {
 }
 
 onMounted(async () => {
-  selected.value = 'home'
   await getProfile()
   await getHome()
 
@@ -34,7 +31,9 @@ onMounted(async () => {
         datasets: [
           {
             label: 'Ingresos',
-            data: arrayDays.map((day) => home.value.incomes.find((r) => r.day === getDay(day))?.total || 0),
+            data: arrayDays.map(
+              (day) => home.value.incomes.find((r) => r.day === getDay(day))?.total || 0
+            ),
             fill: 'start'
           },
           {
@@ -75,8 +74,11 @@ onMounted(async () => {
   </header>
 
   <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard v-for="(stat, index) in home.stats" :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index" />
+    <StatCard
+      v-for="(stat, index) in home.stats"
+      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
+      :key="index"
+    />
   </main>
 
   <div class="bg-white p-4 border rounded-lg w-[97%] min-h-[30rem]">
