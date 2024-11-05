@@ -20,7 +20,7 @@ export const useBatchStore = defineStore('batch', () => {
 
     if (data.packages) {
       const packages = data.packages.sort((a, b) => {
-        return a.guide.localeCompare(b.guide)
+        return a.guide?.localeCompare(b.guide || '') || 0
       })
 
       batch.value.packages = packages
