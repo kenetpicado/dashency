@@ -104,6 +104,12 @@ const router = createRouter({
           meta: { title: 'Cuentas' }
         },
         {
+          path: 'sincronizacion',
+          component: () => import('../views/Sync/SyncView.vue'),
+          name: 'sync',
+          meta: { title: 'Sincronización' }
+        },
+        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile',
@@ -148,24 +154,31 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title + ' - ' + (import.meta.env.VITE_APP_NAME || 'Dashency')
   }
 
+  //Si no hay token y la ruta requiere autenticación
   if (to.meta.requiresAuth && !token) {
-    //Si no hay token y la ruta requiere autenticación
     next({ name: 'login' })
-  } else if (!to.meta.requiresAuth && token) {
-    //Rutas login y register cuando ya hay token
+  }
+
+  //Rutas login y register cuando ya hay token
+  else if (!to.meta.requiresAuth && token) {
     if (auth?.role === 'CAJERO') {
       next({ name: 'billing' })
     } else {
       next({ name: 'home' })
     }
-  } else if (auth?.role === 'CAJERO') {
-    //este usuario solo puede acceder a facturación: billing, billing.create, billing.show y perfil
-    if (!to.name?.toString().startsWith('billing') && to.name !== 'profile') {
-      next({ name: 'billing' })
-    } else {
-      next()
-    }
-  } else {
+  }
+
+  //este usuario solo puede acceder a facturación: billing, billing.create, billing.show y perfil
+  else if (
+    auth?.role === 'CAJERO' &&
+    !to.name?.toString().startsWith('billing') &&
+    to.name !== 'profile'
+  ) {
+    next({ name: 'billing' })
+  }
+
+  //Todo OK
+  else {
     next()
   }
 })

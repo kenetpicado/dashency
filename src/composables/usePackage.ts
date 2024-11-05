@@ -10,6 +10,7 @@ export default function usePackage() {
   const { setPackages } = usePackageStore()
   const { packages } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
+  const trackings = ref<string[]>([])
 
   const queryParams = ref({
     type: '',
@@ -55,5 +56,40 @@ export default function usePackage() {
       })
   }
 
-  return { getPackages, packages, processing, queryParams, updatePackage }
+  async function getTrackings() {
+    await api.get('/trackings').then(({ data }) => {
+      trackings.value = data as string[]
+    })
+  }
+
+  function bulkPackages(data: IPackage[], messageIds: string[], callback: () => void) {
+    processing.value = true
+
+    api
+      .post('/bulk-packages', {
+        packages: data,
+        messages: messageIds
+      })
+      .then(() => {
+        toast.success('Paquetes guardados correctamente')
+        callback()
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.message || 'Error al guardar los paquetes')
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  return {
+    getPackages,
+    packages,
+    processing,
+    queryParams,
+    updatePackage,
+    bulkPackages,
+    getTrackings,
+    trackings
+  }
 }

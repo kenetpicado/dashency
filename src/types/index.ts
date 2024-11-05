@@ -45,12 +45,14 @@ export interface IButton {
 
 export interface IPackage {
   id?: string
-  guide: string
-  description: string
-  pieces: number
+  emailId?: string
+  tracking?: string
+  guide?: string
+  description?: string
+  pieces?: number
   grossWeight: number
   client: string
-  entryDate: string
+  entryDate?: string
   status?: string
   createdAt?: Date
   type?: string
@@ -192,4 +194,51 @@ export interface IAccount {
   number: string
   holder: string
   status: string
+}
+
+export interface ICredential {
+  id: string
+  provider: string
+  createdAt: string
+  email: string
+  from_email?: string
+  picture: string
+}
+
+export interface IBody {
+  data?: string
+  size?: number
+}
+
+export interface IBasicPart {
+  mimeType: string
+  body: IBody
+}
+
+export interface IPart {
+  mimeType: string
+  body: IBody
+  parts?: IBasicPart[]
+}
+
+export interface IPayload {
+  mimeType: string
+  parts: IPart[]
+}
+
+export interface IMessageContent {
+  id: string
+  payload: IPayload
+  internalDate: string
+}
+
+export interface IEmail {
+  messages: IMessage[]
+  nextPageToken: string
+  resultSizeEstimate: number
+}
+
+export interface IMessage {
+  id: string
+  threadId: string
 }
