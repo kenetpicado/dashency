@@ -84,12 +84,6 @@ const items = [
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
   },
   {
-    title: 'Sincronización',
-    to: { name: 'sync' },
-    icon: IconPackage,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
-  },
-  {
     title: 'Finanzas'
   },
   {
