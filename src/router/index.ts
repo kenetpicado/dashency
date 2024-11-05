@@ -104,12 +104,6 @@ const router = createRouter({
           meta: { title: 'Cuentas' }
         },
         {
-          path: 'sincronizacion',
-          component: () => import('../views/Sync/SyncView.vue'),
-          name: 'sync',
-          meta: { title: 'Sincronización' }
-        },
-        {
           path: 'perfil',
           component: () => import('../views/Profile/ProfileView.vue'),
           name: 'profile',
