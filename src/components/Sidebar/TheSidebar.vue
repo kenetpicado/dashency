@@ -89,7 +89,7 @@ const items = [
     title: 'Correo',
     to: { name: 'mail.packages' },
     icon: IconMail,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
   },
   {
     title: 'Sincronización',
@@ -112,9 +112,6 @@ const items = [
     to: { name: 'expenses' },
     icon: IconTransferOut,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
-  },
-  {
-    title: 'Reportes'
   },
   {
     title: 'Arqueos',
