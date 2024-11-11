@@ -58,6 +58,24 @@ export interface IPackage {
   type?: string
 }
 
+export interface IMailPackage {
+  id?: string
+  emailId?: string
+  tracking?: string
+  guide?: string
+  description?: string
+  grossWeight: number
+  client: string
+  createdAt?: Date
+  type?: string
+}
+
+export interface IMailPackageResponse {
+  data: IMailPackage[]
+  pages: number
+  current: number
+}
+
 export interface IPackageResponse {
   data: IPackage[]
   pages: number

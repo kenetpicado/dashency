@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <!-- <form
+    <form
       @submit.prevent="updateFromEmail"
       v-if="auth?.role && ['ADMINISTRADOR', 'ROOT'].includes(auth.role)"
       class="bg-white p-8 rounded-xl border flex flex-col"
@@ -70,7 +70,7 @@
           <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
         </div>
       </template>
-    </form> -->
+    </form>
 
     <form @submit.prevent="onSubmitPassword" class="bg-white p-8 rounded-xl border flex flex-col">
       <div class="flex-1">
