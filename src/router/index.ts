@@ -174,11 +174,13 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  //este usuario solo puede acceder a facturación: billing, billing.create, billing.show y perfil
+  //este usuario solo puede acceder a facturación: billing, billing.create, billing.show, mail.packages, sync y perfil
   else if (
     auth?.role === 'CAJERO' &&
     !to.name?.toString().startsWith('billing') &&
-    to.name !== 'profile'
+    to.name !== 'profile' &&
+    to.name !== 'sync' &&
+    to.name !== 'mail.packages'
   ) {
     next({ name: 'billing' })
   }
