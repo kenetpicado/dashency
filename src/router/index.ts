@@ -50,6 +50,18 @@ const router = createRouter({
           meta: { title: 'Paquetes' }
         },
         {
+          path: 'paquetes-de-correo',
+          component: () => import('../views/MailPackage/MailPackageView.vue'),
+          name: 'mail.packages',
+          meta: { title: 'Paquetes de correos' }
+        },
+        {
+          path: 'sincronizacion',
+          component: () => import('../views/Sync/SyncView.vue'),
+          name: 'sync',
+          meta: { title: 'Sincronización' }
+        },
+        {
           path: 'facturacion',
           component: () => import('../views/Billing/BillingView.vue'),
           name: 'billing',

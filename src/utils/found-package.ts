@@ -1,8 +1,7 @@
-import type { IMessageContent, IPackage, IPart, IBasicPart } from '@/types'
+import type { IMessageContent, IMailPackage, IPart, IBasicPart } from '@/types'
 import { ref } from 'vue'
 import { decode } from 'js-base64'
 import { load } from 'cheerio'
-import status from './status'
 
 function sanitizeText(text: string) {
   const charMap = {
@@ -33,21 +32,15 @@ export default function foundPackage(message: IMessageContent) {
   let lastTable = null
   const internalDate = Number(message.internalDate)
 
-  const form = ref<IPackage>({
+  const form = ref<IMailPackage>({
     emailId: message.id,
     tracking: '',
     grossWeight: 0,
     type: '',
     client: '',
     description: '',
-    status: status[0],
-    entryDate: '',
     createdAt: internalDate ? new Date(internalDate) : new Date()
   })
-
-  if (form.value.createdAt) {
-    form.value.entryDate = form.value.createdAt.toISOString().split('T')[0]
-  }
 
   multipart.value = message.payload?.parts.find((p) => p.mimeType === 'multipart/alternative')
 

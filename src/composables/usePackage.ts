@@ -1,4 +1,4 @@
-import type { IPackage, IPackageResponse } from '@/types'
+import type { IPackage, IPackageResponse, IMailPackage, IMailPackageResponse } from '@/types'
 import { usePackageStore } from '@/stores/package'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -7,8 +7,8 @@ import cleanQueryParams from '@/utils/query-params'
 import toast from '@/utils/toast'
 
 export default function usePackage() {
-  const { setPackages } = usePackageStore()
-  const { packages } = storeToRefs(usePackageStore())
+  const { setPackages, setMailPackages } = usePackageStore()
+  const { packages, mailPackages } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
   const trackings = ref<string[]>([])
 
@@ -18,6 +18,7 @@ export default function usePackage() {
     guide: '',
     status: '',
     entryDate: '',
+    tracking: '',
     page: 1
   })
 
@@ -30,6 +31,24 @@ export default function usePackage() {
       .get('/packages', { params })
       .then((response) => {
         setPackages(response.data as IPackageResponse)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  function getMailPackages() {
+    processing.value = true
+
+    const params = cleanQueryParams(queryParams.value)
+
+    api
+      .get('/mail-packages', { params })
+      .then((response) => {
+        setMailPackages(response.data as IMailPackageResponse)
       })
       .catch((error) => {
         console.log(error)
@@ -62,7 +81,7 @@ export default function usePackage() {
     })
   }
 
-  function bulkPackages(data: IPackage[], messageIds: string[], callback: () => void) {
+  function bulkPackages(data: IMailPackage[], messageIds: string[], callback: () => void) {
     processing.value = true
 
     api
@@ -90,6 +109,8 @@ export default function usePackage() {
     updatePackage,
     bulkPackages,
     getTrackings,
-    trackings
+    trackings,
+    getMailPackages,
+    mailPackages
   }
 }

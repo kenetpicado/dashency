@@ -41,7 +41,9 @@ import {
   IconDeviceDesktopAnalytics,
   IconBooks,
   IconReceipt2,
-  IconLogs
+  IconLogs,
+  IconMail,
+  IconReload
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
@@ -82,6 +84,18 @@ const items = [
     to: { name: 'packages' },
     icon: IconPackage,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+  },
+  {
+    title: 'Correo',
+    to: { name: 'mail.packages' },
+    icon: IconMail,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+  },
+  {
+    title: 'Sincronización',
+    to: { name: 'sync' },
+    icon: IconReload,
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
   },
   {
     title: 'Finanzas'

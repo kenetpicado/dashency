@@ -2,17 +2,17 @@
 import { onMounted, ref } from 'vue'
 import useGoogle from '@/composables/useGoogle'
 import usePackage from '@/composables/usePackage'
-import type { IPackage } from '@/types'
+import type { IMailPackage } from '@/types'
 import foundPackage from '@/utils/found-package'
-import PackageCard from '@/components/PackageCard.vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import router from '@/router'
+import TheTable from '@/components/Table/TheTable.vue'
 
 const { emails, getEmails, message, getMessage } = useGoogle()
 const { bulkPackages, processing, trackings, getTrackings } = usePackage()
 
-const temporalPackage = ref<IPackage>()
-const foundPackages = ref<IPackage[]>([])
+const temporalPackage = ref<IMailPackage>()
+const foundPackages = ref<IMailPackage[]>([])
 const loading = ref(false)
 
 onMounted(async () => {
@@ -64,13 +64,41 @@ function savePackages() {
 
   <template v-else>
     <h5 class="mb-8">{{ foundPackages.length }} paquetes encontrados</h5>
-    <div v-if="foundPackages.length" class="grid grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
-      <PackageCard
-        v-for="(item, index) in foundPackages"
-        :item="item"
-        :key="index"
-        :showIcon="false"
-      />
-    </div>
+
+    <TheTable>
+      <template #header>
+        <th>Guia</th>
+        <th>Paquete</th>
+        <th>Tipo</th>
+        <th>Peso</th>
+      </template>
+      <template #body>
+        <tr v-if="!foundPackages.length">
+          <td colspan="4" class="text-center">No hay paquetes</td>
+        </tr>
+        <tr v-for="(item, index) in foundPackages" :key="index" class="hover:bg-gray-50">
+          <td>
+            {{ item.guide }}
+          </td>
+          <td>
+            <div class="mb-1 font-bold">
+              {{ item.tracking }}
+            </div>
+            <div class="mb-1">
+              {{ item.client }}
+            </div>
+            <div v-if="item.description" class="text-sm text-gray-400">
+              {{ item.description }}
+            </div>
+          </td>
+          <td>
+            {{ item.type }}
+          </td>
+          <td>
+            {{ item.grossWeight }}
+          </td>
+        </tr>
+      </template>
+    </TheTable>
   </template>
 </template>

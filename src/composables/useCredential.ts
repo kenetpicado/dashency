@@ -22,7 +22,6 @@ export default function useCredential() {
   }
 
   async function updateCredential(id: string, data: { from_email: string }) {
-    console.log(data)
     await api.put('/credential/' + id, data).then((response) => {
       toast.success('Correo actualizado correctamente')
       setCredential(response.data as ICredential)
