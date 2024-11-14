@@ -58,7 +58,7 @@ export default function foundPackage(message: IMessageContent) {
         const th = $(this).find('th').text().trim()
         const td = $(this).find('td').text().trim()
 
-        if (th === 'Tracking') {
+        if (th.includes('Tracking')) {
           form.value.tracking = td.replace(/\s/g, '')
           form.value.tracking = sanitizeText(form.value.tracking)
         }
