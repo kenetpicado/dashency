@@ -67,7 +67,9 @@
           >
             Desconectar
           </button>
-          <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
+          <BtnPrimary v-if="auth.role === 'ROOT'" type="submit" :loading="processing">
+            Actualizar
+          </BtnPrimary>
         </div>
       </template>
     </form>
