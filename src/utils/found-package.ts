@@ -29,7 +29,6 @@ export default function foundPackage(message: IMessageContent) {
   const htmlData = ref<string>('')
   const textPart = ref<IBasicPart>()
   const textData = ref<string>('')
-  let lastTable = null
   const internalDate = Number(message.internalDate)
 
   const form = ref<IMailPackage>({
@@ -52,13 +51,25 @@ export default function foundPackage(message: IMessageContent) {
       htmlData.value = decode(htmlPart.value.body.data)
       const $ = load(htmlData.value)
       const allDescriptions = ref<string[]>([])
-      lastTable = $('table').last()
 
-      lastTable.find('tr').each(function () {
+      const trs = $('tr').filter((i, el) => {
+        const th = $(el).find('th').text().trim()
+        return (
+          th === 'Tracking' ||
+          th === 'Tracking Numero 2 Pre-Ingreso' ||
+          th === 'Medio de Envío' ||
+          th === 'Nombre del Cliente' ||
+          th === 'Peso' ||
+          th === 'Descripción' ||
+          th === 'Producto'
+        )
+      })
+
+      trs.each(function () {
         const th = $(this).find('th').text().trim()
         const td = $(this).find('td').text().trim()
 
-        if (th.includes('Tracking')) {
+        if ((th === 'Tracking' || th === 'Tracking Numero 2 Pre-Ingreso') && !form.value.tracking) {
           form.value.tracking = td.replace(/\s/g, '')
           form.value.tracking = sanitizeText(form.value.tracking)
         }
@@ -75,7 +86,7 @@ export default function foundPackage(message: IMessageContent) {
           form.value.grossWeight = Number(td)
         }
 
-        if (th === 'Producto General' || th === 'Producto Especifico' || th === 'Descripción') {
+        if (th === 'Descripción' || th === 'Producto') {
           allDescriptions.value.push(td)
         }
       })
