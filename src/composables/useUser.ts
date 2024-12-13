@@ -10,10 +10,16 @@ export default function useUser() {
   const { users } = storeToRefs(useUserStore())
   const processing = ref<boolean>(false)
 
-  function getUsers() {
-    api.get('/users').then((response) => {
-      setUsers(response.data as IUser[])
-    })
+  async function getUsers() {
+    processing.value = true
+    await api
+      .get('/users')
+      .then((response) => {
+        setUsers(response.data as IUser[])
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   function updateUser(data: IUser, onDone: () => void) {

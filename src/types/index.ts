@@ -6,7 +6,7 @@ export interface IInputForm {
   autofocus?: boolean
   type?: string
   placeholder?: string
-  error?: IErrorStatus
+  errors?: any
 }
 
 export interface IErrorStatus {
@@ -23,7 +23,6 @@ export interface IRegisterForm {
   email: string
   name: string
   password: string
-  password_confirmation: string
 }
 
 export interface IUser {
@@ -171,9 +170,9 @@ export interface IExpenseResponse {
 }
 
 export interface IHome {
-  stats: IStatCard[]
   expenses: Array<any>
   incomes: Array<any>
+  batches: Array<any>
 }
 
 export interface IArching {

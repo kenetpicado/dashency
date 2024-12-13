@@ -5,7 +5,7 @@
   </header>
 
   <DialogForm title="Gasto" :isOpen="openModal" @onClose="openModal = false">
-    <form @submit.prevent="onSubmit()">
+    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
       <SelectForm text="Concepto" name="concept" v-model="conceptSelected">
         <option value="">Otro</option>
         <option v-for="item in concepts" :value="item" :key="item">
@@ -27,11 +27,11 @@
         <InputForm text="Costo" name="cost" v-model="form.cost" type="number" />
       </div>
 
-      <div class="text-xl font-bold mb-4 text-edo-950">
-        ${{ (form.quantity * form.cost).toLocaleString() }}
+      <div class="text-xl font-bold">
+        Total: ${{ (form.quantity * form.cost).toLocaleString() }}
       </div>
 
-      <div class="flex justify-end gap-4">
+      <div class="modal-action">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing">
           {{ isEdit ? 'Actualizar' : 'Guardar' }}
@@ -40,7 +40,7 @@
     </form>
   </DialogForm>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <SelectForm text="Concepto" name="concept" v-model="queryParams.concept">
       <option value="">Todos</option>
       <option v-for="item in concepts" :value="item" :key="item">
@@ -61,7 +61,7 @@
     </template>
     <template #body>
       <tr v-if="!expenses.data.length">
-        <td colspan="7" class="text-center">No hay datos que mostrar</td>
+        <td colspan="8" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in expenses.data" :key="index" class="hover:bg-gray-50">
         <td>

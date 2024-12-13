@@ -1,6 +1,6 @@
 <template>
   <DialogForm title="Editar" :isOpen="openModal" @onClose="openModal = false">
-    <template v-if="batch">
+    <div v-if="batch" class="flex flex-col gap-4">
       <InputForm text="Total" name="total" v-model="batch.total" type="number" />
       <InputForm text="Código o referencia" name="code" v-model="batch.code" />
       <SelectForm text="Tipo" name="type" v-model="batch.type">
@@ -9,21 +9,21 @@
           {{ price.type }}
         </option>
       </SelectForm>
-      <div class="flex justify-end gap-4">
+      <div class="modal-action">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
         <BtnPrimary @click="onSubmit" :loading="processing"> Guardar </BtnPrimary>
       </div>
-    </template>
+    </div>
   </DialogForm>
 
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-8">
     <span class="font-bold text-2xl">Lotes</span>
     <RouterLink :to="{ name: 'batches.create' }">
       <BtnPrimary> Nuevo </BtnPrimary>
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
     <InputForm
       text="Código o referencia"
       name="code"
@@ -48,10 +48,16 @@
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!batches.data.length">
+      <tr v-if="processing">
+        <td colspan="7">
+          <span class="loading loading-spinner mx-auto flex items-center"> </span>
+        </td>
+      </tr>
+      <tr v-else-if="!batches.data.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
+      <template v-else >
+        <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
         <td>
           <UserInfo v-if="item.user" :item="item.user" />
         </td>
@@ -77,6 +83,8 @@
           </div>
         </td>
       </tr>
+      </template>
+
     </template>
   </TheTable>
   <PaginationComponent :pages="batches.pages" :page="batches.current" @selected="getThisPage" />
@@ -104,8 +112,8 @@ import usePrice from '@/composables/usePrice'
 const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
 const { prices, getPrices } = usePrice()
 
-onMounted(() => {
-  getBatches()
+onMounted(async () => {
+  await getBatches()
   getPrices()
 })
 

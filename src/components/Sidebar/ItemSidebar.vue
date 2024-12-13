@@ -5,10 +5,7 @@ defineProps<IItemSidebar>()
 </script>
 
 <template>
-  <span
-    class="flex items-center px-2 py-3 rounded-xl gap-4 cursor-pointer"
-    :class="[active ? 'bg-edo-950 text-white' : 'hover:bg-gray-100']"
-  >
+  <span class="flex items-center gap-4">
     <component v-if="item.icon" :is="item.icon" size="25"></component>
     <span>{{ item.title }}</span>
   </span>

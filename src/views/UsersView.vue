@@ -20,8 +20,8 @@ const { updateUser, processing } = useUser()
 const roles = ['ADMINISTRADOR', 'CAJERO']
 const status = ['REGISTRADO', 'ACTIVO', 'INACTIVO']
 
-onMounted(() => {
-  getUsers()
+onMounted(async () => {
+  await getUsers()
 })
 
 function editUser(item: IUser) {
@@ -29,17 +29,18 @@ function editUser(item: IUser) {
   openModal.value = true
 }
 
-function onSubmit(data: IUser) {
-  updateUser(data, () => {
-    openModal.value = false
-    user.value = undefined
-  })
+function onSubmit() {
+  if (user.value)
+    updateUser(user.value, () => {
+      openModal.value = false
+      user.value = undefined
+    })
 }
 </script>
 
 <template>
-  <DialogForm title="Editar" :isOpen="openModal" @onClose="openModal = false">
-    <template v-if="user">
+  <DialogForm title="Editar" :isOpen="openModal">
+    <form v-if="user" @submit.prevent="onSubmit()" class="flex flex-col gap-4">
       <SelectForm text="Rol" name="role" v-model="user.role">
         <option v-for="item in roles" :value="item" :key="item">
           {{ item }}
@@ -50,14 +51,14 @@ function onSubmit(data: IUser) {
           {{ item }}
         </option>
       </SelectForm>
-      <div class="flex justify-end gap-4">
+      <div class="modal-action">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
-        <BtnPrimary @click="onSubmit(user)" :loading="processing"> Guardar </BtnPrimary>
+        <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
       </div>
-    </template>
+    </form>
   </DialogForm>
 
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-8">
     <span class="font-bold text-2xl">Usuarios</span>
   </header>
 
@@ -71,6 +72,11 @@ function onSubmit(data: IUser) {
       <th>Acciones</th>
     </template>
     <template #body>
+      <tr v-if="processing">
+        <td colspan="6">
+          <span class="loading loading-spinner mx-auto flex items-center"> </span>
+        </td>
+      </tr>
       <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
         <td>
           <UserInfo :item="item" />
@@ -79,7 +85,7 @@ function onSubmit(data: IUser) {
           {{ item.role }}
         </td>
         <td>
-          <span class="bg-blue-100 px-2 py-1 text-blue-600 rounded-lg">{{ item.status }}</span>
+          {{ item.status }}
         </td>
         <td>
           {{ getFormattedDate(item.createdAt) }}

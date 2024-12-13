@@ -1,87 +1,112 @@
 <script setup lang="ts">
-import StatCard from '@/components/StatCard.vue'
-import { onMounted } from 'vue'
-import useAuth from '@/composables/useAuth'
+import { onMounted, ref, watch } from 'vue'
 import useHome from '@/composables/useHome'
-import Chart, { type ChartItem } from 'chart.js/auto'
-import getFormattedDate from '@/utils/date'
+import SelectForm from '@/components/Form/SelectForm.vue'
+import TheTable from '@/components/Table/TheTable.vue'
 
-const { getProfile } = useAuth()
-const { getHome, home } = useHome()
+const { getHome, home, processing, year } = useHome()
+const currentMonth = new Date().getMonth() + 1
+const history = ref()
 
-const arrayDays = Array.from({ length: 31 }, (_, i) => i + 1)
-
-const getDay = (day: number) => {
-  const date = new Date()
-  date.setDate(day)
-  return getFormattedDate(date, 'YYYY-MM-DD')
-}
+const monthsSpanish = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+]
 
 onMounted(async () => {
-  await getProfile()
   await getHome()
-
-  const cx = document.getElementById('chart')
-
-  if (cx) {
-    new Chart(cx as ChartItem, {
-      type: 'line',
-      data: {
-        labels: arrayDays,
-        datasets: [
-          {
-            label: 'Ingresos',
-            data: arrayDays.map(
-              (day) => home.value.incomes.find((r) => r.day === getDay(day))?.total || 0
-            ),
-            fill: 'start'
-          },
-          {
-            label: 'Gastos',
-            data: arrayDays.map(
-              (day) => home.value.expenses.find((r) => r.day === getDay(day))?.total || 0
-            ),
-            fill: 'start'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        elements: {
-          line: {
-            tension: 0.4,
-            borderWidth: 2
-          },
-          point: {
-            radius: 3
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    })
-  }
 })
+
+const years = [2024]
+
+watch(
+  () => home.value,
+  () => {
+    let data = []
+
+    for (let i = 1; i <= currentMonth; i++) {
+      const month = i < 10 ? `0${i}` : i
+
+      const expense =
+        home.value.expenses.find((item) => item._id === year.value + '-' + month)?.total || 0
+      const income =
+        home.value.incomes.find((item) => item._id === year.value + '-' + month)?.total || 0
+      const batches =
+        home.value.batches.find((item) => item._id === year.value + '-' + month)?.total || 0
+
+      if (expense === 0 && income === 0 && batches === 0) continue
+
+      data.push({
+        name: monthsSpanish[i - 1],
+        expense: expense,
+        income: income,
+        batches: batches
+      })
+    }
+
+    history.value = data
+  }
+)
 </script>
 
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
-    <span class="font-bold text-2xl"> Estadísticas mensuales </span>
+  <header class="flex items-center justify-between mb-8">
+    <span class="font-bold text-2xl"> Estadisticas </span>
   </header>
 
-  <main v-if="home.stats.length" class="grid grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-    <StatCard
-      v-for="(stat, index) in home.stats"
-      :stat="{ ...stat, value: `$ ${stat.value.toLocaleString()}` }"
-      :key="index"
-    />
-  </main>
-
-  <div class="bg-white p-4 border rounded-lg w-[97%] min-h-[30rem]">
-    <canvas id="chart"></canvas>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <SelectForm text="Año" name="year" v-model="year">
+      <option v-for="year in years" :value="year" :key="year">
+        {{ year }}
+      </option>
+    </SelectForm>
   </div>
+
+  <span v-if="processing" class="loading loading-spinner loading-lg mx-auto flex items-center">
+  </span>
+
+  <TheTable v-else>
+    <template #header>
+      <th>Mes</th>
+      <th>Facturado</th>
+      <th>Lotes</th>
+      <th>Gastos</th>
+      <th>Ganancia</th>
+    </template>
+    <template #body>
+      <tr v-for="(item, index) in history" :key="index" class="hover:bg-gray-50">
+        <td>
+          {{ item.name }}
+        </td>
+        <td>
+          <span class="bg-green-100 text-green-600 rounded-lg px-2 py-1">
+            ${{ item.income.toLocaleString() }}
+          </span>
+        </td>
+        <td>
+          <span class="bg-red-100 text-red-600 rounded-lg px-2 py-1">
+            ${{ item.batches.toLocaleString() }}
+          </span>
+        </td>
+        <td>
+          <span class="bg-red-100 text-red-600 rounded-lg px-2 py-1">
+            ${{ item.expense.toLocaleString() }}
+          </span>
+        </td>
+        <td class="font-bold">
+          ${{ (item.income - (item.expense + item.batches)).toLocaleString() }}
+        </td>
+      </tr>
+    </template>
+  </TheTable>
 </template>

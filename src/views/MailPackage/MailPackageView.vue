@@ -25,7 +25,7 @@ function getThisPage(page: number) {
     <span class="font-bold text-2xl">Correo</span>
   </header>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
     <InputForm
       text="Guía"
       name="guide"
@@ -87,5 +87,9 @@ function getThisPage(page: number) {
       </tr>
     </template>
   </TheTable>
-  <PaginationComponent :pages="mailPackages.pages" :page="mailPackages.current" @selected="getThisPage" />
+  <PaginationComponent
+    :pages="mailPackages.pages"
+    :page="mailPackages.current"
+    @selected="getThisPage"
+  />
 </template>

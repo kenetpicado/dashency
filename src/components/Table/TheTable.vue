@@ -1,21 +1,17 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full bg-white border rounded-lg mb-4">
-    <div class="overflow-hidden rounded-lg">
-      <table class="w-full border-collapse text-left">
-        <thead class="bg-gray-50">
-          <tr>
-            <slot name="header" />
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 border-t">
-          <slot name="body" />
-        </tbody>
-      </table>
-    </div>
-    <slot name="paginator" />
+  <div class="overflow-x-auto bg-white rounded-lg border">
+    <table class="table">
+      <thead>
+        <tr>
+          <slot name="header" />
+        </tr>
+      </thead>
+      <tbody>
+        <slot name="body" />
+      </tbody>
+    </table>
   </div>
+  <slot name="paginator" />
 </template>
-
-<style scoped></style>

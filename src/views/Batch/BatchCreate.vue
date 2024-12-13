@@ -1,7 +1,7 @@
 <template>
   <loading v-model:active="isLoading" color="#2563eb" loader="dots" />
 
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-8">
     <span class="font-bold text-2xl">Nuevo</span>
     <BtnSecondary @click="openInputFile">
       <IconUpload size="20" />
@@ -23,7 +23,7 @@
     {{ errorMesage }}
   </div>
 
-  <TheTable class="mb-4">
+  <TheTable>
     <template #header>
       <th>Guia</th>
       <th>Descripción</th>
@@ -66,7 +66,7 @@
       </tr>
     </template>
   </TheTable>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-4 gap-4 mt-6">
     <InputForm text="Total" name="total" v-model="form.total" type="number" />
     <InputForm text="Código o referencia" name="code" v-model="form.code" />
     <SelectForm text="Tipo de lote" name="type" v-model="form.type">
@@ -75,7 +75,6 @@
     </SelectForm>
   </div>
   <div class="flex justify-end gap-4">
-    <BtnSecondary>Cancelar</BtnSecondary>
     <BtnPrimary @click="onSubmit" :loading="processing">Guardar</BtnPrimary>
   </div>
 </template>

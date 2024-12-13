@@ -3,14 +3,22 @@ import api from '@/config/axios'
 import type { IEmail, IMessageContent } from '@/types'
 import { storeToRefs } from 'pinia'
 import toast from '@/utils/toast'
+import { ref } from 'vue'
 
 export default function useAuth() {
+  const processing = ref(false)
   const { authRoute, emails, message } = storeToRefs(useGoogleStore())
 
   async function getAuthRoute() {
-    await api.get('/google/auth-route').then((response) => {
-      useGoogleStore().setAuthRoute(response.data as string)
-    })
+    processing.value = false
+    await api
+      .get('/google/auth-route')
+      .then((response) => {
+        useGoogleStore().setAuthRoute(response.data as string)
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   async function getEmails() {
@@ -30,5 +38,5 @@ export default function useAuth() {
     })
   }
 
-  return { getAuthRoute, authRoute, getEmails, emails, getMessage, message }
+  return { getAuthRoute, authRoute, getEmails, emails, getMessage, message, processing }
 }

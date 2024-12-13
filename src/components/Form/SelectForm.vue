@@ -1,21 +1,21 @@
 <template>
-  <div class="w-full mb-5">
-    <label class="block mb-1 text-gray-500">
-      {{ text }}
-    </label>
+  <label class="form-control w-full">
+    <div class="label">
+      <span class="label-text">
+        {{ text }}
+      </span>
+    </div>
 
-    <select
-      class="h-12 border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out focus:border-edo-950"
-      v-model="model"
-      :required="required"
-    >
+    <select class="select select-bordered" v-model="model" :required="required">
       <slot></slot>
     </select>
 
-    <p class="text-sm text-red-400 mt-2" v-if="error && error.field === name">
-      {{ error.message }}
-    </p>
-  </div>
+    <div v-if="errors && errors[name]" class="label">
+      <span class="label-text-alt text-red-400">
+        {{ errors[name] }}
+      </span>
+    </div>
+  </label>
 </template>
 
 <script setup lang="ts">

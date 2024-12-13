@@ -17,23 +17,24 @@ export default function useBatch() {
     page: 1
   })
 
-  function getBatches() {
+ async function getBatches() {
+    processing.value = true
     const params = Object.fromEntries(
       Object.entries(queryParams.value).filter(([_, value]) => value)
     )
 
-    api
+    await api
       .get('/batches', { params })
       .then((response) => {
         setBatches(response.data as IBatchResponse)
       })
-      .catch((error) => {
-        console.log(error)
+      .finally(() => {
+        processing.value = false
       })
   }
 
-  function getBatch(id: string) {
-    api
+  async function getBatch(id: string) {
+    await api
       .get('/batches/' + id)
       .then((response) => {
         setBatch(response.data as IBatch)

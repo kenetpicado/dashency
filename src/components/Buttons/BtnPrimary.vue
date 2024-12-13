@@ -9,8 +9,7 @@ defineProps<IButton>()
   <button
     :type="type ?? 'button'"
     :disabled="disabled || loading"
-    :class="[disabled || loading ? 'opacity-55 cursor-not-allowed' : '']"
-    class="border border-edo-950 h-12 inline-flex gap-2 px-2 items-center justify-center min-w-28 bg-edo-950 rounded-xl text-white hover:bg-edo-800 outline-none transition duration-300 ease-in-out"
+    class="btn btn-neutral min-w-[7rem]"
   >
     <LoadingAnimation v-if="loading" />
     <slot />

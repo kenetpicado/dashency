@@ -1,13 +1,7 @@
 <template>
-  <loading v-model:active="processing" color="#2563eb" loader="dots" />
-
-  <header class="flex items-center justify-between mb-4 h-14">
-    <span class="font-bold text-2xl">Nueva</span>
-  </header>
-
   <div class="grid grid-cols-2 gap-4">
     <div>
-      <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
+      <div class="text-lg mb-2 font-bold">Paquetes</div>
       <div class="grid grid-cols-2 gap-4 mb-4">
         <InputForm
           text="Cliente"
@@ -25,41 +19,117 @@
         />
       </div>
       <div v-if="searching" class="w-full flex justify-center mb-4">
-        <LoadingAnimation class="text-edo-400" />
+        <LoadingAnimation />
       </div>
       <div v-else-if="!filteredPackages.length" class="text-center text-gray-400">
         No hay datos que mostrar
       </div>
-      <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <PackageCard
-          v-for="(item, index) in filteredPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          @selectedItem="addPackage"
-        />
-      </div>
+      <TheTable v-else>
+        <template #header>
+          <th>Guia</th>
+          <th>Cliente</th>
+          <th>Tipo</th>
+          <th>Peso</th>
+          <th></th>
+        </template>
+        <template #body>
+          <tr v-for="(item, index) in filteredPackages" :key="index">
+            <td>
+              {{ item.guide }}
+            </td>
+            <td>
+              <div>
+                {{ item.client }}
+              </div>
+              <div class="mt-1 text-xs text-gray-400">{{ item.description }}</div>
+            </td>
+            <td>
+              {{ item.type }}
+            </td>
+            <td>
+              {{ item.grossWeight }}
+            </td>
+            <td>
+              <button
+                @click="addPackage(item)"
+                type="button"
+                class="bg-neutral rounded-full p-1 text-white"
+              >
+                <IconChevronRight size="20" />
+              </button>
+            </td>
+          </tr>
+        </template>
+      </TheTable>
     </div>
 
     <div>
-      <div class="text-lg mb-2 font-bold">Datos de la factura</div>
+      <div class="text-lg mb-2 font-bold">Factura</div>
 
-      <div v-if="!selectedPackages.length" class="text-center text-gray-400 mb-8">
+      <div v-if="!selectedPackages.length" class="text-center text-gray-400 my-8">
         No hay paquetes seleccionados
       </div>
 
-      <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-        <PackageCard
-          v-for="(item, index) in selectedPackages"
-          :item="item"
-          :key="index"
-          :showIcon="true"
-          :icon="IconTrash"
-          @selectedItem="removePackage(index)"
-        />
+      <TheTable v-else>
+        <template #header>
+          <th>Guia</th>
+          <th>Cliente</th>
+          <th>Tipo</th>
+          <th>Peso</th>
+          <th></th>
+        </template>
+        <template #body>
+          <tr v-for="(item, index) in selectedPackages" :key="index">
+            <td>
+              {{ item.guide }}
+            </td>
+            <td>
+              <div>
+                {{ item.client }}
+              </div>
+              <div class="mt-1 text-xs text-gray-400">{{ item.description }}</div>
+            </td>
+            <td>
+              {{ item.type }}
+            </td>
+            <td>
+              {{ item.grossWeight }}
+            </td>
+            <td>
+              <button
+                @click="removePackage(index)"
+                type="button"
+                class="bg-error rounded-full p-1 text-white"
+              >
+                <IconTrash size="20" />
+              </button>
+            </td>
+          </tr>
+        </template>
+      </TheTable>
+
+      <div class="my-8"></div>
+
+      <div class="mb-4">
+        <details class="bg-white border collapse collapse-arrow">
+          <summary class="collapse-title text-base !font-bold font-medium">Precios</summary>
+          <div class="collapse-content">
+            <div class="grid grid-cols-2 gap-4">
+              <InputForm
+                v-for="item in localPrices"
+                :key="item.id"
+                :text="item.type"
+                :name="item.type"
+                v-model.number="item.value"
+                placeholder="Precio"
+                type="number"
+              />
+            </div>
+          </div>
+        </details>
       </div>
 
-      <TheTable class="mb-4">
+      <TheTable>
         <template #header>
           <th>Envío</th>
           <th>Peso</th>
@@ -75,44 +145,20 @@
             <td>{{ item.weight }} lbs</td>
             <td>{{ item.count }}</td>
             <td class="font-bold">
-              <span class="bg-edo-50 px-2 py-1 rounded-lg"> ${{ item.amount }} </span>
+              <span class=""> ${{ item.amount }} </span>
             </td>
           </tr>
         </template>
       </TheTable>
 
-      <div class="mb-4">
-        <h4 class="text-xl mb-2 font-bold text-gray-400">Precios por libra</h4>
-        <hr class="mb-4" />
-        <div class="grid grid-cols-2 gap-4">
-          <InputForm
-            v-for="item in localPrices"
-            :key="item.id"
-            :text="item.type"
-            :name="item.type"
-            v-model.number="item.value"
-            placeholder="Precio"
-            type="number"
-          />
-        </div>
-      </div>
-
-      <form @submit.prevent="onSubmit()">
-        <h4 class="text-xl mb-2 font-bold text-gray-400">Información del pedido</h4>
-        <hr class="mb-4" />
-        <div class="grid grid-cols-2 gap-4">
+      <form @submit.prevent="onSubmit()" class="mt-4">
+        <div class="grid grid-cols-2 gap-4 mb-4">
           <InputForm
             text="Cliente"
             name="client"
             v-model="form.client"
             placeholder="Nombre del cliente"
             required
-          />
-          <InputForm
-            text="Notas (Opcional)"
-            name="notes"
-            v-model="form.notes"
-            placeholder="Notas"
           />
 
           <SelectForm text="Cuenta" name="account" v-model="form.account" required>
@@ -129,31 +175,45 @@
             placeholder="Código o referencia"
             required
           />
-
-          <InputForm
-            text="Costo envío terrestre (Opcional)"
-            name="delivery"
-            v-model.number="form.delivery"
-            placeholder="Costo del delivery"
-            type="number"
-          />
-          <InputForm
-            text="Dirección de entrega (Opcional)"
-            name="address"
-            v-model="form.address"
-            placeholder="Direccion de entrega"
-          />
-
-          <InputForm
-            text="Importe extra (Opcional)"
-            name="fee"
-            v-model.number="form.fee"
-            placeholder="Importe extra"
-            type="number"
-          />
         </div>
 
-        <div class="text-sm text-gray-400 mb-4">
+        <details class="bg-white border collapse collapse-arrow">
+          <summary class="collapse-title text-base !font-bold font-medium">Otros datos</summary>
+          <div class="collapse-content">
+            <div class="grid grid-cols-2 gap-4">
+              <InputForm
+                text="Costo envío terrestre (Opcional)"
+                name="delivery"
+                v-model.number="form.delivery"
+                placeholder="Costo del delivery"
+                type="number"
+              />
+              <InputForm
+                text="Dirección de entrega (Opcional)"
+                name="address"
+                v-model="form.address"
+                placeholder="Direccion de entrega"
+              />
+
+              <InputForm
+                text="Importe extra (Opcional)"
+                name="fee"
+                v-model.number="form.fee"
+                placeholder="Importe extra"
+                type="number"
+              />
+
+              <InputForm
+                text="Notas (Opcional)"
+                name="notes"
+                v-model="form.notes"
+                placeholder="Notas"
+              />
+            </div>
+          </div>
+        </details>
+
+        <div class="text-sm text-gray-400 my-4">
           Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
           posteriormente.
         </div>
@@ -163,7 +223,6 @@
         </div>
 
         <div v-else class="flex justify-end gap-4">
-          <BtnSecondary>Cancelar</BtnSecondary>
           <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
         </div>
       </form>
@@ -173,16 +232,13 @@
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
-import { IconTrash } from '@tabler/icons-vue'
+import { IconTrash, IconChevronRight } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
 import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
-import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
-import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
