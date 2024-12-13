@@ -6,26 +6,30 @@ const model = defineModel()
 </script>
 
 <template>
-  <div class="w-full mb-5">
-    <label class="block mb-1 text-gray-500">
-      {{ text }}
-    </label>
+  <div class="form-control w-full">
+    <div class="label">
+      <span class="label-text text-gray-500">
+        {{ text }}
+      </span>
+    </div>
 
     <input
+      :id="name"
       :type="type"
       :placeholder="placeholder"
       :disabled="disabled ?? false"
       :autofocus="autofocus"
       :required="required ?? false"
       :name="name"
-      class="h-12 border-gray-300 rounded-lg w-full transition duration-300 ease-in-out placeholder-gray-400 focus:border-edo-950"
-      :class="[disabled ? 'bg-gray-100' : '']"
+      class="input input-bordered w-full"
       v-model="model"
       step="any"
     />
 
-    <p class="text-sm text-red-400 mt-2" v-if="error && error.field === name">
-      {{ error.message }}
-    </p>
+    <div v-if="errors && errors[name]" class="label">
+      <span class="label-text-alt text-red-400">
+        {{ errors[name] }}
+      </span>
+    </div>
   </div>
 </template>

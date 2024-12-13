@@ -4,11 +4,11 @@
     <BtnPrimary @click="openModal = true"> Nuevo </BtnPrimary>
   </header>
 
-  <DialogForm title="Precio" :isOpen="openModal" @onClose="resetValues">
-    <form @submit.prevent="onSubmit()">
+  <DialogForm title="Precio" :isOpen="openModal">
+    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
       <InputForm text="Tipo" name="type" v-model="form.type" />
       <InputForm text="Precio" name="value" v-model="form.value" type="number" />
-      <div class="flex justify-end gap-4">
+      <div class="modal-action">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing">
           {{ isEdit ? 'Actualizar' : 'Guardar' }}
@@ -41,9 +41,6 @@
             <button type="button" @click="edit(item)">
               <IconEdit size="20" />
             </button>
-            <!-- <button v-if="item.id" type="button" @click="destroy(item.id)">
-              <IconTrash size="20" />
-            </button> -->
           </div>
         </td>
       </tr>

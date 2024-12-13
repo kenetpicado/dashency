@@ -7,7 +7,7 @@ defineProps<IItemSidebar>()
 </script>
 
 <template>
-  <RouterLink v-if="item.to" :to="item.to">
+  <RouterLink v-if="item.to" :to="item.to" :class="active ? 'active' : ''">
     <ItemSidebar :item="item" :active="active" />
   </RouterLink>
 </template>

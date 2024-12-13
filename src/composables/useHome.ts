@@ -10,6 +10,8 @@ export default function useHome() {
   const processing = ref<boolean>(false)
 
   async function getHome() {
+    processing.value = true
+
     await api
       .get('/home', {
         params: {
@@ -18,6 +20,9 @@ export default function useHome() {
       })
       .then((response) => {
         setHome(response.data as IHome)
+      })
+      .finally(() => {
+        processing.value = false
       })
   }
 

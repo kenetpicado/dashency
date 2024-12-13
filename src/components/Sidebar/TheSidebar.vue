@@ -1,31 +1,20 @@
 <template>
-  <aside class="min-h-screen p-0 m-0 bg-white flex flex-col border-r">
-    <div class="h-full px-3 py-4 overflow-y-auto w-56">
-      <div class="h-14 w-14 mx-auto my-6">
-        <IconDeviceDesktopAnalytics class="text-edo-950" />
-      </div>
-
-      <ul class="space-y-1">
-        <li
-          v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)"
-          :key="index"
-        >
-          <SectionSidebar v-if="!item.to" :title="item.title" />
-          <ItemSidebarLink
-            v-else
-            :item="item"
-            :active="
-              item.to.name === route.name ||
-              (item.activeAlso && item.activeAlso.includes(route.name as string))
-            "
-          />
-        </li>
-        <li>
-          <ItemSidebar @click="logout" :item="{ title: 'Salir', icon: IconLogout }" />
-        </li>
-      </ul>
-    </div>
-  </aside>
+  <ul class="menu text-base-content min-h-full w-64 p-4 bg-white space-y-1 border-r">
+    <span class="menu-title">
+      <img :src="logo" alt="" class="w-auto h-[2.5rem] my-2 lg:my-8 mx-auto" />
+    </span>
+    <li v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)" :key="index">
+      <SectionSidebar v-if="!item.to" :title="item.title" />
+      <ItemSidebarLink
+        v-else
+        :item="item"
+        :active="
+          item.to.name === route.name ||
+          (item.activeIn && item.activeIn.includes(route.name as string))
+        "
+      />
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +44,9 @@ import { useRoute } from 'vue-router'
 const { logout } = useAuth()
 const { hasRoles } = useAuthStore()
 const route = useRoute()
+const logo =
+  import.meta.env.VITE_APP_LOGO ||
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRty2ZsNw6rVmMywsvo_CrUJbvOIw8Th-vX3Q&s'
 
 const items = [
   {
@@ -77,7 +69,7 @@ const items = [
     to: { name: 'batches' },
     icon: IconPackages,
     show: hasRoles(['ROOT', 'ADMINISTRADOR']),
-    activeAlso: ['batches.create', 'batches.show']
+    activeIn: ['batches.create', 'batches.show']
   },
   {
     title: 'Paquetes',
@@ -105,7 +97,7 @@ const items = [
     to: { name: 'billing' },
     icon: IconDatabaseDollar,
     show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
-    activeAlso: ['billing.create', 'billing.show']
+    activeIn: ['billing.create', 'billing.show']
   },
   {
     title: 'Gastos',
@@ -118,7 +110,7 @@ const items = [
     to: { name: 'archings' },
     icon: IconLogs,
     show: hasRoles(['ROOT', 'ADMINISTRADOR']),
-    activeAlso: ['archings.create', 'archings.show']
+    activeIn: ['archings.create', 'archings.show']
   },
   {
     title: 'Configuración'

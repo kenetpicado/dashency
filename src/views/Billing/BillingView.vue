@@ -1,12 +1,12 @@
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-8">
     <span class="font-bold text-2xl">Facturación</span>
     <RouterLink :to="{ name: 'billing.create' }">
       <BtnPrimary> Nueva </BtnPrimary>
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
     <SelectForm text="Banco" name="bank" v-model="queryParams.account">
       <option value="">Todos</option>
       <option v-for="item in accounts" :value="item.id" :key="item.id">

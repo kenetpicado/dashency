@@ -22,12 +22,12 @@ export default function usePackage() {
     page: 1
   })
 
-  function getPackages() {
+  async function getPackages() {
     processing.value = true
 
     const params = cleanQueryParams(queryParams.value)
 
-    api
+    await api
       .get('/packages', { params })
       .then((response) => {
         setPackages(response.data as IPackageResponse)

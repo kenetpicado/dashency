@@ -10,22 +10,12 @@
 }
 
 @layer base {
-  td {
-    @apply px-5 py-4;
-  }
-
   th {
-    @apply px-5 py-4 font-normal text-base text-gray-600 tracking-wider;
+    @apply uppercase;
   }
 
   body {
-    @apply text-gray-700 antialiased;
-  }
-}
-
-@layer components {
-  .btn-base {
-    @apply border h-12 inline-flex gap-2 px-2 items-center justify-center min-w-28 rounded-xl text-white outline-none transition duration-300 ease-in-out;
+    @apply antialiased text-neutral;
   }
 }
 

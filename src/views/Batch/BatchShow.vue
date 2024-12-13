@@ -1,37 +1,40 @@
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-8">
     <span class="font-bold text-2xl">Detalles</span>
   </header>
 
-  <DialogForm title="Paquete" :isOpen="openModal" @onClose="resetValues">
-    <form @submit.prevent="onSubmit()">
+  <DialogForm title="Paquete" :isOpen="openModal">
+    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
       <InputForm text="Cliente" name="client" v-model="form.client" required />
       <InputForm text="Descripción" name="description" v-model="form.description" required />
-      <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-      <InputForm
-        text="Peso (lbs)"
-        name="grossWeight"
-        v-model="form.grossWeight"
-        type="number"
-        required
-      />
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
+        <InputForm
+          text="Peso (lbs)"
+          name="grossWeight"
+          v-model="form.grossWeight"
+          type="number"
+          required
+        />
+      </div>
 
-      <div class="flex justify-end gap-4">
+      <div class="modal-action">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
     </form>
   </DialogForm>
 
-  <main class="grid grid-cols-4 gap-2 mb-4">
+  <main class="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-4">
     <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
   </main>
 
   <div class="mb-4 bg-white p-4 rounded-xl border">
+    <div v-if="batch" class="mb-2">Fecha: {{ getFormattedDate(batch.createdAt) }}</div>
     <UserInfo v-if="batch?.user" :item="batch.user" />
   </div>
 
-  <div v-if="batch?.packages" class="grid grid-cols-2 xl:grid-cols-3 gap-4">
+  <div v-if="batch?.packages" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <PackageCard
       v-for="(item, index) in batch?.packages"
       :item="item"
@@ -63,7 +66,7 @@ const route = useRoute()
 const { getBatch, batch } = useBatch()
 const { updatePackage, processing } = usePackage()
 
-onMounted(() => getBatch(route.params.id as string))
+onMounted(async () => await getBatch(route.params.id as string))
 
 const openModal = ref<boolean>(false)
 
@@ -94,10 +97,6 @@ const stats = computed(
       {
         title: 'Código o referencia',
         value: batch.value?.code || ''
-      },
-      {
-        title: 'Creado',
-        value: getFormattedDate(batch.value?.createdAt) || ''
       }
     ] as IStatCard[]
 )

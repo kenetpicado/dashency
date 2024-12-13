@@ -1,11 +1,8 @@
 <template>
-  <div class="grid grid-cols-2 gap-4">
-    <div v-if="auth" class="flex flex-col bg-white p-8 rounded-xl border">
-      <div class="flex-1">
-        <h4 class="mb-6 text-xl font-bold">Datos personales</h4>
-        <div class="w-full mb-4 text-gray-400">
-          Registrado el {{ getFormattedDate(auth.createdAt) }}
-        </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div v-if="auth" class="flex flex-col bg-white p-6 rounded-xl border">
+      <h4 class="mb-6 text-xl font-bold">Datos personales</h4>
+      <div class="flex-1 mb-8 flex flex-col gap-4">
         <InputForm text="Nombre" name="name" v-model="profile.name" placeholder="Nombre completo" />
         <InputForm
           text="Correo"
@@ -22,64 +19,54 @@
     <form
       @submit.prevent="updateFromEmail"
       v-if="auth?.role && ['ADMINISTRADOR', 'ROOT'].includes(auth.role)"
-      class="bg-white p-8 rounded-xl border flex flex-col"
+      class="bg-white p-6 rounded-xl border flex flex-col"
     >
+      <span
+        v-if="processingCredential || processingGoogle"
+        class="flex-1 loading loading-spinner text-gray-300 mx-auto flex items-center"
+      >
+      </span>
+
       <div
-        v-if="authRoute && !credential"
+        v-else-if="authRoute && !credential"
         class="flex-1 text-center flex flex-col items-center justify-center"
       >
         <img src="/gmail.png" alt="Gmail logo" class="mx-auto h-10 mb-4" />
         <div class="mb-6">No estas conectado a tu cuenta de Gmail</div>
-        <a :href="authRoute" class="btn-base px-4 border-edo-950 bg-edo-950">
-          Haz click aquí para conectar
-        </a>
+        <a :href="authRoute" class="btn btn-neutral"> Haz click aquí para conectar </a>
       </div>
 
       <template v-else-if="credential">
-        <div class="flex-1">
-          <div class="flex flex-col items-center mb-6">
+        <div class="flex-1 mb-8">
+          <div class="flex-1 flex flex-col items-center mb-6 justify-center h-full">
             <img
               :src="credential.picture"
               alt="Profile picture"
               onerror="this.src='https://as1.ftcdn.net/v2/jpg/00/64/67/52/1000_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg'"
               class="h-20 w-20 rounded-full mb-4"
             />
-            <div>
-              Conectado a: <span class="text-edo-900">{{ credential.email }}</span>
+            <div class="mb-4">
+              Conectado a: <span class="font-bold">{{ credential.email }}</span>
             </div>
+            <div class="text-gray-400">Remitente: {{ credential.from_email }}</div>
           </div>
-
-          <InputForm
-            text="Correo del remitente:"
-            name="email"
-            v-model="formCredential.from_email"
-            placeholder="Correo electrónico"
-            required
-          />
         </div>
 
         <div class="w-full flex justify-end gap-4">
-          <button
-            type="button"
-            @click="confirmDestroyCredential"
-            :loading="processing"
-            class="btn-base border-[#ea4335] bg-[#ea4335]"
-          >
+          <button type="button" @click="confirmDestroyCredential" :loading="processing" class="btn">
             Desconectar
           </button>
-          <BtnPrimary v-if="auth.role === 'ROOT'" type="submit" :loading="processing">
-            Actualizar
-          </BtnPrimary>
         </div>
       </template>
     </form>
 
-    <form @submit.prevent="onSubmitPassword" class="bg-white p-8 rounded-xl border flex flex-col">
+    <form
+      v-if="false"
+      @submit.prevent="onSubmitPassword"
+      class="bg-white p-6 rounded-xl border flex flex-col"
+    >
       <div class="flex-1">
         <h4 class="mb-6 text-xl font-bold">Actualizar contraseña</h4>
-        <div v-if="auth" class="w-full mb-4 text-gray-400">
-          Actualizada por última vez el {{ getFormattedDate(auth.passwordUpdatedAt) }}
-        </div>
         <InputForm
           text="Contraseña"
           name="current_password"
@@ -134,8 +121,14 @@ import useGoogle from '@/composables/useGoogle'
 import useCredential from '@/composables/useCredential'
 
 const { getProfile, auth, processing, updateProfile, updatePassword } = useAuth()
-const { authRoute, getAuthRoute } = useGoogle()
-const { credential, getCredential, updateCredential, destroyCredential } = useCredential()
+const { authRoute, getAuthRoute, processing: processingGoogle } = useGoogle()
+const {
+  credential,
+  getCredential,
+  updateCredential,
+  destroyCredential,
+  processing: processingCredential
+} = useCredential()
 
 onMounted(async () => {
   await getProfile()

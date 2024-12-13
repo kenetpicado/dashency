@@ -13,10 +13,6 @@ export const useAuthStore = defineStore(
 
     function clearData() {
       auth.value = undefined
-      //Eliminar lego que se asegure
-      //que se ha completado la integracion
-      //de las cookies
-      localStorage.clear()
     }
 
     function getAuth() {

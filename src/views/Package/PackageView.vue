@@ -3,27 +3,30 @@
     <span class="font-bold text-2xl">Paquetes</span>
   </header>
 
-  <DialogForm title="Paquete" :isOpen="openModal" @onClose="resetValues">
-    <form @submit.prevent="onSubmit()">
+  <DialogForm title="Paquete" :isOpen="openModal">
+    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
       <InputForm text="Cliente" name="client" v-model="form.client" required />
       <InputForm text="Descripción" name="description" v-model="form.description" required />
-      <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-      <InputForm
-        text="Peso (lbs)"
-        name="grossWeight"
-        v-model="form.grossWeight"
-        type="number"
-        required
-      />
 
-      <div class="flex justify-end gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
+        <InputForm
+          text="Peso (lbs)"
+          name="grossWeight"
+          v-model="form.grossWeight"
+          type="number"
+          required
+        />
+      </div>
+
+      <div class="modal-action">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
     </form>
   </DialogForm>
 
-  <div class="grid grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
     <InputForm
       text="Guía"
       name="guide"
@@ -48,11 +51,16 @@
     <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
 
-  <div v-if="!packages.data.length" class="text-center my-3 text-gray-400">
+  <span v-if="processing" class="loading loading-spinner loading-lg mx-auto flex items-center"></span>
+
+  <div v-else-if="!packages.data.length" class="text-center my-3 text-gray-400">
     No hay datos que mostrar
   </div>
 
-  <div v-if="packages.data.length" class="grid grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
+  <div
+    v-else
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+  >
     <PackageCard
       v-for="(item, index) in packages.data"
       :item="item"

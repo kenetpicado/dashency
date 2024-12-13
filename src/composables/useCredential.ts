@@ -3,15 +3,23 @@ import api from '@/config/axios'
 import type { ICredential } from '@/types'
 import { storeToRefs } from 'pinia'
 import toast from '@/utils/toast'
+import { ref } from 'vue'
 
 export default function useCredential() {
+  const processing = ref(false)
   const { credential } = storeToRefs(useCredentialStore())
   const { setCredential, clearCredential } = useCredentialStore()
 
   async function getCredential() {
-    await api.get('/credential').then((response) => {
-      setCredential(response.data as ICredential)
-    })
+    processing.value = true
+    await api
+      .get('/credential')
+      .then((response) => {
+        setCredential(response.data as ICredential)
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   async function destroyCredential(id: string) {
@@ -28,5 +36,5 @@ export default function useCredential() {
     })
   }
 
-  return { credential, getCredential, updateCredential, destroyCredential }
+  return { credential, getCredential, updateCredential, destroyCredential, processing }
 }
