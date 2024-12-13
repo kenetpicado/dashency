@@ -170,9 +170,9 @@ export interface IExpenseResponse {
 }
 
 export interface IHome {
-  stats: IStatCard[]
   expenses: Array<any>
   incomes: Array<any>
+  batches: Array<any>
 }
 
 export interface IArching {

@@ -5,9 +5,9 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 
 export default function useHome() {
-  const { setHome } = useHomeStore()
   const { home } = storeToRefs(useHomeStore())
   const processing = ref<boolean>(false)
+  const year = ref(new Date().getFullYear())
 
   async function getHome() {
     processing.value = true
@@ -15,16 +15,17 @@ export default function useHome() {
     await api
       .get('/home', {
         params: {
-          timezoneOffset: new Date().getTimezoneOffset()
+          timezoneOffset: new Date().getTimezoneOffset(),
+          year: year.value
         }
       })
       .then((response) => {
-        setHome(response.data as IHome)
+        home.value = response.data as IHome
       })
       .finally(() => {
         processing.value = false
       })
   }
 
-  return { getHome, home, processing }
+  return { getHome, home, processing, year }
 }

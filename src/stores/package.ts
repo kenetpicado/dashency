@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IPackageResponse, IPackageResponse } from '@/types'
+import type { IMailPackageResponse, IPackageResponse } from '@/types'
 
 export const usePackageStore = defineStore('package', () => {
   const packages = ref<IPackageResponse>({
