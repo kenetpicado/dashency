@@ -20,14 +20,12 @@
 <script setup lang="ts">
 import {
   IconHome,
-  IconLogout,
   IconPackage,
   IconPackages,
   IconUsersGroup,
   IconUser,
   IconDatabaseDollar,
   IconTransferOut,
-  IconDeviceDesktopAnalytics,
   IconBooks,
   IconReceipt2,
   IconLogs,
@@ -36,17 +34,12 @@ import {
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
-import ItemSidebar from '@/components/Sidebar/ItemSidebar.vue'
-import useAuth from '@/composables/useAuth'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute } from 'vue-router'
 
-const { logout } = useAuth()
 const { hasRoles } = useAuthStore()
 const route = useRoute()
-const logo =
-  import.meta.env.VITE_APP_LOGO ||
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRty2ZsNw6rVmMywsvo_CrUJbvOIw8Th-vX3Q&s'
+const logo = import.meta.env.VITE_APP_LOGO || ''
 
 const items = [
   {

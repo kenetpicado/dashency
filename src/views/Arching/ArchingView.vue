@@ -6,10 +6,6 @@
     </RouterLink>
   </header>
 
-  <!-- <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Fecha" name="date" v-model="queryParams.date" type="date" />
-  </div> -->
-
   <TheTable>
     <template #header>
       <th>Usuario</th>
@@ -48,7 +44,6 @@
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import InputForm from '@/components/Form/InputForm.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import UserInfo from '@/components/UserInfo.vue'

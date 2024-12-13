@@ -33,7 +33,7 @@
           <th></th>
         </template>
         <template #body>
-          <tr v-for="(item, index) in filteredPackages">
+          <tr v-for="(item, index) in filteredPackages" :key="index">
             <td>
               {{ item.guide }}
             </td>
@@ -79,7 +79,7 @@
           <th></th>
         </template>
         <template #body>
-          <tr v-for="(item, index) in selectedPackages">
+          <tr v-for="(item, index) in selectedPackages" :key="index">
             <td>
               {{ item.guide }}
             </td>
@@ -182,39 +182,37 @@
         </div>
 
         <details class="bg-white border collapse collapse-arrow">
-          <summary class="collapse-title text-base !font-bold font-medium">
-            Otros datos
-          </summary>
+          <summary class="collapse-title text-base !font-bold font-medium">Otros datos</summary>
           <div class="collapse-content">
             <div class="grid grid-cols-2 gap-4">
-                        <InputForm
-            text="Costo envío terrestre (Opcional)"
-            name="delivery"
-            v-model.number="form.delivery"
-            placeholder="Costo del delivery"
-            type="number"
-          />
-          <InputForm
-            text="Dirección de entrega (Opcional)"
-            name="address"
-            v-model="form.address"
-            placeholder="Direccion de entrega"
-          />
+              <InputForm
+                text="Costo envío terrestre (Opcional)"
+                name="delivery"
+                v-model.number="form.delivery"
+                placeholder="Costo del delivery"
+                type="number"
+              />
+              <InputForm
+                text="Dirección de entrega (Opcional)"
+                name="address"
+                v-model="form.address"
+                placeholder="Direccion de entrega"
+              />
 
-          <InputForm
-            text="Importe extra (Opcional)"
-            name="fee"
-            v-model.number="form.fee"
-            placeholder="Importe extra"
-            type="number"
-          />
+              <InputForm
+                text="Importe extra (Opcional)"
+                name="fee"
+                v-model.number="form.fee"
+                placeholder="Importe extra"
+                type="number"
+              />
 
-          <InputForm
-            text="Notas (Opcional)"
-            name="notes"
-            v-model="form.notes"
-            placeholder="Notas"
-          />
+              <InputForm
+                text="Notas (Opcional)"
+                name="notes"
+                v-model="form.notes"
+                placeholder="Notas"
+              />
             </div>
           </div>
         </details>
@@ -238,16 +236,13 @@
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash, IconChevronRight } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
 import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
-import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
-import PackageCard from '@/components/PackageCard.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'

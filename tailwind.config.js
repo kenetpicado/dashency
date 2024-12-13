@@ -1,4 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
+import daisyui from 'daisyui'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -7,10 +8,10 @@ export default {
     extend: {
       fontFamily: {
         sans: ['custom', ...defaultTheme.fontFamily.sans]
-      },
+      }
     }
   },
-  plugins: [require('daisyui')],
+  plugins: [daisyui],
   daisyui: {
     themes: ['light']
   }

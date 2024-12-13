@@ -77,11 +77,10 @@ import TheTable from '@/components/Table/TheTable.vue'
 import useAccount from '@/composables/useAccount'
 import type { IAccount } from '@/types'
 import toast from '@/utils/toast'
-import { IconEdit, IconTrash } from '@tabler/icons-vue'
+import { IconEdit } from '@tabler/icons-vue'
 import { onMounted, ref } from 'vue'
 
-const { getAccounts, accounts, storeAccount, processing, updateAccount, destroyAccount } =
-  useAccount()
+const { getAccounts, accounts, storeAccount, processing, updateAccount } = useAccount()
 
 const openModal = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
@@ -138,11 +137,5 @@ function edit(item: IAccount) {
   form.value = { ...item }
   isEdit.value = true
   openModal.value = true
-}
-
-function destroy(id: string) {
-  if (confirm('¿Estás seguro de eliminar esta cuenta?')) {
-    destroyAccount(id)
-  }
 }
 </script>

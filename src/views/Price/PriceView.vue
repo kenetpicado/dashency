@@ -57,10 +57,10 @@ import TheTable from '@/components/Table/TheTable.vue'
 import usePrice from '@/composables/usePrice'
 import type { IPrice } from '@/types'
 import toast from '@/utils/toast'
-import { IconEdit, IconTrash } from '@tabler/icons-vue'
+import { IconEdit } from '@tabler/icons-vue'
 import { onMounted, ref } from 'vue'
 
-const { getPrices, prices, storePrice, processing, updatePrice, destroyPrice } = usePrice()
+const { getPrices, prices, storePrice, processing, updatePrice } = usePrice()
 
 const openModal = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
@@ -117,11 +117,5 @@ function edit(item: IPrice) {
   form.value = { ...item }
   isEdit.value = true
   openModal.value = true
-}
-
-function destroy(id: string) {
-  if (confirm('¿Estás seguro de eliminar este precio?')) {
-    destroyPrice(id)
-  }
 }
 </script>
