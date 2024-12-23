@@ -61,7 +61,8 @@ export default function foundPackage(message: IMessageContent) {
           th === 'Nombre del Cliente' ||
           th === 'Peso' ||
           th === 'Descripción' ||
-          th === 'Producto'
+          th === 'Producto' ||
+          th === 'Nombre del Cliente en Paquete'
         )
       })
 
@@ -78,7 +79,10 @@ export default function foundPackage(message: IMessageContent) {
           form.value.type = td
         }
 
-        if (th === 'Nombre del Cliente') {
+        if (
+          (th === 'Nombre del Cliente' || th === 'Nombre del Cliente en Paquete') &&
+          !form.value.client
+        ) {
           form.value.client = td
         }
 
