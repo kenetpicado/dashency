@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import useHome from '@/composables/useHome'
-import SelectForm from '@/components/Form/SelectForm.vue'
 import TheTable from '@/components/Table/TheTable.vue'
 
 const { getHome, home, processing, year } = useHome()
@@ -26,8 +25,6 @@ const monthsSpanish = [
 onMounted(async () => {
   await getHome()
 })
-
-const years = [2024]
 
 watch(
   () => home.value,
@@ -64,14 +61,6 @@ watch(
     <span class="font-bold text-2xl"> Estadisticas </span>
   </header>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-    <SelectForm text="Año" name="year" v-model="year">
-      <option v-for="year in years" :value="year" :key="year">
-        {{ year }}
-      </option>
-    </SelectForm>
-  </div>
-
   <span v-if="processing" class="loading loading-spinner loading-lg mx-auto flex items-center">
   </span>
 
@@ -84,6 +73,9 @@ watch(
       <th>Ganancia</th>
     </template>
     <template #body>
+      <tr v-if="!history.length">
+        <td colspan="5">No hay datos</td>
+      </tr>
       <tr v-for="(item, index) in history" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.name }}
