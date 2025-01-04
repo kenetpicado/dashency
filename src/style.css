@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'custom';
+  font-family: 'Custom';
   font-style: normal;
-  font-weight: normal;
-  src: url('/fonts/font.ttf') format('truetype');
+  font-weight: 400;
+  src: url('/fonts/SF-Pro-Text-Regular.otf') format('opentype');
 }
 
 @layer base {

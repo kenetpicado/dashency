@@ -3,9 +3,16 @@ import { onMounted, ref, watch } from 'vue'
 import useHome from '@/composables/useHome'
 import TheTable from '@/components/Table/TheTable.vue'
 
+interface History {
+  name: string
+  expense: number
+  income: number
+  batches: number
+}
+
 const { getHome, home, processing, year } = useHome()
 const currentMonth = new Date().getMonth() + 1
-const history = ref()
+const history = ref<History[]>([])
 
 const monthsSpanish = [
   'Enero',
@@ -73,8 +80,8 @@ watch(
       <th>Ganancia</th>
     </template>
     <template #body>
-      <tr v-if="!history.length">
-        <td colspan="5">No hay datos</td>
+      <tr v-if="history && !history.length">
+        <td colspan="5" class="text-center text-gray-400">No hay datos</td>
       </tr>
       <tr v-for="(item, index) in history" :key="index" class="hover:bg-gray-50">
         <td>

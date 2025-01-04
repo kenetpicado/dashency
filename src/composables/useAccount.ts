@@ -7,7 +7,6 @@ import toast from '@/utils/toast'
 import cleanQueryParams from '@/utils/query-params'
 
 export default function useAccount() {
-  const { setAccounts } = useAccountStore()
   const { accounts } = storeToRefs(useAccountStore())
   const processing = ref<boolean>(false)
 
@@ -15,13 +14,13 @@ export default function useAccount() {
     status: ''
   })
 
-  function getAccounts() {
+  async function getAccounts() {
     const params = cleanQueryParams(queryParams.value)
 
-    api
+    await api
       .get('/accounts', { params })
       .then((response) => {
-        setAccounts(response.data as IAccount[])
+        accounts.value = response.data as IAccount[]
       })
       .catch((error) => {
         console.log(error)

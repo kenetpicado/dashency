@@ -24,12 +24,10 @@
 
       <div class="grid grid-cols-2 gap-4">
         <InputForm text="Cantidad" name="quantity" v-model="form.quantity" type="number" />
-        <InputForm text="Costo" name="cost" v-model="form.cost" type="number" />
+        <InputForm text="Monto $" name="cost" v-model="form.cost" type="number" />
       </div>
 
-      <div class="text-xl font-bold">
-        Total: ${{ (form.quantity * form.cost).toLocaleString() }}
-      </div>
+      <div class="font-bold">Total: ${{ (form.quantity * form.cost).toLocaleString() }}</div>
 
       <div class="modal-action">
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>

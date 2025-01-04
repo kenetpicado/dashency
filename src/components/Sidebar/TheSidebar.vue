@@ -30,7 +30,8 @@ import {
   IconReceipt2,
   IconLogs,
   IconMail,
-  IconReload
+  IconReload,
+  IconSettings
 } from '@tabler/icons-vue'
 import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
 import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
@@ -106,25 +107,10 @@ const items = [
     activeIn: ['archings.create', 'archings.show']
   },
   {
-    title: 'Configuración'
-  },
-  {
-    title: 'Precios',
-    to: { name: 'prices' },
-    icon: IconReceipt2,
+    title: 'Configuración',
+    to: { name: 'settings' },
+    icon: IconSettings,
     show: hasRoles(['ROOT', 'ADMINISTRADOR'])
-  },
-  {
-    title: 'Cuentas',
-    to: { name: 'accounts' },
-    icon: IconBooks,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
-  },
-  {
-    title: 'Perfil',
-    to: { name: 'profile' },
-    icon: IconUser,
-    show: true
   }
 ]
 </script>
