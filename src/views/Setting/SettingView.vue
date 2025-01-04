@@ -38,7 +38,9 @@
     <span class="font-bold text-2xl">Precios</span>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
+  <IsLoading v-if="processing || processingAccount" />
+
+  <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <div v-for="item in prices" :key="item.id" class="bg-white border p-4 rounded-xl">
       <div class="flex flex-col gap-6 items-center mb-8">
         <span class="text-sm">{{ item.type }}</span>
@@ -66,7 +68,9 @@
     <span class="font-bold text-2xl">Cuentas</span>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
+  <IsLoading v-if="processing || processingAccount" />
+
+  <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <div v-for="item in accounts" :key="item.id" class="bg-white border p-4 rounded-xl truncate">
       <div class="flex flex-col gap-6 items-center mb-8 truncate">
         <span class="text-sm">{{ item.type }}</span>
@@ -105,6 +109,7 @@ import { onMounted, ref } from 'vue'
 import { defaultPriceForm, defaultAccountForm } from '@/defaults'
 import useAccount from '@/composables/useAccount'
 import SelectForm from '@/components/Form/SelectForm.vue'
+import IsLoading from '@/components/IsLoading.vue'
 
 const { getPrices, prices, storePrice, processing, updatePrice } = usePrice()
 const {

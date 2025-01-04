@@ -17,7 +17,7 @@
     </div>
 
     <!-- MIDDLE -->
-    <div class="flex-1 flex flex-col gap-2 mb-2">
+    <div class="flex-1 flex flex-col gap-2 mb-2 truncate">
       <div v-if="item.tracking" class="text-sm">
         {{ item.tracking }}
       </div>
