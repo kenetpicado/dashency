@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['custom', ...defaultTheme.fontFamily.sans]
+        sans: ['Custom', ...defaultTheme.fontFamily.sans]
       }
     }
   },

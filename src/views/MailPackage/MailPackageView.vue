@@ -25,7 +25,7 @@ function getThisPage(page: number) {
     <span class="font-bold text-2xl">Correo</span>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <InputForm
       text="Guía"
       name="guide"
@@ -55,28 +55,28 @@ function getThisPage(page: number) {
   <TheTable>
     <template #header>
       <th>Guia</th>
-      <th>Paquete</th>
+      <th>Tracking</th>
+      <th>Cliente</th>
+      <th>Descripcion</th>
       <th>Tipo</th>
       <th>Peso</th>
     </template>
     <template #body>
       <tr v-if="!mailPackages.data.length">
-        <td colspan="4" class="text-center">No hay paquetes</td>
+        <td colspan="6" class="text-center">No hay paquetes</td>
       </tr>
       <tr v-for="(item, index) in mailPackages.data" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.guide }}
         </td>
         <td>
-          <div class="mb-1 font-bold">
-            {{ item.tracking }}
-          </div>
-          <div class="mb-1">
-            {{ item.client }}
-          </div>
-          <div v-if="item.description" class="text-sm text-gray-400">
-            {{ item.description }}
-          </div>
+          {{ item.tracking }}
+        </td>
+        <td>
+          {{ item.client }}
+        </td>
+        <td class="text-sm text-gray-400">
+          {{ item.description }}
         </td>
         <td>
           {{ item.type }}

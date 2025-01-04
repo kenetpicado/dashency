@@ -104,16 +104,10 @@ const router = createRouter({
           meta: { title: 'Arqueo' }
         },
         {
-          path: 'precios',
-          component: () => import('../views/Price/PriceView.vue'),
-          name: 'prices',
-          meta: { title: 'Precios' }
-        },
-        {
-          path: 'cuentas',
-          component: () => import('../views/Account/AccountView.vue'),
-          name: 'accounts',
-          meta: { title: 'Cuentas' }
+          path: 'configuracion',
+          component: () => import('../views/Setting/SettingView.vue'),
+          name: 'settings',
+          meta: { title: 'Configuración' }
         },
         {
           path: 'perfil',

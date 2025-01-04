@@ -26,7 +26,7 @@
     </form>
   </DialogForm>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <InputForm
       text="Guía"
       name="guide"
@@ -51,16 +51,16 @@
     <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
 
-  <span v-if="processing" class="loading loading-spinner loading-lg mx-auto flex items-center"></span>
+  <span
+    v-if="processing"
+    class="loading loading-spinner loading-lg mx-auto flex items-center"
+  ></span>
 
   <div v-else-if="!packages.data.length" class="text-center my-3 text-gray-400">
     No hay datos que mostrar
   </div>
 
-  <div
-    v-else
-    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
-  >
+  <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <PackageCard
       v-for="(item, index) in packages.data"
       :item="item"

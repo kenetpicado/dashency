@@ -5,9 +5,5 @@ import type { IAccount } from '@/types'
 export const useAccountStore = defineStore('accounts', () => {
   const accounts = ref<IAccount[]>([])
 
-  function setAccounts(data: IAccount[]) {
-    accounts.value = data
-  }
-
-  return { accounts, setAccounts }
+  return { accounts }
 })

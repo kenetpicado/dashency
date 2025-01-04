@@ -6,7 +6,6 @@ import { ref } from 'vue'
 import toast from '@/utils/toast'
 
 export default function usePrice() {
-  const { setPrices } = usePriceStore()
   const { prices } = storeToRefs(usePriceStore())
   const processing = ref<boolean>(false)
 
@@ -14,7 +13,7 @@ export default function usePrice() {
     await api
       .get('/prices')
       .then((response) => {
-        setPrices(response.data as IPrice[])
+        prices.value = response.data as IPrice[]
       })
       .catch((error) => {
         console.log(error)
