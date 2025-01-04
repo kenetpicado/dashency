@@ -68,7 +68,7 @@
             {{ item.code }}
           </td>
           <td>{{ item.packages.length }}</td>
-          <td>${{ item.total }}</td>
+          <td>${{ item.total.toLocaleString() }}</td>
           <td class="text-gray-500">
             {{ getFormattedDate(item.createdAt) }}
           </td>
