@@ -71,11 +71,15 @@
   <IsLoading v-if="processing || processingAccount" />
 
   <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
-    <div v-for="item in accounts" :key="item.id" class="bg-white border p-4 rounded-xl truncate">
-      <div class="flex flex-col gap-6 items-center mb-8 truncate">
+    <div
+      v-for="item in accounts"
+      :key="item.id"
+      class="flex flex-col bg-white border p-4 rounded-xl truncate"
+    >
+      <div class="flex-1 flex flex-col gap-6 items-center mb-8 truncate">
         <span class="text-sm">{{ item.type }}</span>
         <span class="font-bold text-xl text-center">{{ item.number }}</span>
-        <span class="text-sm text-center">{{ item.holder }}</span>
+        <span class="text-sm text-center text-balance">{{ item.holder }}</span>
       </div>
       <div class="flex justify-end">
         <button type="button" @click="editAccount(item)">

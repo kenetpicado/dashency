@@ -3,7 +3,7 @@
     <div class="mb-1">
       {{ item.name }}
     </div>
-    <div class="text-sm text-gray-500">
+    <div class="text-sm text-gray-500 truncate max-w-28">
       {{ item.email }}
     </div>
   </div>
