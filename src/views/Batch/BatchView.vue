@@ -23,7 +23,7 @@
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <InputForm
       text="Código o referencia"
       name="code"
@@ -40,12 +40,12 @@
   <TheTable>
     <template #header>
       <th>Usuario</th>
-      <th>Fecha</th>
       <th>Tipo</th>
-      <th>Código o referencia</th>
+      <th>Referencia</th>
       <th>Paquetes</th>
-      <th>Total</th>
-      <th>Acciones</th>
+      <th>Monto</th>
+      <th>Fecha</th>
+      <th></th>
     </template>
     <template #body>
       <tr v-if="processing">
@@ -56,35 +56,34 @@
       <tr v-else-if="!batches.data.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <template v-else >
+      <template v-else>
         <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
-        <td>
-          <UserInfo v-if="item.user" :item="item.user" />
-        </td>
-        <td>
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
-        <td>
-          {{ item.type }}
-        </td>
-        <td>
-          {{ item.code }}
-        </td>
-        <td>{{ item.packages.length }}</td>
-        <td>${{ item.total }}</td>
-        <td>
-          <div class="flex gap-4">
-            <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
-              <IconEye size="20" />
-            </RouterLink>
-            <button type="button" @click="edit(item)">
-              <IconEdit size="20" />
-            </button>
-          </div>
-        </td>
-      </tr>
+          <td>
+            <UserInfo v-if="item.user" :item="item.user" />
+          </td>
+          <td>
+            {{ item.type }}
+          </td>
+          <td class="text-gray-500">
+            {{ item.code }}
+          </td>
+          <td>{{ item.packages.length }}</td>
+          <td>${{ item.total }}</td>
+          <td class="text-gray-500">
+            {{ getFormattedDate(item.createdAt) }}
+          </td>
+          <td>
+            <div class="flex gap-4 justify-end">
+              <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
+                <IconEye size="20" />
+              </RouterLink>
+              <button type="button" @click="edit(item)">
+                <IconEdit size="20" />
+              </button>
+            </div>
+          </td>
+        </tr>
       </template>
-
     </template>
   </TheTable>
   <PaginationComponent :pages="batches.pages" :page="batches.current" @selected="getThisPage" />

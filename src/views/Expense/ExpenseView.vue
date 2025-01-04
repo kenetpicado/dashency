@@ -50,12 +50,13 @@
   <TheTable>
     <template #header>
       <th>Usuario</th>
-      <th>Fecha</th>
       <th>Concepto</th>
-      <th>Cantidad</th>
-      <th>Costo</th>
+      <th>Descripción</th>
+      <th>Cant.</th>
+      <th>Monto</th>
       <th>Total</th>
-      <th>Acciones</th>
+      <th>Fecha</th>
+      <th></th>
     </template>
     <template #body>
       <tr v-if="!expenses.data.length">
@@ -66,23 +67,21 @@
           <UserInfo v-if="item.user" :item="item.user" />
         </td>
         <td>
-          {{ getFormattedDate(item.createdAt) }}
+          {{ item.concept }}
         </td>
-        <td>
-          <div>
-            {{ item.concept }}
-          </div>
-          <div v-if="item.description" class="text-sm text-gray-500">
-            {{ item.description }}
-          </div>
+        <td class="text-gray-500">
+          {{ item.description }}
         </td>
         <td>
           {{ item.quantity }}
         </td>
         <td>${{ item.cost.toLocaleString() }}</td>
         <td>${{ item.total?.toLocaleString() }}</td>
+        <td class="text-gray-500">
+          {{ getFormattedDate(item.createdAt) }}
+        </td>
         <td>
-          <div class="flex gap-4">
+          <div class="flex gap-4 justify-end">
             <button type="button" @click="edit(item)">
               <IconEdit size="20" />
             </button>

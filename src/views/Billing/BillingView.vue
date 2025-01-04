@@ -6,7 +6,7 @@
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
     <SelectForm text="Banco" name="bank" v-model="queryParams.account">
       <option value="">Todos</option>
       <option v-for="item in accounts" :value="item.id" :key="item.id">
@@ -32,11 +32,11 @@
   <TheTable>
     <template #header>
       <th>Usuario</th>
-      <th>Fecha</th>
       <th>Referencia</th>
       <th>Cliente</th>
       <th>Total</th>
-      <th>Acciones</th>
+      <th>Fecha</th>
+      <th></th>
     </template>
     <template #body>
       <tr v-if="!billing.data.length">
@@ -45,9 +45,6 @@
       <tr v-for="(item, index) in billing.data" :key="index" class="hover:bg-gray-50">
         <td>
           <UserInfo v-if="item.user && typeof item.user !== 'string'" :item="item.user" />
-        </td>
-        <td>
-          {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
           <span v-if="item.account && typeof item.account !== 'string'">
@@ -61,8 +58,11 @@
           {{ item.client }}
         </td>
         <td>${{ item.total }}</td>
+        <td class="text-gray-500">
+          {{ getFormattedDate(item.createdAt) }}
+        </td>
         <td>
-          <div class="flex gap-4">
+          <div class="flex gap-4 justify-end">
             <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">
               <IconEye size="20" />
             </RouterLink>
