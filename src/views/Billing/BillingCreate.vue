@@ -1,8 +1,8 @@
 <template>
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <div class="text-lg mb-2 font-bold">Paquetes</div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
+  <form @submit.prevent="onSubmit" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="bg-white p-5 rounded-xl border flex flex-col gap-4">
+      <div class="text-lg mb-2 font-bold">Buscar paquetes</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
         <InputForm
           text="Cliente"
           name="search"
@@ -18,155 +18,121 @@
           placeholder="Número de guía"
         />
       </div>
-      <div v-if="searching" class="w-full flex justify-center mb-4">
-        <LoadingAnimation />
-      </div>
-      <div v-else-if="!filteredPackages.length" class="text-center text-gray-400">
-        No hay datos que mostrar
-      </div>
-      <TheTable v-else>
-        <template #header>
-          <th>Guia</th>
-          <th>Cliente</th>
-          <th>Tipo</th>
-          <th>Peso</th>
-          <th></th>
-        </template>
-        <template #body>
-          <tr v-for="(item, index) in filteredPackages" :key="index">
-            <td>
-              {{ item.guide }}
-            </td>
-            <td>
-              <div>
+      <div class="h-96 overflow-y-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Guia</th>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>Peso</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-if="searching">
+              <td colspan="5" class="text-center">
+                <IsLoading class="opacity-10" />
+              </td>
+            </tr>
+            <tr v-else-if="!filteredPackages.length">
+              <td colspan="5" class="text-center text-gray-400">No hay datos que mostrar</td>
+            </tr>
+            <tr v-for="(item, index) in filteredPackages" :key="index">
+              <td>
+                {{ item.guide }}
+              </td>
+              <td>
                 {{ item.client }}
-              </div>
-              <div class="mt-1 text-xs text-gray-400">{{ item.description }}</div>
-            </td>
-            <td>
-              {{ item.type }}
-            </td>
-            <td>
-              {{ item.grossWeight }}
-            </td>
-            <td>
-              <button
-                @click="addPackage(item)"
-                type="button"
-                class="bg-neutral rounded-full p-1 text-white"
-              >
-                <IconChevronRight size="20" />
-              </button>
-            </td>
-          </tr>
-        </template>
-      </TheTable>
+              </td>
+              <td>
+                {{ item.type }}
+              </td>
+              <td>
+                {{ item.grossWeight }}
+              </td>
+              <td>
+                <button
+                  @click="addPackage(item)"
+                  type="button"
+                  class="bg-neutral rounded-full p-1 text-white"
+                >
+                  <IconChevronRight size="20" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div>
-      <div class="text-lg mb-2 font-bold">Factura</div>
+    <div class="bg-white p-5 rounded-xl border flex flex-col gap-4">
+      <div class="text-lg font-bold">Paquetes seleccionados</div>
 
-      <div v-if="!selectedPackages.length" class="text-center text-gray-400 my-8">
-        No hay paquetes seleccionados
-      </div>
-
-      <TheTable v-else>
-        <template #header>
-          <th>Guia</th>
-          <th>Cliente</th>
-          <th>Tipo</th>
-          <th>Peso</th>
-          <th></th>
-        </template>
-        <template #body>
-          <tr v-for="(item, index) in selectedPackages" :key="index">
-            <td>
-              {{ item.guide }}
-            </td>
-            <td>
-              <div>
+      <div class="h-[31rem] overflow-y-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Guia</th>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>Peso</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="!selectedPackages.length">
+              <td colspan="5" class="text-center text-gray-400">No hay paquetes seleccionados</td>
+            </tr>
+            <tr v-for="(item, index) in selectedPackages" :key="index">
+              <td>
+                {{ item.guide }}
+              </td>
+              <td>
                 {{ item.client }}
-              </div>
-              <div class="mt-1 text-xs text-gray-400">{{ item.description }}</div>
-            </td>
-            <td>
-              {{ item.type }}
-            </td>
-            <td>
-              {{ item.grossWeight }}
-            </td>
-            <td>
-              <button
-                @click="removePackage(index)"
-                type="button"
-                class="bg-error rounded-full p-1 text-white"
-              >
-                <IconTrash size="20" />
-              </button>
-            </td>
-          </tr>
-        </template>
-      </TheTable>
-
-      <div class="my-8"></div>
-
-      <div class="mb-4">
-        <details class="bg-white border collapse collapse-arrow">
-          <summary class="collapse-title text-base !font-bold font-medium">Precios</summary>
-          <div class="collapse-content">
-            <div class="grid grid-cols-2 gap-4">
-              <InputForm
-                v-for="item in localPrices"
-                :key="item.id"
-                :text="item.type"
-                :name="item.type"
-                v-model.number="item.value"
-                placeholder="Precio"
-                type="number"
-              />
-            </div>
-          </div>
-        </details>
+              </td>
+              <td>
+                {{ item.type }}
+              </td>
+              <td>
+                {{ item.grossWeight }}
+              </td>
+              <td>
+                <button
+                  @click="removePackage(index)"
+                  type="button"
+                  class="bg-error rounded-full p-1 text-white"
+                >
+                  <IconTrash size="20" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <TheTable>
-        <template #header>
-          <th>Envío</th>
-          <th>Peso</th>
-          <th>Paquetes</th>
-          <th>Total a pagar</th>
-        </template>
-        <template #body>
-          <tr v-if="summary.length == 0">
-            <td colspan="5" class="text-center">No hay datos que mostrar</td>
-          </tr>
-          <tr v-for="(item, index) in summary" :key="index">
-            <td>{{ item.type }}</td>
-            <td>{{ item.weight }} lbs</td>
-            <td>{{ item.count }}</td>
-            <td class="font-bold">
-              <span class=""> ${{ item.amount }} </span>
-            </td>
-          </tr>
-        </template>
-      </TheTable>
+    <div class="bg-white p-5 rounded-xl border flex flex-col gap-4">
+      <div class="text-lg font-bold">Datos de facturación</div>
 
-      <form @submit.prevent="onSubmit()" class="mt-4">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <InputForm
-            text="Cliente"
-            name="client"
-            v-model="form.client"
-            placeholder="Nombre del cliente"
-            required
-          />
+      <div class="flex flex-col gap-4 mb-4">
+        <InputForm
+          text="Cliente"
+          name="client"
+          v-model="form.client"
+          placeholder="Nombre del cliente"
+          required
+        />
 
+        <div class="grid grid-cols-1 grid-cols-2 gap-4">
           <SelectForm text="Cuenta" name="account" v-model="form.account" required>
             <option value="">Seleccionar cuenta</option>
             <option v-for="item in accounts" :value="item.id" :key="item.id">
               {{ item.type }} - {{ item.number }}
             </option>
           </SelectForm>
+
           <InputForm
             text="Referencia"
             name="reference"
@@ -175,59 +141,102 @@
             placeholder="Código o referencia"
             required
           />
+
+          <InputForm
+            text="Dirección de entrega (Opcional)"
+            name="address"
+            v-model="form.address"
+            placeholder="Direccion de entrega"
+          />
+
+          <InputForm
+            text="Notas (Opcional)"
+            name="notes"
+            v-model="form.notes"
+            placeholder="Notas"
+          />
         </div>
+      </div>
 
-        <details class="bg-white border collapse collapse-arrow">
-          <summary class="collapse-title text-base !font-bold font-medium">Otros datos</summary>
-          <div class="collapse-content">
-            <div class="grid grid-cols-2 gap-4">
-              <InputForm
-                text="Costo envío terrestre (Opcional)"
-                name="delivery"
-                v-model.number="form.delivery"
-                placeholder="Costo del delivery"
-                type="number"
-              />
-              <InputForm
-                text="Dirección de entrega (Opcional)"
-                name="address"
-                v-model="form.address"
-                placeholder="Direccion de entrega"
-              />
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <InputForm
+          v-for="item in localPrices"
+          :key="item.id"
+          :text="`PRECIO ${item.type}`"
+          :name="item.type"
+          v-model.number="item.value"
+          placeholder="Precio"
+          type="number"
+        />
+      </div>
+    </div>
 
-              <InputForm
-                text="Importe extra (Opcional)"
-                name="fee"
-                v-model.number="form.fee"
-                placeholder="Importe extra"
-                type="number"
-              />
+    <div class="bg-white p-5 rounded-xl border flex flex-col gap-4">
+      <div class="text-lg font-bold">Resumen</div>
 
-              <InputForm
-                text="Notas (Opcional)"
-                name="notes"
-                v-model="form.notes"
-                placeholder="Notas"
-              />
-            </div>
-          </div>
-        </details>
+      <table class="table table-fixed mb-4">
+        <thead>
+          <tr>
+            <th>Envío</th>
+            <th>Peso</th>
+            <th>Paquetes</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
 
-        <div class="text-sm text-gray-400 my-4">
-          Por favor, verifique los datos antes de guardar la factura ya que no se podrán modificar
-          posteriormente.
-        </div>
+        <tbody>
+          <tr v-for="(item, index) in summary" :key="index">
+            <td>{{ item.type }}</td>
+            <td>{{ item.weight }} lbs</td>
+            <td>{{ item.count }}</td>
+            <td>${{ item.amount }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <div v-if="errorMessage" class="bg-red-100 p-4 rounded-lg text-red-600">
+      <div>
+        <table class="table table-fixed mb-4 uppercase">
+          <tbody>
+            <tr>
+              <td colspan="3">Subtotal</td>
+              <td>${{ form.subTotal }}</td>
+            </tr>
+            <tr>
+              <td colspan="3">Costo de envío ($)</td>
+              <td>
+                <InputForm
+                  name="delivery"
+                  v-model.number="form.delivery"
+                  placeholder="$0"
+                  type="number"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">Otros importes ($)</td>
+              <td>
+                <InputForm name="fee" v-model.number="form.fee" placeholder="$0" type="number" />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" class="font-bold">Total</td>
+              <td class="font-bold">$ {{ form.total }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div v-if="errorMessage" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
           {{ errorMessage }}
         </div>
 
-        <div v-else class="flex justify-end gap-4">
-          <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
+        <div class="flex justify-end">
+          <BtnPrimary type="submit" :loading="processing" :disabled="!!errorMessage">
+            Generar factura
+          </BtnPrimary>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -239,13 +248,12 @@ import toast from '@/utils/toast'
 import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
-import TheTable from '@/components/Table/TheTable.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useBilling from '@/composables/useBilling'
 import usePrice from '@/composables/usePrice'
 import useAccount from '@/composables/useAccount'
 import { watchDebounced } from '@vueuse/core'
-import LoadingAnimation from '@/components/Buttons/LoadingAnimation.vue'
+import IsLoading from '@/components/IsLoading.vue'
 
 const selectedPackages = ref<IPackage[]>([])
 
@@ -299,23 +307,8 @@ const filteredPackages = computed(() => {
 })
 
 function onSubmit() {
-  if (!form.value.client) {
-    toast.error('Debe ingresar el nombre del cliente')
-    return
-  }
-
   if (!selectedPackages.value.length) {
     toast.error('Debe seleccionar al menos un paquete')
-    return
-  }
-
-  if (!form.value.reference) {
-    toast.error('Ingrese una referencia')
-    return
-  }
-
-  if (!form.value.account) {
-    toast.error('Seleccione una cuenta')
     return
   }
 

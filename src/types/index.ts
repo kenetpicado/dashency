@@ -1,5 +1,5 @@
 export interface IInputForm {
-  text: string
+  text?: string
   name: string
   required?: boolean
   disabled?: boolean
