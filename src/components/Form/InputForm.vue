@@ -7,7 +7,7 @@ const model = defineModel()
 
 <template>
   <div class="form-control w-full">
-    <div class="label">
+    <div v-if="text" class="label">
       <span class="label-text text-gray-500">
         {{ text }}
       </span>
