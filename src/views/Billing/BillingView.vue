@@ -32,41 +32,42 @@
   <TheTable>
     <template #header>
       <th>Usuario</th>
+      <th>Cuenta</th>
       <th>Referencia</th>
       <th>Cliente</th>
       <th>Total</th>
       <th>Fecha</th>
-      <th></th>
+      <th>Acciones</th>
     </template>
     <template #body>
       <tr v-if="!billing.data.length">
-        <td colspan="6" class="text-center">No hay datos que mostrar</td>
+        <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
       <tr v-for="(item, index) in billing.data" :key="index" class="hover:bg-gray-50">
         <td>
-          <UserInfo v-if="item.user && typeof item.user !== 'string'" :item="item.user" />
+          <span v-if="item.user && typeof item.user !== 'string'">
+            {{ item.user.name }}
+          </span>
         </td>
         <td>
           <span v-if="item.account && typeof item.account !== 'string'">
             {{ item.account.type }}: {{ item.account.number }}
           </span>
-          <div class="text-gray-400 text-sm">
-            {{ item.reference }}
-          </div>
+        </td>
+        <td>
+          {{ item.reference }}
         </td>
         <td>
           {{ item.client }}
         </td>
         <td>${{ item.total }}</td>
-        <td class="text-gray-500">
+        <td class="text-gray-400">
           {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
-          <div class="flex gap-4 justify-end">
-            <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">
-              <IconEye size="20" />
-            </RouterLink>
-          </div>
+          <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">
+            <IconEye size="20" />
+          </RouterLink>
         </td>
       </tr>
     </template>

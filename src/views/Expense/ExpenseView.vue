@@ -64,7 +64,7 @@
       </tr>
       <tr v-for="(item, index) in expenses.data" :key="index" class="hover:bg-gray-50">
         <td>
-          <UserInfo v-if="item.user" :item="item.user" />
+          {{ item.user?.name }}
         </td>
         <td>
           {{ item.concept }}
@@ -77,7 +77,7 @@
         </td>
         <td>${{ item.cost.toLocaleString() }}</td>
         <td>${{ item.total?.toLocaleString() }}</td>
-        <td class="text-gray-500">
+        <td class="text-gray-400">
           {{ getFormattedDate(item.createdAt) }}
         </td>
         <td>
@@ -100,7 +100,6 @@ import { onMounted, ref } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
 import getFormattedDate from '@/utils/date'
 import { IconEdit } from '@tabler/icons-vue'
-import UserInfo from '@/components/UserInfo.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
 import SelectForm from '@/components/Form/SelectForm.vue'

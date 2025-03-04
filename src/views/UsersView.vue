@@ -9,7 +9,6 @@ import DialogForm from '@/components/Form/DialogForm.vue'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
 import getFormattedDate from '@/utils/date'
-import UserInfo from '@/components/UserInfo.vue'
 import { useTimeAgo } from '@vueuse/core'
 
 const { getUsers, users } = useUser()
@@ -65,6 +64,7 @@ function onSubmit() {
   <TheTable>
     <template #header>
       <th>Nombre</th>
+      <th>Correo</th>
       <th>Rol</th>
       <th>Estado</th>
       <th>Registrado</th>
@@ -73,13 +73,16 @@ function onSubmit() {
     </template>
     <template #body>
       <tr v-if="processing">
-        <td colspan="6">
+        <td colspan="7">
           <span class="loading loading-spinner mx-auto flex items-center"> </span>
         </td>
       </tr>
       <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
         <td>
-          <UserInfo :item="item" />
+          {{ item.name }}
+        </td>
+        <td>
+          {{ item.email }}
         </td>
         <td>
           {{ item.role }}

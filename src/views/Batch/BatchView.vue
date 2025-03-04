@@ -59,7 +59,7 @@
       <template v-else>
         <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
           <td>
-            <UserInfo v-if="item.user" :item="item.user" />
+            {{ item.user?.name }}
           </td>
           <td>
             {{ item.type }}
@@ -102,7 +102,6 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { RouterLink } from 'vue-router'
-import UserInfo from '@/components/UserInfo.vue'
 import toast from '@/utils/toast'
 import { watchDebounced } from '@vueuse/core'
 import PaginationComponent from '@/components/PaginationComponent.vue'
