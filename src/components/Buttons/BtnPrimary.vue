@@ -12,6 +12,8 @@ defineProps<IButton>()
     class="btn btn-neutral min-w-[7rem]"
   >
     <LoadingAnimation v-if="loading" />
-    <slot />
+    <span v-else>
+      <slot />
+    </span>
   </button>
 </template>

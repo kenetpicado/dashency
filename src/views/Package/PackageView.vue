@@ -51,25 +51,61 @@
     <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
 
-  <span
-    v-if="processing"
-    class="loading loading-spinner loading-lg mx-auto flex items-center"
-  ></span>
-
-  <div v-else-if="!packages.data.length" class="text-center my-3 text-gray-400">
-    No hay datos que mostrar
-  </div>
-
-  <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <PackageCard
-      v-for="(item, index) in packages.data"
-      :item="item"
-      :key="index"
-      :showIcon="item.status === 'REGISTRADO'"
-      :icon="IconEdit"
-      @selectedItem="editPackage"
-    />
-  </div>
+  <TheTable>
+    <template #header>
+      <th>Guia</th>
+      <th>Tipo</th>
+      <th>Peso</th>
+      <th>Piezas</th>
+      <th>Estado</th>
+      <th>Cliente</th>
+      <th>Descripción</th>
+      <th>Fecha Ingreso</th>
+      <th>Fecha</th>
+      <th>Acciones</th>
+    </template>
+    <template #body>
+      <tr v-if="!packages.data.length">
+        <td colspan="10" class="text-center">No hay paquetes</td>
+      </tr>
+      <tr v-for="(item, index) in packages.data" :key="index" class="hover:bg-gray-50">
+        <td>
+          {{ item.guide }}
+        </td>
+        <td>
+          {{ item.type }}
+        </td>
+        <td>
+          {{ item.grossWeight }} lb(s)
+        </td>
+        <td>
+          {{ item.pieces }}
+        </td>
+        <td>
+          {{ item.status }}
+        </td>
+        <td>
+          {{ item.client }}
+        </td>
+        <td>
+          {{ item.description }}
+        </td>
+        <td>
+          <span v-if="item.entryDate">
+            {{ getFormattedDate(item.entryDate, 'DD/MM/YY') }}
+          </span>
+        </td>
+        <td class="text-gray-400">
+          {{ getFormattedDate(item.createdAt) }}
+        </td>
+        <td>
+          <button type="button" @click="editPackage(item)">
+            <IconEdit size="25" />
+          </button>
+        </td>
+      </tr>
+    </template>
+  </TheTable>
 
   <PaginationComponent :pages="packages.pages" :page="packages.current" @selected="getThisPage" />
 </template>
@@ -80,7 +116,6 @@ import usePackage from '@/composables/usePackage'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
-import PackageCard from '@/components/PackageCard.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 import status from '@/utils/status'
 import usePrice from '@/composables/usePrice'
@@ -89,6 +124,8 @@ import type { IPackage } from '@/types'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
+import TheTable from '@/components/Table/TheTable.vue'
+import getFormattedDate from '@/utils/date'
 
 const { getPackages, packages, queryParams, processing, updatePackage } = usePackage()
 const { prices, getPrices } = usePrice()

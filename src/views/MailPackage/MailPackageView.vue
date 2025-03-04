@@ -6,11 +6,12 @@ import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 import { watchDebounced } from '@vueuse/core'
+import getFormattedDate from '@/utils/date'
 
 const { getMailPackages, mailPackages, queryParams } = usePackage()
 
-onMounted(async () => {
-  await getMailPackages()
+onMounted(() => {
+  getMailPackages()
 })
 
 watchDebounced(queryParams.value, () => getMailPackages(), { debounce: 700, maxWait: 1000 })
@@ -55,34 +56,38 @@ function getThisPage(page: number) {
   <TheTable>
     <template #header>
       <th>Guia</th>
-      <th>Tracking</th>
-      <th>Cliente</th>
-      <th>Descripcion</th>
       <th>Tipo</th>
       <th>Peso</th>
+      <th>Cliente</th>
+      <th>Tracking</th>
+      <th>Descripción</th>
+      <th>Fecha</th>
     </template>
     <template #body>
       <tr v-if="!mailPackages.data.length">
-        <td colspan="6" class="text-center">No hay paquetes</td>
+        <td colspan="7" class="text-center">No hay paquetes</td>
       </tr>
       <tr v-for="(item, index) in mailPackages.data" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.guide }}
         </td>
         <td>
-          {{ item.tracking }}
-        </td>
-        <td>
-          {{ item.client }}
-        </td>
-        <td class="text-sm text-gray-400">
-          {{ item.description }}
-        </td>
-        <td>
           {{ item.type }}
         </td>
         <td>
           {{ item.grossWeight }}
+        </td>
+        <td>
+          {{ item.client }}
+        </td>
+        <td>
+          {{ item.tracking }}
+        </td>
+        <td>
+          {{ item.description }}
+        </td>
+        <td class="text-gray-400">
+          {{ getFormattedDate(item.createdAt) }}
         </td>
       </tr>
     </template>
