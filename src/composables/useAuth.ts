@@ -25,7 +25,7 @@ export default function useAuth() {
       .post('/login', data)
       .then((response) => {
         Cookie.set('edo_token', response.data.token, {
-          expires: 1,
+          expires: 30,
           secure: true,
           sameSite: 'Lax'
         })
