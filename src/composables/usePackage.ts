@@ -10,7 +10,6 @@ export default function usePackage() {
   const { setPackages, setMailPackages } = usePackageStore()
   const { packages, mailPackages } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
-  const trackings = ref<string[]>([])
 
   const queryParams = ref({
     type: '',
@@ -75,12 +74,6 @@ export default function usePackage() {
       })
   }
 
-  async function getTrackings() {
-    await api.get('/trackings').then(({ data }) => {
-      trackings.value = data as string[]
-    })
-  }
-
   function bulkPackages(data: IMailPackage[], messageIds: string[], callback: () => void) {
     processing.value = true
 
@@ -108,8 +101,6 @@ export default function usePackage() {
     queryParams,
     updatePackage,
     bulkPackages,
-    getTrackings,
-    trackings,
     getMailPackages,
     mailPackages
   }

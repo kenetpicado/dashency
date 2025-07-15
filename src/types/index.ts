@@ -258,4 +258,6 @@ export interface IEmail {
 export interface IMessage {
   id: string
   threadId: string
+  payload: IPayload
+  internalDate?: number
 }

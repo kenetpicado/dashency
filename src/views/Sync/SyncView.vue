@@ -9,46 +9,47 @@ import router from '@/router'
 import TheTable from '@/components/Table/TheTable.vue'
 import getFormattedDate from '@/utils/date'
 
-const { emails, getEmails, message, getMessage } = useGoogle()
-const { bulkPackages, processing, trackings, getTrackings } = usePackage()
+const { emails, getEmails } = useGoogle()
+const { bulkPackages, processing } = usePackage()
 
 const temporalPackage = ref<IMailPackage>()
 const foundPackages = ref<IMailPackage[]>([])
-const loading = ref(false)
+const allEmailsFetched = ref(false)
 
 onMounted(async () => {
-  loading.value = true
   await getEmails()
-  await getTrackings()
 
   if (emails.value && emails.value.messages) {
-    emails.value.messages.forEach(async (email) => {
-      await getMessage(email.id)
-
-      if (message.value) {
-        temporalPackage.value = foundPackage(message.value)
+    emails.value.messages.forEach((email, index) => {
+      if (email.payload) {
+        temporalPackage.value = foundPackage(email)
 
         if (temporalPackage.value && temporalPackage.value.tracking) {
-          const found = foundPackages.value.find(
-            (p) => p.tracking === temporalPackage.value?.tracking
-          )
-          if (!found && !trackings.value.includes(temporalPackage.value.tracking)) {
+          const found = foundPackages.value.find((p) => p.tracking === temporalPackage.value?.tracking)
+
+          if (!found) {
             foundPackages.value.push(temporalPackage.value)
           } else if (found && temporalPackage.value.guide && !found.guide) {
             found.guide = temporalPackage.value.guide
           }
         }
       }
-    })
-  }
 
-  loading.value = false
+      if (index === emails.value.messages.length - 1) {
+        allEmailsFetched.value = true
+      }
+    })
+
+    if (!emails.value.messages.length) {
+      allEmailsFetched.value = true
+    }
+  }
 })
 
 function savePackages() {
   const messageIds = emails.value.messages.map((email) => email.id) as string[]
   bulkPackages(foundPackages.value, messageIds, () => {
-    router.push({ name: 'packages' })
+    router.push({ name: 'mail.packages' })
   })
 }
 </script>
@@ -61,10 +62,10 @@ function savePackages() {
     </BtnPrimary>
   </header>
 
-  <div v-if="loading" class="text-center text-gray-600">Buscando paquetes...</div>
+  <div v-if="!allEmailsFetched" class="text-center text-gray-600">Buscando paquetes...</div>
 
   <template v-else>
-    <h5 class="mb-8">{{ foundPackages.length }} paquetes encontrados</h5>
+    <h5 class="mb-2">{{ foundPackages.length }} paquetes encontrados</h5>
 
     <TheTable>
       <template #header>
