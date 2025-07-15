@@ -1,4 +1,4 @@
-import type { IMessageContent, IMailPackage, IPart, IBasicPart } from '@/types'
+import type { IMessageContent, IMailPackage, IPart, IBasicPart, IMessage } from '@/types'
 import { ref } from 'vue'
 import { decode } from 'js-base64'
 import { load } from 'cheerio'
@@ -23,12 +23,14 @@ function sanitizeText(text: string) {
   return text.replace(/[А-Я]/gi, (char) => charMap[char] || char)
 }
 
-export default function foundPackage(message: IMessageContent) {
+export default function foundPackage(message: IMessage) {
   const multipart = ref<IPart>()
+
   const htmlPart = ref<IBasicPart>()
   const htmlData = ref<string>('')
   const textPart = ref<IBasicPart>()
   const textData = ref<string>('')
+
   const internalDate = Number(message.internalDate)
 
   const form = ref<IMailPackage>({
@@ -43,9 +45,15 @@ export default function foundPackage(message: IMessageContent) {
 
   multipart.value = message.payload?.parts.find((p) => p.mimeType === 'multipart/alternative')
 
+  if (!multipart.value) {
+    multipart.value = message.payload?.parts.find((p) => p.mimeType === 'text/html')
+  }
+
   if (multipart.value) {
-    textPart.value = multipart.value.parts?.find((p) => p.mimeType === 'text/plain')
-    htmlPart.value = multipart.value.parts?.find((p) => p.mimeType === 'text/html')
+    htmlPart.value =
+      multipart.value.mimeType === 'text/html'
+        ? multipart.value
+        : multipart.value.parts?.find((p) => p.mimeType === 'text/html')
 
     if (htmlPart.value && htmlPart.value.body?.data) {
       htmlData.value = decode(htmlPart.value.body.data)
@@ -99,6 +107,8 @@ export default function foundPackage(message: IMessageContent) {
         form.value.description = allDescriptions.value.join(' | ')
       }
     }
+
+    textPart.value = multipart.value.parts?.find((p) => p.mimeType === 'text/plain')
 
     if (textPart.value && textPart.value.body?.data) {
       textData.value = decode(textPart.value.body.data)

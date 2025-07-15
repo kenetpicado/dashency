@@ -46,7 +46,7 @@
       <TheTable>
         <template #header>
           <th>Cuenta</th>
-          <th>Cantidad</th>
+          <th>Referencias</th>
           <th>Monto</th>
         </template>
         <template #body>
@@ -61,7 +61,7 @@
             <td>
               {{ item.account_key }}
             </td>
-            <td>{{ item.references.length }} lbs</td>
+            <td>{{ item.references.length }}</td>
             <td>${{ item.total }}</td>
           </tr>
         </template>
