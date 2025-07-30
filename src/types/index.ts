@@ -88,6 +88,7 @@ export interface IBatchResponse {
 }
 
 export interface IBatch {
+  _id?: string
   id?: string
   total: number
   code: string
@@ -260,4 +261,15 @@ export interface IMessage {
   threadId: string
   payload: IPayload
   internalDate?: number
+}
+
+export interface IMeta {
+  totalPages: number
+  totalDocs: number
+  page: number
+  nextPage: number | null
+  prevPage: number | null
+  limit: number
+  hasPrevPage: boolean
+  hasNextPage: boolean
 }

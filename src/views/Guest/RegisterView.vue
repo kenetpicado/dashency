@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import InputForm from '@/components/Form/InputForm.vue'
 import { ref } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import useAuth from '@/composables/useAuth'
 import type { IRegisterForm } from '@/types'
-import toast from '@/utils/toast'
+import { Form } from 'vee-validate'
+import FieldForm from '@/components/Form/FieldForm.vue'
 
 const defaultValues: IRegisterForm = {
   name: '',
@@ -20,21 +20,6 @@ const done = ref<boolean>(false)
 const title = ref<string>('Crear nueva cuenta')
 
 function onRegister() {
-  if (form.value.password.length < 8) {
-    toast.error('La contraseña debe tener al menos 8 caracteres')
-    return
-  }
-
-  if (!/\d/.test(form.value.password)) {
-    toast.error('La contraseña debe tener al menos 1 número')
-    return
-  }
-
-  if (!/[A-Z]/.test(form.value.password)) {
-    toast.error('La contraseña debe tener al menos 1 letra mayúscula')
-    return
-  }
-
   register(form.value, () => {
     form.value = defaultValues
     done.value = true
@@ -47,10 +32,7 @@ const logo = import.meta.env.VITE_APP_LOGO || ''
 
 <template>
   <div class="flex flex-col justify-center items-center mb-4">
-    <img :src="logo" alt="" class="w-auto h-[2rem] mb-8 mx-auto" />
-    <h1 class="text-base font-bold mb-2">
-      {{ title }}
-    </h1>
+    <img :src="logo" alt="Logo" class="w-auto h-[4rem] mx-auto" />
   </div>
 
   <div v-if="done" class="text-base">
@@ -58,21 +40,36 @@ const logo = import.meta.env.VITE_APP_LOGO || ''
     sesión.
   </div>
 
-  <form v-else @submit.prevent="onRegister">
+  <Form v-else @submit="onRegister">
     <div class="flex flex-col gap-4">
-      <InputForm text="Nombre" name="name" v-model="form.name" autofocus />
+      <FieldForm
+        text="Nombre completo"
+        name="nombre"
+        v-model="form.name"
+        autofocus
+        placeholder="ej. Kenet Picado"
+        rules="required"
+      />
 
-      <InputForm text="Correo" name="email" v-model="form.email" required type="email" />
+      <FieldForm
+        text="Correo"
+        name="correo"
+        v-model="form.email"
+        type="email"
+        placeholder="ej. kenet@gmail.com"
+        rules="required|email"
+      />
 
-      <InputForm
+      <FieldForm
         text="Contraseña"
-        name="password"
+        name="contraseña"
         v-model="form.password"
-        required
+        rules="required|password"
+        placeholder="********"
         :type="showPassword ? 'text' : 'password'"
       />
 
-      <div class="form-control w-full">
+      <div class="form-control w-full mb-8">
         <label class="label cursor-pointer">
           <div class="flex gap-2 items-center">
             <input type="checkbox" v-model="showPassword" class="checkbox" />
@@ -82,11 +79,10 @@ const logo = import.meta.env.VITE_APP_LOGO || ''
       </div>
     </div>
 
-    <div class="mt-10">
-      <BtnPrimary type="submit" class="w-full" :loading="processing"> Crear cuenta </BtnPrimary>
-    </div>
-  </form>
-  <div class="text-center my-5">
+    <BtnPrimary type="submit" class="w-full" :loading="processing"> Crear cuenta </BtnPrimary>
+  </Form>
+
+  <div class="text-center mt-5 text-gray-400">
     ¿Ya tienes cuenta?
     <RouterLink :to="{ name: 'login' }" class="text-neutral"> Inicia sesión </RouterLink>
   </div>

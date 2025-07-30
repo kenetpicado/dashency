@@ -1,32 +1,35 @@
-import type { IBatch, IBatchResponse } from '@/types'
+import type { IBatch } from '@/types'
 import { useBatchStore } from '@/stores/batch'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import router from '@/router'
 import toast from '@/utils/toast'
+import cleanQueryParams from '@/utils/query-params'
 
 export default function useBatch() {
-  const { setBatches, setBatch } = useBatchStore()
-  const { batches, batch } = storeToRefs(useBatchStore())
+  const { batches, batch, meta } = storeToRefs(useBatchStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref<{ type: string; code: string; page: number }>({
+  const queryParams = ref<any>({
     type: '',
-    code: '',
-    page: 1
+    code: ''
   })
 
- async function getBatches() {
+  async function getBatches() {
     processing.value = true
-    const params = Object.fromEntries(
-      Object.entries(queryParams.value).filter(([_, value]) => value)
-    )
+
+    const params = {
+      page: meta.value.page,
+      ...cleanQueryParams(queryParams.value)
+    }
 
     await api
       .get('/batches', { params })
       .then((response) => {
-        setBatches(response.data as IBatchResponse)
+        const { docs, ...rest } = response.data
+        batches.value = docs
+        meta.value = rest
       })
       .finally(() => {
         processing.value = false
@@ -34,10 +37,11 @@ export default function useBatch() {
   }
 
   async function getBatch(id: string) {
+    batch.value = undefined
     await api
       .get('/batches/' + id)
       .then((response) => {
-        setBatch(response.data as IBatch)
+        batch.value = response.data
       })
       .catch((error) => {
         console.log(error)
@@ -54,8 +58,8 @@ export default function useBatch() {
         toast.success('Lote creado correctamente')
         router.push({ name: 'batches' })
       })
-      .catch((error) => {
-        console.log(error)
+      .catch((err) => {
+        toast.error('Error al crear el lote: ' + err.response?.data?.message || 'Error desconocido')
       })
       .finally(() => {
         processing.value = false
@@ -63,16 +67,6 @@ export default function useBatch() {
   }
 
   function updateBatch(data: IBatch, callback: () => void) {
-    if (!data.total) {
-      toast.error('El campo total es requerido')
-      return
-    }
-
-    if (!data.type) {
-      toast.error('El campo tipo es requerido')
-      return
-    }
-
     processing.value = true
 
     api
@@ -87,5 +81,19 @@ export default function useBatch() {
       })
   }
 
-  return { getBatches, getBatch, batches, batch, processing, storeBatch, updateBatch, queryParams }
+  function deleteBatch(id: string) {
+    processing.value = true
+
+    api
+      .delete('/batches/' + id)
+      .then(() => {
+        toast.success('Lote eliminado correctamente')
+        router.push({ name: 'batches' })
+      })
+      .finally(() => {
+        processing.value = false
+      })
+  }
+
+  return { getBatches, getBatch, batches, batch, processing, storeBatch, updateBatch, queryParams, meta, deleteBatch }
 }

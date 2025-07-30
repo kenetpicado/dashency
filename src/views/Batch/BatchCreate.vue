@@ -1,82 +1,113 @@
 <template>
   <loading v-model:active="isLoading" color="#2563eb" loader="dots" />
 
-  <header class="flex items-center justify-between mb-8">
-    <span class="font-bold text-2xl">Nuevo</span>
-    <BtnSecondary @click="openInputFile">
-      <IconUpload size="20" />
-      Subir archivo
-    </BtnSecondary>
-  </header>
+  <Form @submit="onSubmit">
+    <header class="flex items-center justify-between mb-8">
+      <span class="font-bold text-2xl">Nuevo</span>
+      <BtnSecondary @click="open">
+        <IconUpload size="20" />
+        Subir archivo
+      </BtnSecondary>
+    </header>
 
-  <input
-    type="file"
-    id="excelFileInput"
-    class="hidden"
-    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-    @change="onChange"
-  />
+    <div v-if="errorMessage" role="alert" class="alert alert-error mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span>
+        No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a
+        intentarlo.
+        <br />
+        {{ errorMessage }}
+      </span>
+    </div>
 
-  <div v-if="errorMesage" class="bg-red-100 p-4 rounded-lg text-red-600 mb-4">
-    No se pudo procesar tu archivo ya que tiene errores, por favor, revisa y vuelve a intentarlo.
-    <br />
-    {{ errorMesage }}
-  </div>
+    <TheTable>
+      <template #header>
+        <th>#</th>
+        <th>Guia</th>
+        <th>Descripción</th>
+        <th>Piezas</th>
+        <th>Peso (lbs)</th>
+        <th>Cliente</th>
+        <th>Ingreso</th>
+      </template>
+      <template #body>
+        <tr v-if="!form.packages.length">
+          <td colspan="7" class="text-center">No hay datos que mostrar</td>
+        </tr>
+        <tr v-else v-for="(item, index) in form.packages" :key="index" class="hover:bg-gray-50">
+          <td>
+            {{ index + 1 }}
+          </td>
+          <td>
+            {{ item.guide }}
+          </td>
+          <td class="truncate max-w-[5rem]">
+            {{ item.description }}
+          </td>
+          <td>
+            {{ item.pieces }}
+          </td>
+          <td>
+            <input
+              type="number"
+              class="input w-full input-bordered input-sm"
+              v-model="item.grossWeight"
+            />
+          </td>
+          <td>
+            <input type="text" class="input w-full input-bordered input-sm" v-model="item.client" />
+          </td>
+          <td>
+            {{ item.entryDate }}
+          </td>
+        </tr>
+      </template>
+    </TheTable>
 
-  <TheTable>
-    <template #header>
-      <th>Guia</th>
-      <th>Descripción</th>
-      <th>Piezas</th>
-      <th>Peso (lbs)</th>
-      <th>Cliente</th>
-      <th>Ingreso</th>
-    </template>
-    <template #body>
-      <tr v-if="!form.packages.length">
-        <td colspan="6" class="text-center">No hay datos que mostrar</td>
-      </tr>
-      <tr v-else v-for="(item, index) in form.packages" :key="index" class="hover:bg-gray-50">
-        <td>
-          {{ item.guide }}
-        </td>
-        <td class="truncate max-w-[5rem]">
-          {{ item.description }}
-        </td>
-        <td>
-          {{ item.pieces }}
-        </td>
-        <td>
-          <input
-            type="number"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.grossWeight"
-          />
-        </td>
-        <td>
-          <input
-            type="text"
-            class="border-gray-300 rounded-lg block w-full transition duration-300 ease-in-out"
-            v-model="item.client"
-          />
-        </td>
-        <td>
-          {{ item.entryDate }}
-        </td>
-      </tr>
-    </template>
-  </TheTable>
-  <div class="grid grid-cols-4 gap-4 mt-6">
-    <InputForm text="Total" name="total" v-model="form.total" type="number" />
-    <InputForm text="Código o referencia" name="code" v-model="form.code" />
-    <SelectForm text="Tipo de lote" name="type" v-model="form.type">
-      <option value="">Selecciona un tipo</option>
-      <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
-    </SelectForm>
-  </div>
-  <div class="flex justify-end gap-4">
-    <BtnPrimary @click="onSubmit" :loading="processing">Guardar</BtnPrimary>
-  </div>
+    <div class="grid grid-cols-4 gap-4 mt-6">
+      <FieldForm
+        text="Total"
+        name="total"
+        v-model="form.total"
+        type="number"
+        rules="required|numeric|min_value:1"
+        placeholder="ej. 200"
+      />
+
+      <FieldForm
+        text="Código o referencia"
+        name="referencia"
+        v-model="form.code"
+        rules="required"
+        placeholder="ej. REF12345"
+      />
+
+      <FieldForm as="select" text="Tipo de lote" name="tipo" v-model="form.type" rules="required">
+        <option value="">Selecciona un tipo</option>
+        <option v-for="price in prices" :value="price.type" :key="price.id">
+          {{ price.type }}
+        </option>
+      </FieldForm>
+    </div>
+
+    <div class="flex justify-end gap-4">
+      <BtnPrimary type="submit" :loading="processing" :disabled="!form.packages.length">
+        Guardar
+      </BtnPrimary>
+    </div>
+  </Form>
 </template>
 
 <script setup lang="ts">
@@ -84,7 +115,6 @@ import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { onMounted, ref } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import InputForm from '@/components/Form/InputForm.vue'
 import { IconUpload } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
 import type { IBatch, IPackage } from '@/types'
@@ -92,16 +122,18 @@ import useBatch from '@/composables/useBatch'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import * as XLSX from 'xlsx'
-import SelectForm from '@/components/Form/SelectForm.vue'
 import usePrice from '@/composables/usePrice'
 import { format } from '@formkit/tempo'
+import { useFileDialog } from '@vueuse/core'
+import { Form } from 'vee-validate'
+import FieldForm from '@/components/Form/FieldForm.vue'
 
 const isLoading = ref<boolean>(false)
 
 const { storeBatch, processing } = useBatch()
 const { prices, getPrices } = usePrice()
 
-const errorMesage = ref<string>('')
+const errorMessage = ref<string>('')
 
 const form = ref<IBatch>({
   total: 0,
@@ -110,44 +142,41 @@ const form = ref<IBatch>({
   code: ''
 })
 
+const { open, onChange } = useFileDialog({
+  accept:
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
+  directory: false
+})
+
 onMounted(() => {
   getPrices()
 })
 
-async function onChange(event: any) {
-  errorMesage.value = ''
+onChange((files: any) => {
+  errorMessage.value = ''
   isLoading.value = true
 
-  processFile(event.target.files[0])
+  if (!files.length) {
+    isLoading.value = false
+    form.value.packages = []
+    return
+  }
+
+  processFile(files[0])
     .then((packages: any) => {
       form.value.packages = packages as IPackage[]
     })
     .catch((error: any) => {
-      errorMesage.value = error.message
+      errorMessage.value = error.message
     })
     .finally(() => {
       isLoading.value = false
     })
-}
+})
 
 function onSubmit() {
-  if (!form.value.packages.length) {
-    toast.error('No hay paquetes')
-    return
-  }
-
-  if (!form.value.total || form.value.total < 1) {
-    toast.error('El total es requerido')
-    return
-  }
-
   if (!form.value.type) {
     toast.error('El tipo es requerido')
-    return
-  }
-
-  if (!form.value.code) {
-    toast.error('El código es requerido')
     return
   }
 
@@ -156,10 +185,6 @@ function onSubmit() {
     form.value.type = ''
     form.value.packages = []
   })
-}
-
-function openInputFile() {
-  document.getElementById('excelFileInput')?.click()
 }
 
 function processFile(file: File) {
@@ -184,14 +209,16 @@ function processFile(file: File) {
 
         const packages = jsonData
           .filter((item: any) => item.Guide)
-          .map((item: any) => {
+          .map((item: any, index: number) => {
             const missingFields = requiredFields.filter((field) => !(field in item))
 
             if (missingFields.length > 0) {
               throw new Error(`Los campos ${missingFields.join(', ')} son requeridos`)
             }
 
-            const formattedDate = formatDate(item['FechaIngreso'])
+            if (typeof item['Gross Weight'] !== 'number') {
+              throw new Error('El campo "Gross Weight" debe ser un número, fila: ' + (index + 2))
+            }
 
             return {
               guide: item['Guide'],
@@ -199,7 +226,7 @@ function processFile(file: File) {
               pieces: item['Pieces'],
               grossWeight: item['Gross Weight'],
               client: item['Client'].toString().trim(),
-              entryDate: formattedDate
+              entryDate: formatDate(item['FechaIngreso'])
             }
           })
 

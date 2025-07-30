@@ -1,13 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Custom';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/SF-Pro-Text-Regular.otf') format('opentype');
-}
 
 @layer base {
   th {
@@ -16,6 +11,12 @@
 
   body {
     @apply antialiased text-neutral;
+  }
+}
+
+@layer components {
+  .loading-table-data {
+    @apply loading loading-spinner loading-md flex mx-auto text-gray-300;
   }
 }
 

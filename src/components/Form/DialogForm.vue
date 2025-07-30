@@ -8,7 +8,7 @@ defineProps<{
 <template>
   <dialog class="modal modal-bottom sm:modal-middle" :class="{ 'modal-open': isOpen }">
     <div class="modal-box">
-      <h3 class="text-lg font-bold">{{ title }}</h3>
+      <h3 class="text-lg font-bold mb-1">{{ title }}</h3>
       <p class="py-2">
         <slot></slot>
       </p>
