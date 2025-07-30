@@ -7,7 +7,8 @@
   <DialogForm title="Confirmar" :isOpen="openModal" @onClose="openModal = false">
     <Form v-if="batch && batch._id" @submit="deleteBatch(batch._id)" class="flex flex-col gap-4">
       <div class="text-gray-400">
-        Escriba <strong>ELIMINAR</strong> para confirmar la eliminación del lote y sus paquetes. Esta acción no se puede deshacer.
+        Escriba <strong>ELIMINAR</strong> para confirmar la eliminación del lote y sus paquetes.
+        Esta acción no se puede deshacer.
       </div>
 
       <FieldForm
@@ -20,7 +21,9 @@
 
       <div class="modal-action">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
-        <BtnPrimary type="submit" :disabled="action !== 'ELIMINAR'" :loading="processing"> Confirmar </BtnPrimary>
+        <BtnPrimary type="submit" :disabled="action !== 'ELIMINAR'" :loading="processing">
+          Confirmar
+        </BtnPrimary>
       </div>
     </Form>
   </DialogForm>
@@ -142,5 +145,7 @@ const { getBatch, batch, processing, deleteBatch } = useBatch()
 const openModal = ref(false)
 const action = ref('')
 
-onMounted(async () => await getBatch(route.params.id as string))
+onMounted(async () => {
+  await getBatch(route.params.id as string)
+})
 </script>

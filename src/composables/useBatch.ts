@@ -37,7 +37,9 @@ export default function useBatch() {
   }
 
   async function getBatch(id: string) {
+    processing.value = true
     batch.value = undefined
+
     await api
       .get('/batches/' + id)
       .then((response) => {
@@ -45,6 +47,9 @@ export default function useBatch() {
       })
       .catch((error) => {
         console.log(error)
+      })
+      .finally(() => {
+        processing.value = false
       })
   }
 
