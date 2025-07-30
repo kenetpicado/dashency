@@ -64,7 +64,7 @@
           </tr>
           <tr>
             <td class="border-r border-gray-200 text-gray-400">Total</td>
-            <td>$ {{ batch.total }}</td>
+            <td>$ {{ batch.total.toLocaleString() }}</td>
           </tr>
           <tr>
             <td class="border-r border-gray-200 text-gray-400">Paquetes</td>
