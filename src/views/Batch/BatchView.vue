@@ -89,7 +89,7 @@
           <td>
             {{ item.packages.length }}
           </td>
-          <td>$ {{ item.total.toLocaleString() }}</td>
+          <td nowrap>$ {{ item.total.toLocaleString() }}</td>
           <td>
             <div class="flex gap-4 items-center">
               <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">

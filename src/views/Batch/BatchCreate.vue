@@ -82,7 +82,7 @@
         name="total"
         v-model="form.total"
         type="number"
-        rules="required|numeric|min_value:1"
+        rules="required|min_value:1"
         placeholder="ej. 200"
       />
 
