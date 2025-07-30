@@ -1,19 +1,33 @@
 <template>
   <DialogForm title="Editar" :isOpen="openModal" @onClose="openModal = false">
-    <div v-if="batch" class="flex flex-col gap-4">
-      <InputForm text="Total" name="total" v-model="batch.total" type="number" />
-      <InputForm text="Código o referencia" name="code" v-model="batch.code" />
-      <SelectForm text="Tipo" name="type" v-model="batch.type">
+    <Form @submit="onSubmit" v-if="batch" class="flex flex-col gap-4">
+      <FieldForm
+        text="Total"
+        name="total"
+        v-model="batch.total"
+        type="number"
+        rules="required|numeric|min_value:1"
+      />
+
+      <FieldForm
+        text="Código o referencia"
+        name="referencia"
+        v-model="batch.code"
+        rules="required"
+      />
+
+      <FieldForm as="select" text="Tipo" name="tipo" v-model="batch.type" rules="required">
         <option value="">Selecciona un tipo</option>
         <option v-for="price in prices" :value="price.type" :key="price.id">
           {{ price.type }}
         </option>
-      </SelectForm>
+      </FieldForm>
+
       <div class="modal-action">
         <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
-        <BtnPrimary @click="onSubmit" :loading="processing"> Guardar </BtnPrimary>
+        <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
       </div>
-    </div>
+    </Form>
   </DialogForm>
 
   <header class="flex items-center justify-between mb-8">
@@ -39,46 +53,50 @@
 
   <TheTable>
     <template #header>
-      <th>Usuario</th>
+      <th>Creado</th>
+      <th>Por</th>
       <th>Tipo</th>
       <th>Referencia</th>
       <th>Paquetes</th>
       <th>Monto</th>
-      <th>Fecha</th>
-      <th></th>
+      <th>Acciones</th>
     </template>
     <template #body>
       <tr v-if="processing">
         <td colspan="7">
-          <span class="loading loading-spinner mx-auto flex items-center"> </span>
+          <span class="loading-table-data"> </span>
         </td>
       </tr>
-      <tr v-else-if="!batches.data.length">
+      <tr v-else-if="!batches.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
       <template v-else>
-        <tr v-for="(item, index) in batches.data" :key="index" class="hover:bg-gray-50">
+        <tr v-for="(item, index) in batches" :key="index" class="hover:bg-gray-50">
+          <td>
+            <span v-if="item.createdAt">
+              {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+            </span>
+          </td>
           <td>
             {{ item.user?.name }}
           </td>
           <td>
             {{ item.type }}
           </td>
-          <td class="text-gray-500">
+          <td>
             {{ item.code }}
           </td>
-          <td>{{ item.packages.length }}</td>
-          <td>${{ item.total.toLocaleString() }}</td>
-          <td class="text-gray-500">
-            {{ getFormattedDate(item.createdAt) }}
-          </td>
           <td>
-            <div class="flex gap-4 justify-end">
+            {{ item.packages.length }}
+          </td>
+          <td>$ {{ item.total.toLocaleString() }}</td>
+          <td>
+            <div class="flex gap-4 items-center">
               <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
-                <IconEye size="20" />
+                <IconEye size="25" />
               </RouterLink>
               <button type="button" @click="edit(item)">
-                <IconEdit size="20" />
+                <IconEdit size="25" />
               </button>
             </div>
           </td>
@@ -86,36 +104,38 @@
       </template>
     </template>
   </TheTable>
-  <PaginationComponent :pages="batches.pages" :page="batches.current" @selected="getThisPage" />
+
+  <ThePaginate v-model="meta.page" :meta="meta" />
 </template>
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import useBatch from '@/composables/useBatch'
 import { IconEdit, IconEye } from '@tabler/icons-vue'
-import getFormattedDate from '@/utils/date'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import type { IBatch } from '@/types'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { RouterLink } from 'vue-router'
-import toast from '@/utils/toast'
 import { watchDebounced } from '@vueuse/core'
-import PaginationComponent from '@/components/PaginationComponent.vue'
 import usePrice from '@/composables/usePrice'
+import { format } from '@formkit/tempo'
+import { Form } from 'vee-validate'
+import FieldForm from '@/components/Form/FieldForm.vue'
+import ThePaginate from '@/components/ThePaginate.vue'
 
-const { getBatches, batches, processing, updateBatch, queryParams } = useBatch()
+const { getBatches, batches, processing, updateBatch, queryParams, meta } = useBatch()
 const { prices, getPrices } = usePrice()
 
 onMounted(async () => {
   await getBatches()
-  getPrices()
+  await getPrices()
 })
 
-const batch = ref<IBatch | null>(null)
+const batch = ref<IBatch>()
 const openModal = ref(false)
 
 function edit(item: IBatch) {
@@ -126,19 +146,20 @@ function edit(item: IBatch) {
 function onSubmit() {
   if (!batch.value) return
 
-  if (!batch.value.type || !batch.value.code || !batch.value.total) {
-    return toast.error('Todos los campos son requeridos')
-  }
-
   updateBatch(batch.value, () => {
     openModal.value = false
-    batch.value = null
+    batch.value = undefined
   })
 }
 
-watchDebounced(queryParams.value, () => getBatches(), { debounce: 500, maxWait: 1000 })
+watchDebounced(
+  queryParams.value,
+  () => {
+    meta.value.page = 1
+    getBatches()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 
-function getThisPage(selected: number) {
-  queryParams.value.page = selected * 1
-}
+watch(() => meta.value.page, getBatches)
 </script>

@@ -25,7 +25,9 @@ onMounted(async () => {
         temporalPackage.value = foundPackage(email)
 
         if (temporalPackage.value && temporalPackage.value.tracking) {
-          const found = foundPackages.value.find((p) => p.tracking === temporalPackage.value?.tracking)
+          const found = foundPackages.value.find(
+            (p) => p.tracking === temporalPackage.value?.tracking
+          )
 
           if (!found) {
             foundPackages.value.push(temporalPackage.value)

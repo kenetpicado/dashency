@@ -1,18 +1,25 @@
 <template>
-  <ul class="menu text-base-content min-h-full w-64 p-4 bg-white space-y-1 border-r">
-    <span class="menu-title">
-      <img :src="logo" alt="" class="w-auto h-[2.5rem] my-2 lg:my-8 mx-auto" />
-    </span>
-    <li v-for="(item, index) in items.filter((i) => i.show || i.show == undefined)" :key="index">
-      <SectionSidebar v-if="!item.to" :title="item.title" />
-      <ItemSidebarLink
+  <ul class="menu text-base-content min-h-full w-64 p-4 bg-white space-y-0 border-r">
+    <li class="menu-title">
+      <img :src="logo" alt="" class="w-auto h-[4rem] my-1 mx-auto" />
+    </li>
+    <li v-for="(item, index) in items.filter((i) => i.show)" :key="index">
+      <span v-if="!item.to" class="menu-title mt-2">
+        {{ item.title }}
+      </span>
+
+      <RouterLink
         v-else
-        :item="item"
-        :active="
-          item.to.name === route.name ||
-          (item.activeIn && item.activeIn.includes(route.name as string))
-        "
-      />
+        :to="item.to"
+        :class="{
+          active: item.to.name === route.name || item.activeIn.includes(route.name as string)
+        }"
+      >
+        <span class="flex items-center gap-2">
+          <component v-if="item.icon" :is="item.icon" size="25"></component>
+          <span>{{ item.title }}</span>
+        </span>
+      </RouterLink>
     </li>
   </ul>
 </template>
@@ -23,20 +30,15 @@ import {
   IconPackage,
   IconPackages,
   IconUsersGroup,
-  IconUser,
   IconDatabaseDollar,
   IconTransferOut,
-  IconBooks,
-  IconReceipt2,
   IconLogs,
   IconMail,
   IconReload,
   IconSettings
 } from '@tabler/icons-vue'
-import ItemSidebarLink from '@/components/Sidebar/ItemSidebarLink.vue'
-import SectionSidebar from '@/components/Sidebar/SectionSidebar.vue'
 import { useAuthStore } from '@/stores/auth'
-import { useRoute } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 
 const { hasRoles } = useAuthStore()
 const route = useRoute()
@@ -44,19 +46,23 @@ const logo = import.meta.env.VITE_APP_LOGO || ''
 
 const items = [
   {
-    title: 'Administración'
+    title: 'Administración',
+    show: false,
+    activeIn: []
   },
   {
     title: 'Inicio',
     to: { name: 'home' },
     icon: IconHome,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: ['home']
   },
   {
     title: 'Usuarios',
     to: { name: 'users' },
     icon: IconUsersGroup,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: []
   },
   {
     title: 'Lotes',
@@ -69,22 +75,27 @@ const items = [
     title: 'Paquetes',
     to: { name: 'packages' },
     icon: IconPackage,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: []
   },
   {
     title: 'Correo',
     to: { name: 'mail.packages' },
     icon: IconMail,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    activeIn: []
   },
   {
     title: 'Sincronización',
     to: { name: 'sync' },
     icon: IconReload,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    activeIn: []
   },
   {
-    title: 'Finanzas'
+    title: 'Finanzas',
+    show: true,
+    activeIn: []
   },
   {
     title: 'Facturación',
@@ -97,7 +108,8 @@ const items = [
     title: 'Gastos',
     to: { name: 'expenses' },
     icon: IconTransferOut,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: []
   },
   {
     title: 'Arqueos',
@@ -110,7 +122,8 @@ const items = [
     title: 'Configuración',
     to: { name: 'settings' },
     icon: IconSettings,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR'])
+    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: []
   }
 ]
 </script>

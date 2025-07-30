@@ -75,9 +75,7 @@
         <td>
           {{ item.type }}
         </td>
-        <td>
-          {{ item.grossWeight }} lb(s)
-        </td>
+        <td>{{ item.grossWeight }} lb(s)</td>
         <td>
           {{ item.pieces }}
         </td>

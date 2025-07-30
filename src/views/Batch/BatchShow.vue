@@ -1,127 +1,146 @@
 <template>
-  <header class="flex items-center justify-between mb-8">
+  <header class="flex items-center justify-between mb-4">
     <span class="font-bold text-2xl">Detalles</span>
+    <BtnPrimary @click.prevent="openModal = true"> Eliminar </BtnPrimary>
   </header>
 
-  <DialogForm title="Paquete" :isOpen="openModal">
-    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
-      <InputForm text="Cliente" name="client" v-model="form.client" required />
-      <InputForm text="Descripción" name="description" v-model="form.description" required />
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-        <InputForm
-          text="Peso (lbs)"
-          name="grossWeight"
-          v-model="form.grossWeight"
-          type="number"
-          required
-        />
+  <DialogForm title="Confirmar" :isOpen="openModal" @onClose="openModal = false">
+    <Form v-if="batch && batch._id" @submit="deleteBatch(batch._id)" class="flex flex-col gap-4">
+      <div class="text-gray-400">
+        Escriba <strong>ELIMINAR</strong> para confirmar la eliminación del lote y sus paquetes. Esta acción no se puede deshacer.
       </div>
+
+      <FieldForm
+        text="Acción"
+        name="confirmar"
+        v-model="action"
+        rules="required"
+        placeholder="ELIMINAR"
+      />
 
       <div class="modal-action">
-        <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
-        <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
+        <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
+        <BtnPrimary type="submit" :disabled="action !== 'ELIMINAR'" :loading="processing"> Confirmar </BtnPrimary>
       </div>
-    </form>
+    </Form>
   </DialogForm>
 
-  <main class="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-4">
-    <StatCard v-for="(stat, index) in stats" :stat="stat" :key="index" />
-  </main>
+  <template v-if="processing">
+    <span class="loading loading-spinner loading-lg flex mx-auto text-gray-300"></span>
+  </template>
 
-  <div class="mb-4 bg-white p-4 rounded-xl border">
-    <div v-if="batch" class="mb-2">Fecha: {{ getFormattedDate(batch.createdAt) }}</div>
-    <UserInfo v-if="batch?.user" :item="batch.user" />
-  </div>
+  <template v-else-if="batch">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+      <TheTable table-class="table-fixed">
+        <template #body>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Creado</td>
+            <td>
+              <span v-if="batch.createdAt">
+                {{ format(batch.createdAt, { date: 'short', time: 'short' }) }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Realizado por</td>
+            <td>
+              {{ batch.user?.name || 'Desconocido' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Tipo</td>
+            <td>
+              {{ batch.type }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Referencia</td>
+            <td>
+              {{ batch.code || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Total</td>
+            <td>$ {{ batch.total }}</td>
+          </tr>
+          <tr>
+            <td class="border-r border-gray-200 text-gray-400">Paquetes</td>
+            <td>
+              {{ batch.packages.length || '0' }}
+            </td>
+          </tr>
+        </template>
+      </TheTable>
+    </div>
 
-  <div v-if="batch?.packages" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <PackageCard
-      v-for="(item, index) in batch?.packages"
-      :item="item"
-      :key="index"
-      :showIcon="item.status === 'REGISTRADO'"
-      :icon="IconEdit"
-      @selectedItem="editPackage"
-    />
-  </div>
+    <TheTable>
+      <template #header>
+        <th>Guia</th>
+        <th>Tipo</th>
+        <th>Peso</th>
+        <th>Piezas</th>
+        <th>Estado</th>
+        <th>Cliente</th>
+        <th>Descripción</th>
+        <th>Ingreso</th>
+        <th>Registrado</th>
+      </template>
+      <template #body>
+        <tr v-if="!batch.packages.length">
+          <td colspan="9" class="text-center">No hay paquetes</td>
+        </tr>
+        <tr v-for="(item, index) in batch.packages" :key="index" class="hover:bg-gray-50">
+          <td>
+            {{ item.guide }}
+          </td>
+          <td>
+            {{ item.type }}
+          </td>
+          <td>{{ item.grossWeight }} lb(s)</td>
+          <td>
+            {{ item.pieces }}
+          </td>
+          <td>
+            {{ item.status }}
+          </td>
+          <td>
+            {{ item.client }}
+          </td>
+          <td>
+            {{ item.description }}
+          </td>
+          <td>
+            <span v-if="item.entryDate">
+              {{ format(item.entryDate, 'short') }}
+            </span>
+          </td>
+          <td>
+            <span v-if="item.createdAt">
+              {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+            </span>
+          </td>
+        </tr>
+      </template>
+    </TheTable>
+  </template>
 </template>
 
 <script setup lang="ts">
-import StatCard from '@/components/StatCard.vue'
 import useBatch from '@/composables/useBatch'
-import getFormattedDate from '@/utils/date'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import PackageCard from '@/components/PackageCard.vue'
-import UserInfo from '@/components/UserInfo.vue'
-import type { IPackage, IStatCard } from '@/types'
-import { IconEdit } from '@tabler/icons-vue'
-import DialogForm from '@/components/Form/DialogForm.vue'
-import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
+import TheTable from '@/components/Table/TheTable.vue'
+import { format } from '@formkit/tempo'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import usePackage from '@/composables/usePackage'
-import InputForm from '@/components/Form/InputForm.vue'
+import DialogForm from '@/components/Form/DialogForm.vue'
+import FieldForm from '@/components/Form/FieldForm.vue'
+import { Form } from 'vee-validate'
+import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 
 const route = useRoute()
-const { getBatch, batch } = useBatch()
-const { updatePackage, processing } = usePackage()
+const { getBatch, batch, processing, deleteBatch } = useBatch()
+const openModal = ref(false)
+const action = ref('')
 
 onMounted(async () => await getBatch(route.params.id as string))
-
-const openModal = ref<boolean>(false)
-
-const form = ref<IPackage>({
-  guide: '',
-  client: '',
-  description: '',
-  pieces: 0,
-  grossWeight: 0,
-  entryDate: ''
-})
-
-const stats = computed(
-  () =>
-    [
-      {
-        title: 'Tipo',
-        value: batch.value?.type || ''
-      },
-      {
-        title: 'Total',
-        value: '$ ' + batch.value?.total || ''
-      },
-      {
-        title: 'Paquetes',
-        value: batch.value?.packages.length || '0'
-      },
-      {
-        title: 'Código o referencia',
-        value: batch.value?.code || ''
-      }
-    ] as IStatCard[]
-)
-
-function editPackage(item: IPackage) {
-  form.value = { ...item }
-  openModal.value = true
-}
-
-function resetValues() {
-  form.value = {
-    guide: '',
-    client: '',
-    description: '',
-    pieces: 0,
-    grossWeight: 0,
-    entryDate: ''
-  }
-  openModal.value = false
-}
-
-function onSubmit() {
-  updatePackage(form.value, () => {
-    resetValues()
-    getBatch(route.params.id as string)
-  })
-}
 </script>

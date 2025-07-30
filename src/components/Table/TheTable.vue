@@ -1,8 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{
+  tableClass?: string
+}>()
+</script>
 
 <template>
   <div class="overflow-x-auto bg-white rounded-lg border">
-    <table class="table">
+    <table class="table" :class="tableClass">
       <thead>
         <tr>
           <slot name="header" />

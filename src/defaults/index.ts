@@ -13,3 +13,14 @@ export const defaultAccountForm: IAccount = {
   holder: '',
   status: ''
 }
+
+export const defaultMeta = {
+  totalPages: 1,
+  totalDocs: 1,
+  page: 1,
+  nextPage: 1,
+  prevPage: 1,
+  limit: 1,
+  hasNextPage: false,
+  hasPrevPage: false
+}

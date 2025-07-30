@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import type { IInputForm } from '@/types'
-defineProps<IInputForm>()
+import { Field, ErrorMessage } from 'vee-validate'
+
+defineProps<{
+  text?: string
+  name: string
+  type?: string
+  placeholder?: string
+  autofocus?: boolean
+  rules?: string
+  as?: string
+}>()
 
 const model = defineModel()
 </script>
@@ -13,23 +22,20 @@ const model = defineModel()
       </span>
     </div>
 
-    <input
+    <Field
       :id="name"
+      :as="as || 'input'"
       :type="type"
       :placeholder="placeholder"
-      :disabled="disabled ?? false"
       :autofocus="autofocus"
-      :required="required ?? false"
       :name="name"
+      :rules="rules"
       class="input input-bordered w-full"
       v-model="model"
-      step="any"
-    />
+    >
+      <slot />
+    </Field>
 
-    <div v-if="errors && errors[name]" class="label">
-      <span class="label-text-alt text-red-400">
-        {{ errors[name] }}
-      </span>
-    </div>
+    <ErrorMessage :name="name" class="text-sm text-red-600 mt-2" />
   </div>
 </template>
