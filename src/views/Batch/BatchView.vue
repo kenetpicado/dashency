@@ -6,7 +6,7 @@
         name="total"
         v-model="batch.total"
         type="number"
-        rules="required|numeric|min_value:1"
+        rules="required|min_value:1"
       />
 
       <FieldForm
