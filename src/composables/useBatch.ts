@@ -100,5 +100,16 @@ export default function useBatch() {
       })
   }
 
-  return { getBatches, getBatch, batches, batch, processing, storeBatch, updateBatch, queryParams, meta, deleteBatch }
+  return {
+    getBatches,
+    getBatch,
+    batches,
+    batch,
+    processing,
+    storeBatch,
+    updateBatch,
+    queryParams,
+    meta,
+    deleteBatch
+  }
 }

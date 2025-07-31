@@ -257,7 +257,7 @@ import IsLoading from '@/components/IsLoading.vue'
 
 const selectedPackages = ref<IPackage[]>([])
 
-const { getPackages, packages, queryParams, processing: searching } = usePackage()
+const { getPackages, packages, queryParams, processing: searching, meta } = usePackage()
 const { storeBilling, processing } = useBilling()
 const { prices, getPrices } = usePrice()
 const { accounts, getAccounts, queryParams: accountParams } = useAccount()
@@ -301,7 +301,7 @@ function removePackage(index: number) {
 }
 
 const filteredPackages = computed(() => {
-  return packages.value.data.filter((item) => {
+  return packages.value.filter((item) => {
     return !selectedPackages.value.find((selected) => selected.id === item.id)
   })
 })
@@ -376,7 +376,7 @@ function updateSummary() {
 
 onMounted(async () => {
   searching.value = true
-  packages.value.data = []
+  packages.value = []
   queryParams.value.status = 'REGISTRADO'
   accountParams.value.status = 'ACTIVO'
   await getPrices()
@@ -389,6 +389,7 @@ watchDebounced(
   queryParams.value,
   () => {
     queryParams.value.status = 'REGISTRADO'
+    meta.value.page = 1
     getPackages()
   },
   { debounce: 500, maxWait: 1000 }
