@@ -1,4 +1,4 @@
-import type { IPackage, IPackageResponse, IMailPackage, IMailPackageResponse } from '@/types'
+import type { IPackage, IMailPackage, IMailPackageResponse } from '@/types'
 import { usePackageStore } from '@/stores/package'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -7,8 +7,8 @@ import cleanQueryParams from '@/utils/query-params'
 import toast from '@/utils/toast'
 
 export default function usePackage() {
-  const { setPackages, setMailPackages } = usePackageStore()
-  const { packages, mailPackages } = storeToRefs(usePackageStore())
+  const { setMailPackages } = usePackageStore()
+  const { packages, mailPackages, meta } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
 
   const queryParams = ref({
@@ -24,15 +24,17 @@ export default function usePackage() {
   async function getPackages() {
     processing.value = true
 
-    const params = cleanQueryParams(queryParams.value)
+    const params = {
+      page: meta.value.page,
+      ...cleanQueryParams(queryParams.value)
+    }
 
     await api
       .get('/packages', { params })
       .then((response) => {
-        setPackages(response.data as IPackageResponse)
-      })
-      .catch((error) => {
-        console.log(error)
+        const { docs, ...rest } = response.data
+        packages.value = docs
+        meta.value = rest
       })
       .finally(() => {
         processing.value = false
@@ -97,6 +99,7 @@ export default function usePackage() {
   return {
     getPackages,
     packages,
+    meta,
     processing,
     queryParams,
     updatePackage,

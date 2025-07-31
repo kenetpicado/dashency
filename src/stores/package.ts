@@ -1,13 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IMailPackageResponse, IPackageResponse } from '@/types'
+import type { IMailPackageResponse, IMeta, IPackage, IPackageResponse } from '@/types'
+import { defaultMeta } from '@/defaults'
 
 export const usePackageStore = defineStore('package', () => {
-  const packages = ref<IPackageResponse>({
-    data: [],
-    pages: 1,
-    current: 1
-  })
+  const packages = ref<IPackage[]>([])
 
   const mailPackages = ref<IPackageResponse>({
     data: [],
@@ -15,13 +12,11 @@ export const usePackageStore = defineStore('package', () => {
     current: 1
   })
 
-  function setPackages(data: IPackageResponse) {
-    packages.value = data
-  }
+  const meta = ref<IMeta>({ ...defaultMeta })
 
   function setMailPackages(data: IMailPackageResponse) {
     mailPackages.value = data
   }
 
-  return { packages, setPackages, mailPackages, setMailPackages }
+  return { packages, meta, mailPackages, setMailPackages }
 })

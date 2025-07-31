@@ -1,21 +1,43 @@
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-6">
     <span class="font-bold text-2xl">Paquetes</span>
   </header>
 
   <DialogForm title="Paquete" :isOpen="openModal">
-    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
-      <InputForm text="Cliente" name="client" v-model="form.client" required />
-      <InputForm text="Descripción" name="description" v-model="form.description" required />
+    <Form @submit="onSubmit" class="flex flex-col gap-4">
+      <FieldForm
+        text="Cliente"
+        name="cliente"
+        v-model="form.client"
+        rules="required"
+        placeholder="ej. Kenet Picado"
+      />
+
+      <FieldForm
+        text="Descripción"
+        name="descripción"
+        v-model="form.description"
+        rules="required"
+        placeholder="ej. Paquete de libros"
+      />
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <InputForm text="Piezas" name="pieces" v-model="form.pieces" type="number" required />
-        <InputForm
+        <FieldForm
+          text="Piezas"
+          name="piezas"
+          v-model="form.pieces"
+          type="number"
+          rules="required"
+          placeholder="ej. 1"
+        />
+
+        <FieldForm
           text="Peso (lbs)"
-          name="grossWeight"
+          name="peso"
           v-model="form.grossWeight"
           type="number"
-          required
+          rules="required"
+          placeholder="ej. 5"
         />
       </div>
 
@@ -23,36 +45,43 @@
         <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
-    </form>
+    </Form>
   </DialogForm>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <InputForm
+    <FieldForm
       text="Guía"
       name="guide"
       v-model="queryParams.guide"
       placeholder="Número de guia"
       type="number"
     />
-    <InputForm
+
+    <FieldForm
       text="Cliente"
       name="client"
       v-model="queryParams.client"
       placeholder="Nombre del cliente"
+      type="search"
     />
-    <SelectForm text="Tipo" name="type" v-model="queryParams.type">
+
+    <FieldForm as="select" text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
-    </SelectForm>
-    <SelectForm text="Estado" name="status" v-model="queryParams.status">
+    </FieldForm>
+
+    <FieldForm as="select" text="Estado" name="status" v-model="queryParams.status">
       <option value="">Todos</option>
       <option v-for="item in status" :value="item" :key="item">{{ item }}</option>
-    </SelectForm>
-    <InputForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
+    </FieldForm>
+
+    <FieldForm text="Ingreso" name="entryDate" v-model="queryParams.entryDate" type="date" />
   </div>
 
   <TheTable>
     <template #header>
+      <th>Creado</th>
+      <th>Ingreso</th>
       <th>Guia</th>
       <th>Tipo</th>
       <th>Peso</th>
@@ -60,15 +89,28 @@
       <th>Estado</th>
       <th>Cliente</th>
       <th>Descripción</th>
-      <th>Fecha Ingreso</th>
-      <th>Fecha</th>
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!packages.data.length">
+      <tr v-if="processing">
+        <td colspan="10">
+          <span class="loading-table-data"> </span>
+        </td>
+      </tr>
+      <tr v-else-if="!packages.length">
         <td colspan="10" class="text-center">No hay paquetes</td>
       </tr>
-      <tr v-for="(item, index) in packages.data" :key="index" class="hover:bg-gray-50">
+      <tr v-else v-for="(item, index) in packages" :key="index" class="hover:bg-gray-50">
+        <td>
+          <span v-if="item.createdAt">
+            {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+          </span>
+        </td>
+        <td>
+          <span v-if="item.entryDate">
+            {{ format(item.entryDate, 'short') }}
+          </span>
+        </td>
         <td>
           {{ item.guide }}
         </td>
@@ -89,14 +131,6 @@
           {{ item.description }}
         </td>
         <td>
-          <span v-if="item.entryDate">
-            {{ getFormattedDate(item.entryDate, 'DD/MM/YY') }}
-          </span>
-        </td>
-        <td class="text-gray-400">
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
-        <td>
           <button type="button" @click="editPackage(item)">
             <IconEdit size="25" />
           </button>
@@ -105,16 +139,14 @@
     </template>
   </TheTable>
 
-  <PaginationComponent :pages="packages.pages" :page="packages.current" @selected="getThisPage" />
+  <ThePaginate v-model="meta.page" :meta="meta" />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import usePackage from '@/composables/usePackage'
-import SelectForm from '@/components/Form/SelectForm.vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
-import PaginationComponent from '@/components/PaginationComponent.vue'
 import status from '@/utils/status'
 import usePrice from '@/composables/usePrice'
 import { IconEdit } from '@tabler/icons-vue'
@@ -123,9 +155,12 @@ import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import getFormattedDate from '@/utils/date'
+import ThePaginate from '@/components/ThePaginate.vue'
+import { format } from '@formkit/tempo'
+import FieldForm from '@/components/Form/FieldForm.vue'
+import { Form } from 'vee-validate'
 
-const { getPackages, packages, queryParams, processing, updatePackage } = usePackage()
+const { getPackages, packages, queryParams, processing, updatePackage, meta } = usePackage()
 const { prices, getPrices } = usePrice()
 
 const openModal = ref<boolean>(false)
@@ -144,11 +179,14 @@ onMounted(() => {
   getPrices()
 })
 
-watchDebounced(queryParams.value, () => getPackages(), { debounce: 700, maxWait: 1000 })
-
-function getThisPage(page: number) {
-  queryParams.value.page = page
-}
+watchDebounced(
+  queryParams.value,
+  () => {
+    meta.value.page = 1
+    getPackages()
+  },
+  { debounce: 700, maxWait: 1000 }
+)
 
 function editPackage(item: IPackage) {
   form.value = { ...item }
@@ -173,4 +211,6 @@ function onSubmit() {
     getPackages()
   })
 }
+
+watch(() => meta.value.page, getPackages)
 </script>

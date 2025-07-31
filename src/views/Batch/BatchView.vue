@@ -38,17 +38,18 @@
   </header>
 
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
-    <InputForm
+    <FieldForm
       text="Código o referencia"
       name="code"
       v-model="queryParams.code"
       type="search"
       placeholder="Buscar código o referencia"
     />
-    <SelectForm text="Tipo" name="type" v-model="queryParams.type">
+
+    <FieldForm as="select" text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Selecciona un tipo</option>
       <option v-for="price in prices" :value="price.type" :key="price.id">{{ price.type }}</option>
-    </SelectForm>
+    </FieldForm>
   </div>
 
   <TheTable>
@@ -116,8 +117,6 @@ import useBatch from '@/composables/useBatch'
 import { IconEdit, IconEye } from '@tabler/icons-vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import type { IBatch } from '@/types'
-import SelectForm from '@/components/Form/SelectForm.vue'
-import InputForm from '@/components/Form/InputForm.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import { RouterLink } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
