@@ -7,18 +7,16 @@ import cleanQueryParams from '@/utils/query-params'
 import toast from '@/utils/toast'
 
 export default function usePackage() {
-  const { setMailPackages } = usePackageStore()
   const { packages, mailPackages, meta } = storeToRefs(usePackageStore())
   const processing = ref<boolean>(false)
 
-  const queryParams = ref({
+  const queryParams = ref<any>({
     type: '',
     client: '',
     guide: '',
     status: '',
     entryDate: '',
-    tracking: '',
-    page: 1
+    tracking: ''
   })
 
   async function getPackages() {
@@ -49,7 +47,7 @@ export default function usePackage() {
     api
       .get('/mail-packages', { params })
       .then((response) => {
-        setMailPackages(response.data as IMailPackageResponse)
+        mailPackages.value = response.data as IMailPackageResponse
       })
       .catch((error) => {
         console.log(error)
@@ -99,12 +97,12 @@ export default function usePackage() {
   return {
     getPackages,
     packages,
-    meta,
     processing,
     queryParams,
     updatePackage,
     bulkPackages,
     getMailPackages,
-    mailPackages
+    mailPackages,
+    meta,
   }
 }
