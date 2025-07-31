@@ -145,7 +145,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import usePackage from '@/composables/usePackage'
-import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
 import status from '@/utils/status'
 import usePrice from '@/composables/usePrice'
@@ -179,15 +178,6 @@ onMounted(() => {
   getPrices()
 })
 
-watchDebounced(
-  queryParams.value,
-  () => {
-    meta.value.page = 1
-    getPackages()
-  },
-  { debounce: 700, maxWait: 1000 }
-)
-
 function editPackage(item: IPackage) {
   form.value = { ...item }
   openModal.value = true
@@ -212,5 +202,19 @@ function onSubmit() {
   })
 }
 
-watch(() => meta.value.page, getPackages)
+watchDebounced(
+  queryParams.value,
+  () => {
+    meta.value.page = 1
+    getPackages()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
+
+watch(
+  () => meta.value.page,
+  () => {
+    getPackages()
+  }
+)
 </script>
