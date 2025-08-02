@@ -7,16 +7,12 @@ export const useAuthStore = defineStore(
   () => {
     const auth = ref<IUser>()
 
-    function setAuthData(data: IUser) {
-      auth.value = data
+    function getAuth() {
+      return auth.value
     }
 
     function clearData() {
       auth.value = undefined
-    }
-
-    function getAuth() {
-      return auth.value
     }
 
     function hasRoles(names: Array<string>) {
@@ -27,7 +23,7 @@ export const useAuthStore = defineStore(
       return false
     }
 
-    return { auth, setAuthData, clearData, getAuth, hasRoles }
+    return { auth, getAuth, hasRoles, clearData }
   },
   {
     persist: true

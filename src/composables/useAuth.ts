@@ -9,12 +9,11 @@ import Cookie from 'js-cookie'
 
 export default function useAuth() {
   const processing = ref(false)
-  const { setAuthData, clearData } = useAuthStore()
   const { auth } = storeToRefs(useAuthStore())
 
   async function getProfile() {
     await api.get('/profile').then((response) => {
-      setAuthData(response.data as IUser)
+      auth.value = response.data as IUser
     })
   }
 
@@ -29,7 +28,8 @@ export default function useAuth() {
           secure: true,
           sameSite: 'Lax'
         })
-        setAuthData(response.data.user)
+
+        auth.value = response.data.user as IUser
         router.push({ name: 'home' })
       })
       .catch((error: any) => {
@@ -41,7 +41,7 @@ export default function useAuth() {
   }
 
   function logout() {
-    clearData()
+    auth.value = undefined
     Cookie.remove('edo_token')
     router.push({ name: 'login' })
   }
@@ -77,21 +77,5 @@ export default function useAuth() {
       })
   }
 
-  function updatePassword(data: { current_password: string; password: string }) {
-    processing.value = true
-
-    api
-      .put('/password', data)
-      .then(() => {
-        toast.success('Contraseña actualizada')
-      })
-      .catch((error: any) => {
-        toast.error(error.response?.data?.message || error?.message || 'Error')
-      })
-      .finally(() => {
-        processing.value = false
-      })
-  }
-
-  return { login, logout, getProfile, processing, auth, register, updateProfile, updatePassword }
+  return { login, logout, getProfile, processing, auth, register, updateProfile }
 }

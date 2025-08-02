@@ -35,7 +35,7 @@ import {
   IconLogs,
   IconMail,
   IconReload,
-  IconSettings
+  IconSettings, IconUser
 } from '@tabler/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'
@@ -123,6 +123,18 @@ const items = [
     to: { name: 'settings' },
     icon: IconSettings,
     show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    activeIn: []
+  },
+  {
+    title: 'Otros',
+    show: true,
+    activeIn: []
+  },
+  {
+    title: 'Perfil',
+    to: { name: 'profile' },
+    icon: IconUser,
+    show: true,
     activeIn: []
   }
 ]
