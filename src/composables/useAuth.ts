@@ -11,12 +11,6 @@ export default function useAuth() {
   const processing = ref(false)
   const { auth } = storeToRefs(useAuthStore())
 
-  async function getProfile() {
-    await api.get('/profile').then((response) => {
-      auth.value = response.data as IUser
-    })
-  }
-
   function login(data: ILoginForm) {
     processing.value = true
 
@@ -60,22 +54,5 @@ export default function useAuth() {
       })
   }
 
-  function updateProfile(data: { name: string; email: string }) {
-    processing.value = true
-
-    api
-      .put('/profile', data)
-      .then(() => {
-        getProfile()
-        toast.success('Perfil actualizado')
-      })
-      .catch((error: any) => {
-        toast.error(error.response?.data?.message || error?.message || 'Error')
-      })
-      .finally(() => {
-        processing.value = false
-      })
-  }
-
-  return { login, logout, getProfile, processing, auth, register, updateProfile }
+  return { login, logout, processing, auth, register }
 }
