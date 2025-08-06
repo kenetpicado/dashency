@@ -2,7 +2,13 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <Form @submit="updateProfile" v-if="auth" class="flex flex-col bg-white p-6 rounded-xl border">
       <div class="flex-1 mb-8 flex flex-col gap-4">
-        <FieldForm text="Nombre" name="nombre" v-model="form.name" placeholder="ej. Kenet Picado" rules="required" />
+        <FieldForm
+          text="Nombre"
+          name="nombre"
+          v-model="form.name"
+          placeholder="ej. Kenet Picado"
+          rules="required"
+        />
 
         <FieldForm
           text="Correo"
@@ -51,7 +57,11 @@
         </div>
 
         <div class="w-full flex justify-end gap-4">
-          <BtnSecondary type="button" @click="confirmDestroyCredential" :loading="processingCredential">
+          <BtnSecondary
+            type="button"
+            @click="confirmDestroyCredential"
+            :loading="processingCredential"
+          >
             Desconectar
           </BtnSecondary>
         </div>

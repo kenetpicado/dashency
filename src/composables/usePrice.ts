@@ -1,68 +1,62 @@
 import type { IPrice } from '@/types'
 import { usePriceStore } from '@/stores/price'
-import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import toast from '@/utils/toast'
+import useForm from '@/composables/useForm'
+import useCrud from '@/composables/useCrud'
 
 export default function usePrice() {
   const { prices } = storeToRefs(usePriceStore())
   const processing = ref<boolean>(false)
+  const { index, store, destroy, update } = useCrud('prices')
+  const openModal = ref<boolean>(false)
+
+  const { form, reset } = useForm<any>({
+    id: '',
+    type: '',
+    value: 0
+  })
 
   async function getPrices() {
-    await api
-      .get('/prices')
-      .then((response) => {
-        prices.value = response.data as IPrice[]
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    await index().then((response) => {
+      prices.value = response.data as IPrice[]
+    })
   }
 
-  function storePrice(data: IPrice, callback: () => void) {
-    processing.value = true
-
-    api
-      .post('/prices', data)
-      .then(() => {
-        callback()
-        getPrices()
-        toast.success('Precio creado correctamente')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  async function storePrice() {
+    await store(form.value).then(() => {
+      onSuccess()
+    })
   }
 
-  function updatePrice(data: IPrice, callback: () => void) {
-    processing.value = true
-
-    api
-      .put('/prices/' + data.id, data)
-      .then(() => {
-        callback()
-        getPrices()
-        toast.success('Precio actualizado correctamente')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  async function updatePrice(id: string) {
+    await update(id, form.value).then(() => {
+      onSuccess()
+    })
   }
 
-  function destroyPrice(id: string) {
-    processing.value = true
-
-    api
-      .delete('/prices/' + id)
-      .then(() => {
-        getPrices()
-        toast.success('Precio eliminado correctamente')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  async function destroyPrice(id: string) {
+    await destroy(id).then(() => {
+      getPrices()
+    })
   }
 
-  return { getPrices, prices, processing, storePrice, updatePrice, destroyPrice }
+  async function onSuccess() {
+    openModal.value = false
+    document.getElementById('resetPrice')?.click()
+    reset()
+    await getPrices()
+  }
+
+  return {
+    getPrices,
+    prices,
+    processing,
+    storePrice,
+    updatePrice,
+    destroyPrice,
+    form,
+    reset,
+    openModal
+  }
 }
