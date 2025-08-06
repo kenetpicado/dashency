@@ -116,12 +116,12 @@ function confirmDelete(id: string) {
       </template>
       <template #body>
         <tr v-if="processing">
-          <td colspan="4" class="text-center">
+          <td colspan="6" class="text-center">
             <span class="loading-table-data"> </span>
           </td>
         </tr>
         <tr v-else-if="!accounts.length">
-          <td colspan="4" class="text-center">No hay paquetes</td>
+          <td colspan="6" class="text-center">No hay paquetes</td>
         </tr>
         <tr v-else v-for="(item, index) in accounts" :key="index" class="hover:bg-gray-50">
           <td>{{ index + 1 }}</td>
