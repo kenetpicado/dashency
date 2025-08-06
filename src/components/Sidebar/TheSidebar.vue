@@ -35,7 +35,8 @@ import {
   IconLogs,
   IconMail,
   IconReload,
-  IconSettings, IconUser
+  IconSettings,
+  IconUser
 } from '@tabler/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'

@@ -25,12 +25,15 @@ export default function useCredential() {
   async function destroyCredential() {
     processing.value = true
 
-    await api.delete('/credential').then(() => {
-      toast.success('Desconectado correctamente')
-      credential.value = undefined
-    }).finally(() => {
-      processing.value = false
-    })
+    await api
+      .delete('/credential')
+      .then(() => {
+        toast.success('Desconectado correctamente')
+        credential.value = undefined
+      })
+      .finally(() => {
+        processing.value = false
+      })
   }
 
   return { credential, getCredential, destroyCredential, processing }

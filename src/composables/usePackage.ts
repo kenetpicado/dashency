@@ -103,6 +103,6 @@ export default function usePackage() {
     bulkPackages,
     getMailPackages,
     mailPackages,
-    meta,
+    meta
   }
 }

@@ -37,7 +37,7 @@ export interface IUser {
 }
 
 export interface IButton {
-  type?: 'submit' | 'button'
+  type?: 'submit' | 'button' | 'reset'
   disabled?: boolean
   loading?: boolean
 }
@@ -201,13 +201,13 @@ export interface IAccountSummary {
 }
 
 export interface IPrice {
-  id?: string
+  id: string
   type: string
   value: number
 }
 
 export interface IAccount {
-  id?: string
+  id: string
   type: string
   number: string
   holder: string
