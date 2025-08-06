@@ -8,8 +8,7 @@ import useForm from '@/composables/useForm'
 
 export default function useAccount() {
   const { accounts } = storeToRefs(useAccountStore())
-  const processing = ref<boolean>(false)
-  const { index, store, destroy, update } = useCrud('accounts')
+  const { index, store, destroy, update, processing } = useCrud('accounts')
   const openModal = ref<boolean>(false)
 
   const queryParams = ref<any>({

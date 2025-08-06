@@ -7,8 +7,7 @@ import useCrud from '@/composables/useCrud'
 
 export default function usePrice() {
   const { prices } = storeToRefs(usePriceStore())
-  const processing = ref<boolean>(false)
-  const { index, store, destroy, update } = useCrud('prices')
+  const { index, store, destroy, update, processing } = useCrud('prices')
   const openModal = ref<boolean>(false)
 
   const { form, reset } = useForm<any>({
