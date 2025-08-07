@@ -1,41 +1,60 @@
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-6">
     <span class="font-bold text-2xl">Gastos</span>
     <BtnPrimary @click="openModal = true"> Nuevo </BtnPrimary>
   </header>
 
   <DialogForm title="Gasto" :isOpen="openModal" @onClose="openModal = false">
-    <form @submit.prevent="onSubmit()" class="flex flex-col gap-4">
-      <SelectForm text="Concepto" name="concept" v-model="conceptSelected">
+    <Form @submit="onSubmit" class="flex flex-col gap-4">
+      <FieldForm as="select" text="Concepto" name="concepto" v-model="conceptSelected">
         <option value="">Otro</option>
         <option v-for="item in concepts" :value="item" :key="item">
           {{ item }}
         </option>
-      </SelectForm>
+      </FieldForm>
 
-      <InputForm
+      <FieldForm
         v-if="!conceptSelected"
         text="Especificar concepto"
-        name="concept"
+        name="especificar"
         v-model="form.concept"
+        rules="required"
+        placeholder="ej. Pago de alquiler"
       />
 
-      <InputForm text="Descripción (Opcional)" name="description" v-model="form.description" />
+      <FieldForm
+        text="Descripción (Opcional)"
+        name="descripción"
+        v-model="form.description"
+        placeholder="ej. Pago mes de Enero"
+      />
 
       <div class="grid grid-cols-2 gap-4">
-        <InputForm text="Cantidad" name="quantity" v-model="form.quantity" type="number" />
-        <InputForm text="Monto $" name="cost" v-model="form.cost" type="number" />
+        <FieldForm
+          text="Cantidad"
+          name="cantidad"
+          v-model="form.quantity"
+          type="number"
+          rules="required|min_value:1"
+        />
+        <FieldForm
+          text="Monto $"
+          name="costo"
+          v-model="form.cost"
+          type="number"
+          rules="required|min_value:0"
+        />
       </div>
 
       <div class="font-bold">Total: ${{ (form.quantity * form.cost).toLocaleString() }}</div>
 
       <div class="modal-action">
-        <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
+        <BtnSecondary type="reset" @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing">
           {{ isEdit ? 'Actualizar' : 'Guardar' }}
         </BtnPrimary>
       </div>
-    </form>
+    </Form>
   </DialogForm>
 
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
@@ -49,20 +68,25 @@
 
   <TheTable>
     <template #header>
+      <th>Fecha</th>
       <th>Usuario</th>
       <th>Concepto</th>
       <th>Descripción</th>
       <th>Cant.</th>
       <th>Monto</th>
       <th>Total</th>
-      <th>Fecha</th>
-      <th></th>
+      <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!expenses.data.length">
+      <tr v-if="!expenses.length">
         <td colspan="8" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in expenses.data" :key="index" class="hover:bg-gray-50">
+      <tr v-for="(item, index) in expenses" :key="index" class="hover:bg-gray-50">
+        <td>
+          <span v-if="item.createdAt">
+            {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+          </span>
+        </td>
         <td>
           {{ item.user?.name }}
         </td>
@@ -77,13 +101,13 @@
         </td>
         <td>${{ item.cost.toLocaleString() }}</td>
         <td>${{ item.total?.toLocaleString() }}</td>
-        <td class="text-gray-400">
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
         <td>
-          <div class="flex gap-4 justify-end">
+          <div class="flex items-center gap-4">
             <button type="button" @click="edit(item)">
-              <IconEdit size="20" />
+              <IconEdit size="25" />
+            </button>
+            <button v-if="item.id" type="button" @click="confirmDelete(item.id)">
+              <IconTrash size="25" />
             </button>
           </div>
         </td>
@@ -91,28 +115,40 @@
     </template>
   </TheTable>
 
-  <PaginationComponent :pages="expenses.pages" :page="expenses.current" @selected="getThisPage" />
+  <ThePaginate v-model="meta.page" :meta="meta" />
 </template>
 
 <script setup lang="ts">
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import getFormattedDate from '@/utils/date'
-import { IconEdit } from '@tabler/icons-vue'
-import InputForm from '@/components/Form/InputForm.vue'
+import { format } from '@formkit/tempo'
+import { IconEdit, IconTrash } from '@tabler/icons-vue'
 import { watchDebounced } from '@vueuse/core'
 import SelectForm from '@/components/Form/SelectForm.vue'
 import useExpense from '@/composables/useExpense'
 import DialogForm from '@/components/Form/DialogForm.vue'
 import type { IExpense } from '@/types'
 import concepts from '@/utils/concepts'
-import toast from '@/utils/toast'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
-import PaginationComponent from '@/components/PaginationComponent.vue'
+import ThePaginate from '@/components/ThePaginate.vue'
+import { Form } from 'vee-validate'
+import FieldForm from '@/components/Form/FieldForm.vue'
 
-const { getExpenses, expenses, queryParams, processing, storeExpense, updateExpense } = useExpense()
-const openModal = ref<boolean>(false)
+const {
+  getExpenses,
+  expenses,
+  queryParams,
+  processing,
+  storeExpense,
+  updateExpense,
+  meta,
+  form,
+  reset,
+  openModal,
+  destroyExpense
+} = useExpense()
+
 const isEdit = ref<boolean>(false)
 const conceptSelected = ref<string>('')
 
@@ -120,55 +156,33 @@ onMounted(() => {
   getExpenses()
 })
 
-const form = ref<IExpense>({
-  id: '',
-  concept: '',
-  description: '',
-  quantity: 1,
-  cost: 0
-})
-
 const resetValues = () => {
   openModal.value = false
   conceptSelected.value = ''
   isEdit.value = false
-
-  form.value = {
-    concept: '',
-    description: '',
-    quantity: 1,
-    cost: 0
-  }
+  reset()
 }
 
 function onSubmit() {
-  if (!form.value.concept && !conceptSelected.value) {
-    toast.error('El concepto es requerido')
-    return
-  }
-
-  if (!form.value.quantity) {
-    toast.error('La cantidad es requerida')
-    return
-  }
-
-  if (!form.value.cost) {
-    toast.error('El costo es requerido')
-    return
-  }
-
   if (conceptSelected.value) {
     form.value.concept = conceptSelected.value
   }
 
-  if (isEdit.value) {
-    updateExpense(form.value, () => resetValues())
+  if (isEdit.value && form.value.id) {
+    updateExpense(form.value.id)
   } else {
-    storeExpense(form.value, () => resetValues())
+    storeExpense()
   }
 }
 
-watchDebounced(queryParams.value, () => getExpenses(), { debounce: 500, maxWait: 1000 })
+watchDebounced(
+  queryParams.value,
+  () => {
+    meta.value.page = 1
+    getExpenses()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 
 function edit(item: IExpense) {
   form.value = { ...item }
@@ -184,8 +198,16 @@ function edit(item: IExpense) {
   openModal.value = true
 }
 
-function getThisPage(page: number) {
-  if (page == expenses.value.current) return
-  queryParams.value.page = page
+watch(
+  () => meta.value.page,
+  () => {
+    getExpenses()
+  }
+)
+
+function confirmDelete(id: string) {
+  if (confirm('¿Estás seguro de eliminar este gasto?')) {
+    destroyExpense(id)
+  }
 }
 </script>
