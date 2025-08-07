@@ -93,7 +93,7 @@
         <td>
           {{ item.concept }}
         </td>
-        <td class="text-gray-500">
+        <td>
           {{ item.description }}
         </td>
         <td>
