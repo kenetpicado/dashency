@@ -78,10 +78,15 @@
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!expenses.length">
+      <tr v-if="processing">
+        <td colspan="8" class="text-center">
+          <span class="loading-table-data"> </span>
+        </td>
+      </tr>
+      <tr v-else-if="!expenses.length">
         <td colspan="8" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in expenses" :key="index" class="hover:bg-gray-50">
+      <tr v-else v-for="(item, index) in expenses" :key="index" class="hover:bg-gray-50">
         <td>
           <span v-if="item.createdAt">
             {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
