@@ -1,69 +1,64 @@
-import type { IExpense, IExpenseResponse } from '@/types'
+import type { IExpense } from '@/types'
 import { useExpenseStore } from '@/stores/expense'
-import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import toast from '@/utils/toast'
+import useCrud from '@/composables/useCrud'
+import cleanQueryParams from '@/utils/query-params'
+import useForm from '@/composables/useForm'
 
 export default function useExpense() {
-  const { setExpenses } = useExpenseStore()
-  const { expenses } = storeToRefs(useExpenseStore())
-  const processing = ref<boolean>(false)
+  const { expenses, meta } = storeToRefs(useExpenseStore())
+  const { index, processing, store, update, destroy } = useCrud('expenses')
+  const openModal = ref<boolean>(false)
 
-  const queryParams = ref<{ concept: string; page: number }>({
+  const queryParams = ref<any>({
+    concept: ''
+  })
+
+  const { form, reset } = useForm<IExpense>({
+    id: '',
     concept: '',
-    page: 1
+    description: '',
+    quantity: 1,
+    cost: 0
   })
 
   function getExpenses() {
-    const params = Object.fromEntries(
-      Object.entries(queryParams.value).filter(([_, value]) => value)
-    )
+    const params = {
+      page: meta.value.page,
+      ...cleanQueryParams(queryParams.value)
+    }
 
-    api
-      .get('/expenses', { params })
-      .then((response) => {
-        setExpenses(response.data as IExpenseResponse)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    index(params).then((response) => {
+      const { docs, ...rest } = response.data
+      expenses.value = docs
+      meta.value = rest
+    })
   }
 
-  function storeExpense(data: IExpense, callback: () => void) {
-    processing.value = true
-
-    api
-      .post('/expenses', data)
-      .then(() => {
-        callback()
-        getExpenses()
-        toast.success('Registro creado correctamente')
-      })
-      .catch((error) => {
-        toast.error(error.response.data?.message || 'Error al crear el registro')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  async function storeExpense() {
+    await store(form.value).then(() => {
+      onSuccess()
+    })
   }
 
-  function updateExpense(data: IExpense, callback: () => void) {
-    processing.value = true
+  function updateExpense(id: string) {
+    update(id, form.value).then(() => {
+      onSuccess()
+    })
+  }
 
-    api
-      .put('/expenses/' + data.id, data)
-      .then(() => {
-        callback()
-        toast.success('Registro actualizado correctamente')
-        getExpenses()
-      })
-      .catch((error) => {
-        toast.error(error.response.data?.message || 'Error al crear el registro')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  function destroyExpense(id: string) {
+    destroy(id).then(() => {
+      getExpenses()
+    })
+  }
+
+  function onSuccess() {
+    openModal.value = false
+    document.getElementById('resetExpense')?.click()
+    reset()
+    getExpenses()
   }
 
   return {
@@ -72,6 +67,11 @@ export default function useExpense() {
     processing,
     storeExpense,
     updateExpense,
-    queryParams
+    queryParams,
+    meta,
+    form,
+    reset,
+    destroyExpense,
+    openModal
   }
 }

@@ -1,17 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { IExpenseResponse } from '@/types'
+import type { IExpense, IMeta } from '@/types'
+import { defaultMeta } from '@/defaults'
 
 export const useExpenseStore = defineStore('expense', () => {
-  const expenses = ref<IExpenseResponse>({
-    data: [],
-    pages: 1,
-    current: 1
-  })
+  const expenses = ref<IExpense[]>([])
+  const meta = ref<IMeta>({ ...defaultMeta })
 
-  function setExpenses(data: IExpenseResponse) {
-    expenses.value = data
-  }
-
-  return { expenses, setExpenses }
+  return { expenses, meta }
 })
