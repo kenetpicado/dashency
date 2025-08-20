@@ -2,19 +2,16 @@
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import useUser from '@/composables/useUser'
 import { IconEdit } from '@tabler/icons-vue'
 import DialogForm from '@/components/Form/DialogForm.vue'
-import SelectForm from '@/components/Form/SelectForm.vue'
 import type { IUser } from '@/types'
-import getFormattedDate from '@/utils/date'
 import { useTimeAgo } from '@vueuse/core'
+import FieldForm from '@/components/Form/FieldForm.vue'
+import { Form } from 'vee-validate'
 
-const { getUsers, users } = useUser()
-const openModal = ref(false)
-const user = ref<IUser>()
-const { updateUser, processing } = useUser()
+const { updateUser, processing, form, openModal, getUsers, users } = useUser()
 
 const roles = ['ADMINISTRADOR', 'CAJERO']
 const status = ['REGISTRADO', 'ACTIVO', 'INACTIVO']
@@ -24,40 +21,36 @@ onMounted(async () => {
 })
 
 function editUser(item: IUser) {
-  user.value = { ...item }
+  form.value.id = item._id
+  form.value.role = item.role
+  form.value.status = item.status
   openModal.value = true
-}
-
-function onSubmit() {
-  if (user.value)
-    updateUser(user.value, () => {
-      openModal.value = false
-      user.value = undefined
-    })
 }
 </script>
 
 <template>
   <DialogForm title="Editar" :isOpen="openModal">
-    <form v-if="user" @submit.prevent="onSubmit()" class="flex flex-col gap-4">
-      <SelectForm text="Rol" name="role" v-model="user.role">
+    <Form @submit="updateUser" class="flex flex-col gap-4">
+      <FieldForm as="select" text="Rol" name="rol" v-model="form.role" rules="required">
+        <option value="">Seleccionar rol</option>
         <option v-for="item in roles" :value="item" :key="item">
           {{ item }}
         </option>
-      </SelectForm>
-      <SelectForm text="Estado" name="status" v-model="user.status">
+      </FieldForm>
+      <FieldForm as="select" text="Estado" name="estado" v-model="form.status" rules="required">
+        <option value="">Seleccionar estado</option>
         <option v-for="item in status" :value="item" :key="item">
           {{ item }}
         </option>
-      </SelectForm>
+      </FieldForm>
       <div class="modal-action">
-        <BtnSecondary @click="openModal = false">Cancelar</BtnSecondary>
+        <BtnSecondary type="reset" id="resetUser" @click="openModal = false">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing"> Guardar </BtnPrimary>
       </div>
-    </form>
+    </Form>
   </DialogForm>
 
-  <header class="flex items-center justify-between mb-8">
+  <header class="flex items-center justify-between mb-6">
     <span class="font-bold text-2xl">Usuarios</span>
   </header>
 
@@ -67,7 +60,6 @@ function onSubmit() {
       <th>Correo</th>
       <th>Rol</th>
       <th>Estado</th>
-      <th>Registrado</th>
       <th>Última actividad</th>
       <th>Acciones</th>
     </template>
@@ -77,7 +69,10 @@ function onSubmit() {
           <span class="loading loading-spinner mx-auto flex items-center"> </span>
         </td>
       </tr>
-      <tr v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
+      <tr v-else-if="!users.length">
+        <td colspan="7" class="text-center">No hay usuarios registrados</td>
+      </tr>
+      <tr v-else v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
         <td>
           {{ item.name }}
         </td>
@@ -91,16 +86,13 @@ function onSubmit() {
           {{ item.status }}
         </td>
         <td>
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
-        <td>
           <span v-if="item.lastActivity">
             {{ useTimeAgo(item.lastActivity) }}
           </span>
         </td>
         <td>
           <button type="button" @click="editUser(item)">
-            <IconEdit size="20" />
+            <IconEdit size="25" />
           </button>
         </td>
       </tr>
