@@ -69,7 +69,7 @@ function editUser(item: IUser) {
           <span class="loading loading-spinner mx-auto flex items-center"> </span>
         </td>
       </tr>
-      <tr v-else-if="users.length === 0">
+      <tr v-else-if="!users.length">
         <td colspan="7" class="text-center">No hay usuarios registrados</td>
       </tr>
       <tr v-else v-for="(item, index) in users" :key="index" class="hover:bg-gray-50">
