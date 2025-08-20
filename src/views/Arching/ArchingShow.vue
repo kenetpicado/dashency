@@ -37,10 +37,9 @@
             </tr>
             <tr v-for="item in arching.summary" :key="item.type">
               <td class="border-r text-sm text-gray-400">
-                {{ item.type }}
+                {{ item.type }}: {{ item.weight }} lb(s) - {{ item.count }} paquetes
               </td>
               <td>
-                {{ item.weight }} lb(s) - {{ item.count }} paquetes -
                 {{ item.amount.toLocaleString('en', CURRENCY_OPTIONS) }}
               </td>
             </tr>
