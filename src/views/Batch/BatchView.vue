@@ -90,7 +90,7 @@
           <td>
             {{ item.packages.length }}
           </td>
-          <td nowrap>$ {{ item.total.toLocaleString() }}</td>
+          <td nowrap>{{ item.total.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
           <td>
             <div class="flex gap-4 items-center">
               <RouterLink :to="{ name: 'batches.show', params: { id: item.id } }">
@@ -125,6 +125,7 @@ import { format } from '@formkit/tempo'
 import { Form } from 'vee-validate'
 import FieldForm from '@/components/Form/FieldForm.vue'
 import ThePaginate from '@/components/ThePaginate.vue'
+import { CURRENCY_OPTIONS } from '@/defaults'
 
 const { getBatches, batches, processing, updateBatch, queryParams, meta } = useBatch()
 const { prices, getPrices } = usePrice()

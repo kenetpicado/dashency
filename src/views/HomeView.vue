@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import useHome from '@/composables/useHome'
 import TheTable from '@/components/Table/TheTable.vue'
+import IsLoading from '@/components/IsLoading.vue'
 
 interface History {
   name: string
@@ -68,8 +69,7 @@ watch(
     <span class="font-bold text-2xl"> Estadisticas </span>
   </header>
 
-  <span v-if="processing" class="loading loading-spinner loading-lg mx-auto flex items-center">
-  </span>
+  <IsLoading v-if="processing" />
 
   <TheTable v-else>
     <template #header>

@@ -1,64 +1,38 @@
-import type { IArching, IArchingResponse } from '@/types'
+import type { IArching } from '@/types'
 import { useArchingStore } from '@/stores/arching'
-import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
 import router from '@/router'
 import toast from '@/utils/toast'
-import cleanQueryParams from '@/utils/query-params'
+import useCrud from '@/composables/useCrud'
 
 export default function useArching() {
-  const { setArching, setArchings } = useArchingStore()
-  const { arching, archings } = storeToRefs(useArchingStore())
-  const processing = ref<boolean>(false)
+  const { arching, archings, meta } = storeToRefs(useArchingStore())
+  const { index, processing, show, store } = useCrud('/archings')
 
-  const queryParams = ref<{
-    date: string
-    page: number
-    timezoneOffset: number
-  }>({
-    date: '',
-    page: 1,
-    timezoneOffset: new Date().getTimezoneOffset()
-  })
+  async function getArchings() {
+    const params = {
+      page: meta.value.page,
+    }
 
-  function getArchings() {
-    const params = cleanQueryParams(queryParams.value)
-
-    api
-      .get('/archings', { params })
-      .then((response) => {
-        setArchings(response.data as IArchingResponse)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    await index(params).then((response) => {
+      const { docs, ...rest } = response.data
+      archings.value = docs
+      meta.value = rest
+    })
   }
 
   function getArching(id: string) {
-    api
-      .get('/archings/' + id)
-      .then((response) => {
-        setArching(response.data as IArching)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    show(id).then((response) => {
+      arching.value = response.data
+    })
   }
 
   function storeArching(data: IArching) {
-    processing.value = true
-
-    api
-      .post('/archings', data)
-      .then(() => {
-        toast.success('Arqueo creado correctamente')
-        router.push({ name: 'archings' })
-      })
-      .finally(() => {
-        processing.value = false
-      })
+    store(data).then(() => {
+      toast.success('Arqueo creado correctamente')
+      router.push({ name: 'archings' })
+    })
   }
 
-  return { getArchings, archings, processing, storeArching, queryParams, getArching, arching }
+  return { getArchings, archings, processing, storeArching, meta, getArching, arching }
 }

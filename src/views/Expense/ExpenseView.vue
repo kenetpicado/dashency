@@ -108,10 +108,10 @@
           {{ item.description }}
         </td>
         <td>
-          {{ item.quantity }}
+          {{ item.quantity.toLocaleString('en') }}
         </td>
-        <td>${{ item.cost.toLocaleString() }}</td>
-        <td>${{ item.total?.toLocaleString() }}</td>
+        <td>{{ item.cost.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
+        <td>{{ item.total?.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
         <td>
           <div class="flex items-center gap-4">
             <button type="button" @click="edit(item)">
@@ -145,6 +145,7 @@ import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import ThePaginate from '@/components/ThePaginate.vue'
 import { Form } from 'vee-validate'
 import FieldForm from '@/components/Form/FieldForm.vue'
+import { CURRENCY_OPTIONS } from '@/defaults'
 
 const {
   getExpenses,

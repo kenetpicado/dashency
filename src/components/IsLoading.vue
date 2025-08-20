@@ -1,3 +1,5 @@
 <template>
-  <span class="loading loading-spinner loading-lg mx-auto flex items-center"> </span>
+  <span class="loading-view"> </span>
 </template>
+
+<script setup lang="ts"></script>
