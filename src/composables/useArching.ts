@@ -10,7 +10,11 @@ export default function useArching() {
   const { index, processing, show, store } = useCrud('/archings')
 
   async function getArchings() {
-    await index().then((response) => {
+    const params = {
+      page: meta.value.page,
+    }
+
+    await index(params).then((response) => {
       const { docs, ...rest } = response.data
       archings.value = docs
       meta.value = rest
