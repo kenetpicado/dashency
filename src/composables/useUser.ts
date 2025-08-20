@@ -1,43 +1,34 @@
-import type { IUser } from '@/types'
 import { useUserStore } from '@/stores/user'
-import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
+import useCrud from '@/composables/useCrud'
+import useForm from '@/composables/useForm'
 import { ref } from 'vue'
-import toast from '@/utils/toast'
 
 export default function useUser() {
-  const { setUsers } = useUserStore()
   const { users } = storeToRefs(useUserStore())
-  const processing = ref<boolean>(false)
+  const { index, processing, update } = useCrud('/users')
+  const openModal = ref<boolean>(false)
+
+  const { form, reset } = useForm<any>({
+    id: '',
+    role: '',
+    status: ''
+  })
 
   async function getUsers() {
-    processing.value = true
-    await api
-      .get('/users')
-      .then((response) => {
-        setUsers(response.data as IUser[])
-      })
-      .finally(() => {
-        processing.value = false
-      })
+    await index().then((response) => {
+      users.value = response.data
+    })
   }
 
-  function updateUser(data: IUser, onDone: () => void) {
-    processing.value = true
-
-    api
-      .put('/users/' + data.id, data)
-      .then(() => {
-        getUsers()
-        onDone()
-      })
-      .catch((error: any) => {
-        toast.error(error.response?.data?.message || error?.message || 'Error')
-      })
-      .finally(() => {
-        processing.value = false
-      })
+  async function updateUser() {
+    await update(form.value.id, form.value).then(() => {
+      getUsers()
+      document.getElementById('resetUser')?.click()
+      reset()
+      openModal.value = false
+    })
   }
 
-  return { getUsers, updateUser, users, processing }
+  return { getUsers, updateUser, users, processing, form, openModal }
 }

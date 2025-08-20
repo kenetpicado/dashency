@@ -130,8 +130,8 @@
       <TheTable>
         <template #header>
           <th>Guía</th>
-          <th>Peso</th>
           <th>Tipo</th>
+          <th>Peso</th>
           <th>Cliente</th>
         </template>
 
@@ -140,10 +140,10 @@
             <td>
               {{ item.guide }}
             </td>
-            <td>{{ item.grossWeight }} lb(s)</td>
             <td>
               {{ item.type }}
             </td>
+            <td>{{ item.grossWeight }} lb(s)</td>
             <td>
               {{ item.client }}
             </td>
