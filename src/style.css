@@ -20,7 +20,7 @@
   }
 
   .loading-view {
-    @apply loading loading-spinner loading-lg text-gray-300 mx-auto flex items-center
+    @apply loading loading-spinner loading-lg text-gray-300 mx-auto flex items-center;
   }
 }
 

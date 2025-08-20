@@ -69,7 +69,7 @@ watch(
     <span class="font-bold text-2xl"> Estadisticas </span>
   </header>
 
-  <IsLoading v-if="processing"/>
+  <IsLoading v-if="processing" />
 
   <TheTable v-else>
     <template #header>

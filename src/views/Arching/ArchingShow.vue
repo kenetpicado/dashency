@@ -1,118 +1,139 @@
 <template>
   <header class="flex items-center justify-between mb-8 h-14">
-    <span class="font-bold text-2xl">
-      Detalles del arqueo
-      <label v-if="arching"> : {{ getBaseDate(arching.date) }} </label>
-    </span>
-    <RouterLink :to="{ name: 'billing.create' }">
-      <BtnPrimary> Nueva </BtnPrimary>
-    </RouterLink>
+    <span class="font-bold text-2xl"> Detalles </span>
   </header>
 
-  <div class="mb-4 bg-white p-4 rounded-xl border">
-    <UserInfo v-if="arching?.user" :item="arching.user" />
-  </div>
+  <IsLoading v-if="processing" />
 
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <h5 class="text-lg font-bold mb-2">Resumen</h5>
-      <TheTable>
-        <template #header>
-          <th>Tipos</th>
-          <th>Peso</th>
-          <th>Cantidad</th>
-          <th>Monto</th>
-        </template>
-        <template #body>
-          <tr v-if="!arching?.summary?.length">
-            <td colspan="4" class="text-center">No hay datos que mostrar</td>
-          </tr>
-          <tr v-for="(item, index) in arching?.summary" :key="index" class="hover:bg-gray-50">
-            <td>
-              {{ item.type }}
-            </td>
-            <td>{{ item.weight }} lbs</td>
-            <td>
-              {{ item.count }}
-            </td>
-            <td>${{ item.amount }}</td>
-          </tr>
-        </template>
-      </TheTable>
+  <template v-else-if="arching">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+      <div>
+        <TheTable table-class="table-fixed">
+          <template #body>
+            <tr>
+              <td class="border-r text-sm text-gray-400">Fecha</td>
+              <td>
+                <span v-if="arching.createdAt">
+                  {{ format(arching.createdAt, { date: 'short', time: 'short' }) }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="border-r text-sm text-gray-400">Realizado por</td>
+              <td>{{ arching.user?.name }}</td>
+            </tr>
+            <tr>
+              <td class="border-r text-sm text-gray-400">Fecha del arqueo</td>
+              <td>{{ format(arching.date) }}</td>
+            </tr>
+            <tr>
+              <td class="border-r text-sm text-gray-400">Total arqueado</td>
+              <td>
+                {{ arching.total.toLocaleString('en', CURRENCY_OPTIONS) }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="border-r">RESUMEN</td>
+            </tr>
+            <tr v-for="item in arching.summary" :key="item.type">
+              <td class="border-r text-sm text-gray-400">
+                {{ item.type }}
+              </td>
+              <td>
+                {{ item.weight }} lb(s) - {{ item.count }} paquetes -
+                {{ item.amount.toLocaleString('en', CURRENCY_OPTIONS) }}
+              </td>
+            </tr>
+          </template>
+        </TheTable>
+      </div>
+
+      <div>
+        <TheTable>
+          <template #header>
+            <th>Cuenta</th>
+            <th>Referencias</th>
+            <th>Monto</th>
+          </template>
+          <template #body>
+            <tr v-if="!arching?.accountSummary?.length">
+              <td colspan="4" class="text-center">No hay datos que mostrar</td>
+            </tr>
+            <tr
+              v-for="(item, index) in arching?.accountSummary"
+              :key="index"
+              class="hover:bg-gray-50"
+            >
+              <td>
+                {{ item.account_key }}
+              </td>
+              <td>{{ item.references.length }}</td>
+              <td>{{ item.total.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
+            </tr>
+          </template>
+        </TheTable>
+      </div>
     </div>
 
-    <div>
-      <h5 class="text-lg font-bold mb-2">Transferencias</h5>
-      <TheTable>
-        <template #header>
-          <th>Cuenta</th>
-          <th>Referencias</th>
-          <th>Monto</th>
-        </template>
-        <template #body>
-          <tr v-if="!arching?.accountSummary?.length">
-            <td colspan="4" class="text-center">No hay datos que mostrar</td>
-          </tr>
-          <tr
-            v-for="(item, index) in arching?.accountSummary"
-            :key="index"
-            class="hover:bg-gray-50"
-          >
-            <td>
-              {{ item.account_key }}
-            </td>
-            <td>{{ item.references.length }}</td>
-            <td>${{ item.total }}</td>
-          </tr>
-        </template>
-      </TheTable>
-    </div>
-  </div>
-
-  <h5 class="text-lg font-bold mb-2">Facturas</h5>
-
-  <TheTable>
-    <template #header>
-      <th>Fecha</th>
-      <th>Referencia</th>
-      <th>Cliente</th>
-      <th>Total</th>
-    </template>
-    <template #body>
-      <tr v-if="!arching?.billings?.length">
-        <td colspan="6" class="text-center">No hay datos que mostrar</td>
-      </tr>
-      <tr v-for="(item, index) in arching?.billings" :key="index" class="hover:bg-gray-50">
-        <td>
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
-        <td>
-          <div v-if="item.account && typeof item.account !== 'string'">
-            {{ item.account.type }}: {{ item.account.number }}
-          </div>
-          <div class="text-gray-400 text-sm">
+    <TheTable>
+      <template #header>
+        <th>Creado</th>
+        <th>Por</th>
+        <th>Cuenta</th>
+        <th>Referencia</th>
+        <th>Cliente</th>
+        <th>Total</th>
+        <th>Acciones</th>
+      </template>
+      <template #body>
+        <tr v-if="!arching.billings?.length">
+          <td colspan="7" class="text-center">No hay datos que mostrar</td>
+        </tr>
+        <tr v-else v-for="(item, index) in arching.billings" :key="index" class="hover:bg-gray-50">
+          <td>
+            <span v-if="item.createdAt">
+              {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+            </span>
+          </td>
+          <td>
+            <span v-if="item.user && typeof item.user !== 'string'">
+              {{ item.user.name }}
+            </span>
+          </td>
+          <td>
+            <span v-if="item.account && typeof item.account !== 'string'">
+              {{ item.account.type }}: {{ item.account.number }}
+            </span>
+          </td>
+          <td>
             {{ item.reference }}
-          </div>
-        </td>
-        <td>
-          {{ item.client }}
-        </td>
-        <td>${{ item.total }}</td>
-      </tr>
-    </template>
-  </TheTable>
+          </td>
+          <td>
+            {{ item.client }}
+          </td>
+          <td>{{ item.total.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
+          <td>
+            <RouterLink :to="{ name: 'billing.show', params: { id: item._id } }">
+              <IconEye size="25" />
+            </RouterLink>
+          </td>
+        </tr>
+      </template>
+    </TheTable>
+  </template>
 </template>
 
 <script setup lang="ts">
-import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import UserInfo from '@/components/UserInfo.vue'
 import useArching from '@/composables/useArching'
-import getFormattedDate, { getBaseDate } from '@/utils/date'
 import { onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { format } from '@formkit/tempo'
+import { CURRENCY_OPTIONS } from '@/defaults'
+import IsLoading from '@/components/IsLoading.vue'
+import { IconEye } from '@tabler/icons-vue'
 
-const { getArching, arching } = useArching()
+const { getArching, arching, processing } = useArching()
 
 const route = useRoute()
 
