@@ -7,20 +7,26 @@
   </header>
 
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
-    <SelectForm text="Banco" name="bank" v-model="queryParams.account">
-      <option value="">Todos</option>
+    <FieldForm text="Desde" name="desde" v-model="from" type="date" />
+
+    <FieldForm text="Hasta" name="hasta" v-model="to" type="date" />
+
+    <FieldForm as="select" text="Cuenta" name="cuenta" v-model="queryParams.account">
+      <option value="">Todas</option>
       <option v-for="item in accounts" :value="item.id" :key="item.id">
         {{ item.type }} - {{ item.number }}
       </option>
-    </SelectForm>
-    <InputForm
-      text="Código o referencia"
+    </FieldForm>
+
+    <FieldForm
+      text="Referencia"
       name="reference"
       v-model="queryParams.reference"
       type="search"
-      placeholder="Buscar código o referencia"
+      placeholder="Buscar referencia"
     />
-    <InputForm
+
+    <FieldForm
       text="Cliente"
       name="client"
       v-model="queryParams.client"
@@ -29,21 +35,42 @@
     />
   </div>
 
+  <main class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-title">Facturado</div>
+        <div class="stat-value">
+          {{ meta.sumTotal?.toLocaleString('en', CURRENCY_OPTIONS) }}
+        </div>
+      </div>
+    </div>
+  </main>
+
   <TheTable>
     <template #header>
-      <th>Usuario</th>
+      <th>Creado</th>
+      <th>Por</th>
       <th>Cuenta</th>
       <th>Referencia</th>
       <th>Cliente</th>
       <th>Total</th>
-      <th>Fecha</th>
       <th>Acciones</th>
     </template>
     <template #body>
-      <tr v-if="!billing.data.length">
+      <tr v-if="processing">
+        <td colspan="7" class="text-center">
+          <span class="loading-table-data"> </span>
+        </td>
+      </tr>
+      <tr v-else-if="!billing.length">
         <td colspan="7" class="text-center">No hay datos que mostrar</td>
       </tr>
-      <tr v-for="(item, index) in billing.data" :key="index" class="hover:bg-gray-50">
+      <tr v-else v-for="(item, index) in billing" :key="index" class="hover:bg-gray-50">
+        <td>
+          <span v-if="item.createdAt">
+            {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
+          </span>
+        </td>
         <td>
           <span v-if="item.user && typeof item.user !== 'string'">
             {{ item.user.name }}
@@ -60,47 +87,77 @@
         <td>
           {{ item.client }}
         </td>
-        <td>${{ item.total }}</td>
-        <td class="text-gray-400">
-          {{ getFormattedDate(item.createdAt) }}
-        </td>
+        <td>{{ item.total.toLocaleString('en', CURRENCY_OPTIONS) }}</td>
         <td>
           <RouterLink :to="{ name: 'billing.show', params: { id: item.id } }">
-            <IconEye size="20" />
+            <IconEye size="25" />
           </RouterLink>
         </td>
       </tr>
     </template>
   </TheTable>
-  <PaginationComponent :pages="billing.pages" :page="billing.current" @selected="getThisPage" />
+
+  <ThePaginate v-model="meta.page" :meta="meta" />
 </template>
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import useBilling from '@/composables/useBilling'
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import TheTable from '@/components/Table/TheTable.vue'
-import getFormattedDate from '@/utils/date'
+import { format, monthStart, dayEnd, dayStart } from '@formkit/tempo'
 import { IconEye } from '@tabler/icons-vue'
-import UserInfo from '@/components/UserInfo.vue'
-import InputForm from '@/components/Form/InputForm.vue'
 import { watchDebounced } from '@vueuse/core'
-import SelectForm from '@/components/Form/SelectForm.vue'
-import PaginationComponent from '@/components/PaginationComponent.vue'
 import useAccount from '@/composables/useAccount'
+import ThePaginate from '@/components/ThePaginate.vue'
+import FieldForm from '@/components/Form/FieldForm.vue'
+import { CURRENCY_OPTIONS } from '@/defaults'
 
-const { getBilling, billing, queryParams } = useBilling()
+const { getBilling, billing, queryParams, meta, processing } = useBilling()
 const { accounts, getAccounts } = useAccount()
 
+const START_OF_MONTH = monthStart(new Date())
+const from = ref(format(START_OF_MONTH, 'YYYY-MM-DD'))
+const to = ref('')
+
 onMounted(() => {
-  getBilling()
+  processing.value = true
+  queryParams.value.from = dayStart(START_OF_MONTH)
+
   getAccounts()
 })
 
-watchDebounced(queryParams.value, () => getBilling(), { debounce: 500, maxWait: 1000 })
+watchDebounced(
+  queryParams.value,
+  () => {
+    meta.value.page = 1
+    getBilling()
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 
-function getThisPage(selected: number) {
-  queryParams.value.page = selected * 1
-}
+watch(
+  () => [from.value, to.value],
+  ([from, to]) => {
+    if (from) {
+      queryParams.value.from = dayStart(from).toISOString()
+    } else {
+      queryParams.value.from = ''
+    }
+
+    if (to) {
+      queryParams.value.to = dayEnd(to).toISOString()
+    } else {
+      queryParams.value.to = ''
+    }
+  }
+)
+
+watch(
+  () => meta.value.page,
+  () => {
+    getBilling()
+  }
+)
 </script>

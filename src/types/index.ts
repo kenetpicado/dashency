@@ -123,13 +123,14 @@ export interface ISummary {
 
 export interface IBilling {
   id?: string
+  _id?: string
   invoice?: Number
   client: string
   packages?: IPackage[]
   packages_ids?: Array<string>
   total: number
   reference: string
-  account: string | IAccount
+  account: IAccount
   summary?: ISummary[]
   createdAt?: Date
   user?: IUserInfo
@@ -272,4 +273,5 @@ export interface IMeta {
   limit: number
   hasPrevPage: boolean
   hasNextPage: boolean
+  sumTotal?: number
 }

@@ -1,4 +1,4 @@
-import type { IBilling, IBillingResponse } from '@/types'
+import type { IBilling } from '@/types'
 import { useBillingStore } from '@/stores/billing'
 import api from '@/config/axios'
 import { storeToRefs } from 'pinia'
@@ -6,92 +6,64 @@ import { ref } from 'vue'
 import router from '@/router'
 import toast from '@/utils/toast'
 import cleanQueryParams from '@/utils/query-params'
+import useCrud from '@/composables/useCrud'
 
 export default function useBilling() {
-  const { setBilling, setBill } = useBillingStore()
-  const { billing, bill } = storeToRefs(useBillingStore())
-  const processing = ref<boolean>(false)
+  const { billing, bill, meta } = storeToRefs(useBillingStore())
+  const { index, processing, store, show } = useCrud('/billing')
 
-  const queryParams = ref<{
-    date: string
-    reference: string
-    client: string
-    account: string
-    page: number
-    timezoneOffset: number
-  }>({
+  const queryParams = ref<any>({
     date: '',
     reference: '',
     client: '',
     account: '',
-    page: 1,
-    timezoneOffset: new Date().getTimezoneOffset()
+    from: '',
+    to: ''
   })
 
   function getBilling() {
-    const params = cleanQueryParams(queryParams.value)
+    const params = {
+      page: meta.value.page,
+      ...cleanQueryParams(queryParams.value)
+    }
 
-    api
-      .get('/billing', { params })
-      .then((response) => {
-        setBilling(response.data as IBillingResponse)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    index(params).then((response) => {
+      const { docs, ...rest } = response.data
+      billing.value = docs
+      meta.value = rest
+    })
   }
 
   async function getBillingDay() {
     const params = cleanQueryParams(queryParams.value)
 
-    await api
-      .get('/billing-day', { params })
-      .then((response) => {
-        const customResponse = {
-          data: response.data,
-          pages: 1,
-          current: 1
-        }
-
-        setBilling(customResponse as IBillingResponse)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    await api.get('/billing/today/arching', { params }).then((response) => {
+      billing.value = response.data
+    })
   }
 
   async function getBill(id: string) {
-    await api
-      .get('/billing/' + id)
-      .then((response) => {
-        setBill(response.data as IBilling)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    await show(id).then((response) => {
+      bill.value = response.data as IBilling
+    })
   }
 
   function storeBilling(data: IBilling) {
-    processing.value = true
+    store(data).then((response) => {
+      toast.success('Factura creada correctamente')
 
-    api
-      .post('/billing', data)
-      .then((response) => {
-        toast.success('Factura creada correctamente')
-        router.push({
-          name: 'billing.show',
-          params: { id: response.data.id },
-          query: { action: 'print' }
-        })
+      router.push({
+        name: 'billing.show',
+        params: { id: response.data._id },
+        query: { action: 'print' }
       })
-      .finally(() => {
-        processing.value = false
-      })
+    })
   }
 
   return {
     getBilling,
     billing,
+    meta,
     processing,
     storeBilling,
     queryParams,

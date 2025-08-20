@@ -245,7 +245,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import InputForm from '@/components/Form/InputForm.vue'
 import { IconTrash, IconChevronRight } from '@tabler/icons-vue'
 import toast from '@/utils/toast'
-import type { IBilling, IPackage, IPrice, ISummary } from '@/types'
+import type { IPackage, IPrice, ISummary } from '@/types'
 import 'vue-loading-overlay/dist/css/index.css'
 import usePackage from '@/composables/usePackage'
 import SelectForm from '@/components/Form/SelectForm.vue'
@@ -266,7 +266,7 @@ const summary = ref<ISummary[]>([])
 const errorMessage = ref<string>('')
 const localPrices = ref<IPrice[]>([])
 
-const form = ref<IBilling>({
+const form = ref<any>({
   client: '',
   packages_ids: [],
   total: 0,
