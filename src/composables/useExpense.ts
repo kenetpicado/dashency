@@ -12,7 +12,8 @@ export default function useExpense() {
   const openModal = ref<boolean>(false)
 
   const queryParams = ref<any>({
-    concept: ''
+    concept: '',
+    description: ''
   })
 
   const { form, reset } = useForm<IExpense>({

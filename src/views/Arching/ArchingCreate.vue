@@ -10,8 +10,8 @@
   <div class="grid grid-cols-2 gap-4">
     <div class="flex flex-col gap-4">
       <div class="font-bold text-xl">Transacciones</div>
-      <div v-if="!billing.data.length" class="text-center text-gray-400">No hay transacciones</div>
-      <div v-for="item in billing.data" :key="item.id" class="bg-white p-4 rounded-lg border">
+      <div v-if="!billing.length" class="text-center text-gray-400">No hay transacciones</div>
+      <div v-for="item in billing" :key="item.id" class="bg-white p-4 rounded-lg border">
         <div class="text-gray-400 text-xs mb-2">
           {{ getFormattedDate(item.createdAt) }}
         </div>
@@ -129,11 +129,11 @@ onMounted(async () => {
 })
 
 function setAccountSummary() {
-  const uniqueBanks = new Set(billing.value.data.map((item) => item.account_key))
+  const uniqueBanks = new Set(billing.value.map((item) => item.account_key))
   const temporalSummary: IAccountSummary[] = []
 
   uniqueBanks.forEach((account_key) => {
-    const transactions = billing.value.data.filter((item) => item.account_key === account_key)
+    const transactions = billing.value.filter((item) => item.account_key === account_key)
 
     temporalSummary.push({
       account_key: account_key as string,
@@ -145,14 +145,14 @@ function setAccountSummary() {
   temporalSummary.push({
     account_key: 'TOTAL',
     total: Math.round(temporalSummary.reduce((acc, item) => acc + item.total, 0) * 100) / 100,
-    references: billing.value.data.map((item) => item.reference)
+    references: billing.value.map((item) => item.reference)
   })
 
   accountSummary.value = temporalSummary
 }
 
 function setSummary() {
-  const flatSummary = billing.value.data
+  const flatSummary = billing.value
     .filter((item) => item.summary !== undefined && item.summary.length > 1)
     .map((item) => item.summary)
     .flat() as ISummary[]
@@ -176,14 +176,14 @@ function setSummary() {
 }
 
 function onSubmit() {
-  if (!billing.value.data.length) {
+  if (!billing.value.length) {
     toast.error('No hay transacciones que guardar')
   }
 
   form.value.date = billingParams.value.date
   form.value.summary = summary.value
   form.value.accountSummary = accountSummary.value
-  form.value.billing_ids = billing.value.data.map((item) => item.id as string)
+  form.value.billing_ids = billing.value.map((item) => item.id as string)
 
   const totalItem = accountSummary.value.find((item) => item.account_key === 'TOTAL')
 

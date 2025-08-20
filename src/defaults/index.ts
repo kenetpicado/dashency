@@ -24,3 +24,10 @@ export const defaultMeta = {
   hasNextPage: false,
   hasPrevPage: false
 }
+
+export const CURRENCY_OPTIONS = {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+}

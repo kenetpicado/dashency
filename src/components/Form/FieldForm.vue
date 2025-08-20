@@ -9,6 +9,7 @@ defineProps<{
   autofocus?: boolean
   rules?: string
   as?: string
+  list?: string
 }>()
 
 const model = defineModel()
@@ -30,8 +31,13 @@ const model = defineModel()
       :autofocus="autofocus"
       :name="name"
       :rules="rules"
-      class="input input-bordered w-full"
+      class="w-full"
+      :class="{
+        'select select-bordered': as === 'select',
+        'input input-bordered': as !== 'select'
+      }"
       v-model="model"
+      :list="list"
     >
       <slot />
     </Field>

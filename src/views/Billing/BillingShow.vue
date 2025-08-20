@@ -4,7 +4,180 @@
     <BtnPrimary v-print="printObj" id="btnPrint">Imprimir</BtnPrimary>
   </header>
 
-  <div class="w-full flex justify-center">
+  <span v-if="processing" class="loading loading-spinner loading-lg text-gray-300 mx-auto flex items-center"> </span>
+
+  <div v-else-if="bill" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+      <TheTable table-class="table-fixed">
+        <template #body>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Fecha</td>
+            <td>
+             <span v-if="bill.createdAt">
+              {{ format(bill.createdAt, { date: 'short', time: 'short' }) }}
+            </span>
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Realizado por</td>
+            <td>
+              {{ bill.user?.name }} ({{ bill.user?.email }})
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">ID</td>
+            <td>
+             {{ bill._id }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Recibo</td>
+            <td>
+              {{ bill.invoice?.toString().padStart(6, '0') }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Cuenta</td>
+            <td>
+              {{ bill.account.type }}: {{ bill.account?.number }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Referencia</td>
+            <td>
+              {{ bill.reference }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Cliente</td>
+            <td>
+              {{ bill.client }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Paquetes en la factura</td>
+            <td>
+              {{ bill.packages?.length }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">
+              Dirección de envío
+            </td>
+            <td>
+              {{ bill.address || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Notas</td>
+            <td>
+              {{ bill.notes || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Envío terrestre</td>
+            <td>
+              {{ bill.delivery?.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Importe extra</td>
+            <td>
+              {{ bill.fee?.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400">Sub total</td>
+            <td>
+              {{ bill.subTotal.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border-r text-sm text-gray-400 font-bold">Total</td>
+            <td class="font-bold">
+              {{ bill.total.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+          </tr>
+        </template>
+      </TheTable>
+
+    <div class="flex flex-col gap-4">
+      <TheTable>
+        <template #header>
+          <th>
+            Concepto
+          </th>
+          <th>
+            Peso total
+          </th>
+          <th>
+            Paquetes
+          </th>
+          <th>
+            Precio por lb
+          </th>
+          <th>
+            Total
+          </th>
+        </template>
+
+        <template #body>
+          <tr v-for="(item, index) in bill.summary" :key="index">
+            <td>
+              {{ item.type }}
+            </td>
+            <td>
+             {{ item.weight }} lb(s)
+            </td>
+            <td>
+              {{ item.count }}
+            </td>
+            <td>
+              {{ item.price?.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+            <td>
+              {{ item.amount?.toLocaleString('en', CURRENCY_OPTIONS) }}
+            </td>
+          </tr>
+        </template>
+      </TheTable>
+
+      <TheTable>
+        <template #header>
+          <th>
+            Guía
+          </th>
+          <th>
+            Peso
+          </th>
+          <th>
+            Tipo
+          </th>
+          <th>
+            Cliente
+          </th>
+        </template>
+
+        <template #body>
+          <tr v-for="(item, index) in bill.packages" :key="index">
+            <td>
+              {{ item.guide }}
+            </td>
+            <td>
+              {{ item.grossWeight }} lb(s)
+            </td>
+            <td>
+              {{ item.type }}
+            </td>
+            <td>
+              {{ item.client }}
+            </td>
+          </tr>
+        </template>
+      </TheTable>
+    </div>
+  </div>
+
+  <div class="hidden">
     <div class="bg-white p-[0.8cm]">
       <div class="w-[210mm] min-h-[200mm] bg-white" id="printMe">
         <div class="flex justify-between mb-6">
@@ -105,8 +278,11 @@ import useBilling from '@/composables/useBilling'
 import getFormattedDate from '@/utils/date'
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import TheTable from '@/components/Table/TheTable.vue'
+import { format } from '@formkit/tempo'
+import { CURRENCY_OPTIONS } from '@/defaults'
 
-const { getBill, bill } = useBilling()
+const { getBill, bill, processing } = useBilling()
 
 const route = useRoute()
 

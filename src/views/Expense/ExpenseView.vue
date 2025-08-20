@@ -6,20 +6,17 @@
 
   <DialogForm title="Gasto" :isOpen="openModal" @onClose="openModal = false">
     <Form @submit="onSubmit" class="flex flex-col gap-4">
-      <FieldForm as="select" text="Concepto" name="concepto" v-model="conceptSelected">
-        <option value="">Otro</option>
-        <option v-for="item in concepts" :value="item" :key="item">
-          {{ item }}
-        </option>
-      </FieldForm>
+      <datalist id="conceptos">
+        <option v-for="item in concepts" :value="item" :key="item"></option>
+      </datalist>
 
       <FieldForm
-        v-if="!conceptSelected"
-        text="Especificar concepto"
-        name="especificar"
+        text="Concepto"
+        name="concepto"
         v-model="form.concept"
         rules="required"
         placeholder="ej. Pago de alquiler"
+        list="conceptos"
       />
 
       <FieldForm
@@ -37,6 +34,7 @@
           type="number"
           rules="required|min_value:1"
         />
+
         <FieldForm
           text="Monto $"
           name="costo"
@@ -49,7 +47,7 @@
       <div class="font-bold">Total: ${{ (form.quantity * form.cost).toLocaleString() }}</div>
 
       <div class="modal-action">
-        <BtnSecondary type="reset" @click="resetValues">Cancelar</BtnSecondary>
+        <BtnSecondary type="reset" id="resetExpense" @click="resetValues">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing">
           {{ isEdit ? 'Actualizar' : 'Guardar' }}
         </BtnPrimary>
@@ -64,6 +62,14 @@
         {{ item }}
       </option>
     </SelectForm>
+
+    <FieldForm
+      text="Descripción"
+      name="description"
+      v-model="queryParams.description"
+      type="search"
+      placeholder="Buscar por descripción"
+    />
   </div>
 
   <TheTable>
@@ -155,7 +161,6 @@ const {
 } = useExpense()
 
 const isEdit = ref<boolean>(false)
-const conceptSelected = ref<string>('')
 
 onMounted(() => {
   getExpenses()
@@ -163,16 +168,11 @@ onMounted(() => {
 
 const resetValues = () => {
   openModal.value = false
-  conceptSelected.value = ''
   isEdit.value = false
   reset()
 }
 
 function onSubmit() {
-  if (conceptSelected.value) {
-    form.value.concept = conceptSelected.value
-  }
-
   if (isEdit.value && form.value.id) {
     updateExpense(form.value.id)
   } else {
@@ -191,14 +191,6 @@ watchDebounced(
 
 function edit(item: IExpense) {
   form.value = { ...item }
-
-  if (concepts.includes(item.concept)) {
-    conceptSelected.value = item.concept
-  } else {
-    conceptSelected.value = ''
-    form.value.concept = item.concept
-  }
-
   isEdit.value = true
   openModal.value = true
 }
