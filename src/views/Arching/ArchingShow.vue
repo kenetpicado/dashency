@@ -1,5 +1,5 @@
 <template>
-  <header class="flex items-center justify-between mb-8 h-14">
+  <header class="flex items-center justify-between mb-6">
     <span class="font-bold text-2xl"> Detalles </span>
   </header>
 
