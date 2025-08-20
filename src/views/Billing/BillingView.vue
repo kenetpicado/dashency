@@ -1,12 +1,12 @@
 <template>
-  <header class="flex items-center justify-between mb-8">
+  <header class="flex items-center justify-between mb-6">
     <span class="font-bold text-2xl">Facturación</span>
     <RouterLink :to="{ name: 'billing.create' }">
       <BtnPrimary> Nueva </BtnPrimary>
     </RouterLink>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
     <FieldForm text="Desde" name="desde" v-model="from" type="date" />
 
     <FieldForm text="Hasta" name="hasta" v-model="to" type="date" />
@@ -35,7 +35,7 @@
     />
   </div>
 
-  <main class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+  <main class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
     <div class="stats shadow">
       <div class="stat">
         <div class="stat-title">Facturado</div>

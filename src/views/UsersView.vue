@@ -66,7 +66,7 @@ function editUser(item: IUser) {
     <template #body>
       <tr v-if="processing">
         <td colspan="7">
-          <span class="loading loading-spinner mx-auto flex items-center"> </span>
+          <span class="loading-table-data"> </span>
         </td>
       </tr>
       <tr v-else-if="!users.length">
