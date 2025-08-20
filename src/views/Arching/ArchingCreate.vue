@@ -4,7 +4,7 @@
   </header>
 
   <div class="grid grid-cols-4 gap-4 mb-4">
-    <InputForm text="Fecha" name="date" v-model="billingParams.date" type="date" />
+    <InputForm text="Fecha" name="date" v-model="localDate" type="date" />
   </div>
 
   <div class="grid grid-cols-2 gap-4">
@@ -97,6 +97,7 @@ import getFormattedDate from '@/utils/date'
 import toast from '@/utils/toast'
 import { onMounted, ref, watch } from 'vue'
 import 'vue-loading-overlay/dist/css/index.css'
+import { dayEnd, dayStart, format } from '@formkit/tempo'
 
 const { getBillingDay, queryParams: billingParams, billing } = useBilling()
 const { processing, storeArching } = useArching()
@@ -112,9 +113,20 @@ const form = ref<IArching>({
   billing_ids: []
 })
 
+const TODAY = new Date()
+const localDate = ref<string>('')
+
 watch(
-  () => billingParams.value.date,
-  async () => {
+  () => localDate.value,
+  async (value) => {
+    if (!value) {
+      toast.error('La fecha es requerida')
+      return
+    }
+
+    billingParams.value.from = dayStart(value).toISOString()
+    billingParams.value.to = dayEnd(value).toISOString()
+
     await getBillingDay()
     setAccountSummary()
     setSummary()
@@ -122,10 +134,7 @@ watch(
 )
 
 onMounted(async () => {
-  billingParams.value.date = getFormattedDate(new Date(), 'YYYY-MM-DD')
-  await getBillingDay()
-  setAccountSummary()
-  setSummary()
+  localDate.value = format(TODAY, 'YYYY-MM-DD')
 })
 
 function setAccountSummary() {
@@ -180,7 +189,7 @@ function onSubmit() {
     toast.error('No hay transacciones que guardar')
   }
 
-  form.value.date = billingParams.value.date
+  form.value.date = localDate.value
   form.value.summary = summary.value
   form.value.accountSummary = accountSummary.value
   form.value.billing_ids = billing.value.map((item) => item.id as string)

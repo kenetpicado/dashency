@@ -37,17 +37,15 @@ export default function useBilling() {
   async function getBillingDay() {
     const params = cleanQueryParams(queryParams.value)
 
-    await api.get('/billing-day', { params }).then((response) => {
+    await api.get('/billing/today/arching', { params }).then((response) => {
       billing.value = response.data
-    }).catch((err) => {
-      console.log(err)
     })
   }
 
   async function getBill(id: string) {
     await show(id).then((response) => {
-        bill.value = response.data as IBilling
-      })
+      bill.value = response.data as IBilling
+    })
   }
 
   function storeBilling(data: IBilling) {
