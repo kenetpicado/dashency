@@ -59,16 +59,17 @@ watchDebounced(
       <th>Tipo</th>
       <th>Peso</th>
       <th>Cliente</th>
+      <th>Tracking</th>
       <th>Descripción</th>
     </template>
     <template #body>
       <tr v-if="processing">
-        <td colspan="6">
+        <td colspan="7">
           <span class="loading-table-data"> </span>
         </td>
       </tr>
       <tr v-else-if="!mailPackages.length">
-        <td colspan="6" class="text-center">No hay paquetes</td>
+        <td colspan="7" class="text-center">No hay paquetes</td>
       </tr>
       <tr v-else v-for="(item, index) in mailPackages" :key="index" class="hover:bg-gray-50">
         <td>
@@ -85,6 +86,9 @@ watchDebounced(
         <td>{{ item.grossWeight }} lb(s)</td>
         <td>
           {{ item.client }}
+        </td>
+        <td>
+          {{ item.tracking || '-' }}
         </td>
         <td>
           {{ item.description }}
