@@ -56,6 +56,7 @@ export interface IPackage {
   status?: string
   createdAt?: Date
   type?: string
+  billing?: string
 }
 
 export interface IMailPackage {
