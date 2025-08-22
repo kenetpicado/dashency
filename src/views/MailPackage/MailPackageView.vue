@@ -45,6 +45,14 @@ watchDebounced(
       type="search"
     />
 
+    <FieldForm
+      text="Tracking"
+      name="tracking"
+      v-model="queryParams.tracking"
+      placeholder="ej. 1Z12345E0205271688"
+      type="search"
+    />
+
     <FieldForm as="select" text="Tipo" name="type" v-model="queryParams.type">
       <option value="">Todos</option>
       <option value="Maritimo/Ocean">Maritimo/Ocean</option>
