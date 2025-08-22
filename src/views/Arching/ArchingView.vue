@@ -43,7 +43,7 @@
         <td>
           <div class="flex gap-4">
             <RouterLink :to="{ name: 'archings.show', params: { id: item.id } }">
-              <IconEye size="20" />
+              <IconEye size="25" />
             </RouterLink>
           </div>
         </td>

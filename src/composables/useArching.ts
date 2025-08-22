@@ -11,7 +11,7 @@ export default function useArching() {
 
   async function getArchings() {
     const params = {
-      page: meta.value.page,
+      page: meta.value.page
     }
 
     await index(params).then((response) => {

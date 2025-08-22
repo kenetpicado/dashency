@@ -42,7 +42,7 @@
       </div>
 
       <div class="modal-action">
-        <BtnSecondary @click="resetValues">Cancelar</BtnSecondary>
+        <BtnSecondary type="reset" id="resetPackage" @click="onCancel">Cancelar</BtnSecondary>
         <BtnPrimary type="submit" :loading="processing"> Actualizar </BtnPrimary>
       </div>
     </Form>
@@ -122,7 +122,16 @@
           {{ item.pieces }}
         </td>
         <td>
-          {{ item.status }}
+          <RouterLink
+            class="text-primary underline"
+            v-if="item.billing"
+            :to="{ name: 'billing.show', params: { id: item.billing } }"
+          >
+            {{ item.status }}
+          </RouterLink>
+          <span v-else class="text-gray-400">
+            {{ item.status }}
+          </span>
         </td>
         <td>
           {{ item.client }}
@@ -159,19 +168,18 @@ import { format } from '@formkit/tempo'
 import FieldForm from '@/components/Form/FieldForm.vue'
 import { Form } from 'vee-validate'
 
-const { getPackages, packages, queryParams, processing, updatePackage, meta } = usePackage()
+const {
+  getPackages,
+  packages,
+  queryParams,
+  processing,
+  updatePackage,
+  meta,
+  form,
+  openModal,
+  reset
+} = usePackage()
 const { prices, getPrices } = usePrice()
-
-const openModal = ref<boolean>(false)
-
-const form = ref<IPackage>({
-  guide: '',
-  client: '',
-  description: '',
-  pieces: 0,
-  grossWeight: 0,
-  entryDate: ''
-})
 
 onMounted(() => {
   getPackages()
@@ -179,27 +187,21 @@ onMounted(() => {
 })
 
 function editPackage(item: IPackage) {
-  form.value = { ...item }
+  form.value.id = item.id
+  form.value.client = item.client
+  form.value.description = item.description
+  form.value.pieces = item.pieces
+  form.value.grossWeight = item.grossWeight
   openModal.value = true
 }
 
-function resetValues() {
-  form.value = {
-    guide: '',
-    client: '',
-    description: '',
-    pieces: 0,
-    grossWeight: 0,
-    entryDate: ''
-  }
+function onCancel() {
+  reset()
   openModal.value = false
 }
 
 function onSubmit() {
-  updatePackage(form.value, () => {
-    resetValues()
-    getPackages()
-  })
+  updatePackage()
 }
 
 watchDebounced(
