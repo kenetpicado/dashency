@@ -1,6 +1,12 @@
 <template>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <Form @submit="updateProfile" v-if="auth" class="flex flex-col bg-white p-6 rounded-xl border">
+    <Form
+      @submit="updateProfile"
+      v-if="auth"
+      class="flex flex-col gap-4 bg-white p-6 rounded-xl border"
+    >
+      <h1 class="font-bold text-lg">Datos personales</h1>
+
       <div class="flex-1 mb-8 flex flex-col gap-4">
         <FieldForm
           text="Nombre"
@@ -20,7 +26,7 @@
       </div>
 
       <div class="w-full flex justify-end">
-        <BtnPrimary type="submit" :loading="processing">Guardar</BtnPrimary>
+        <BtnPrimary type="submit" :loading="processing">Actualizar</BtnPrimary>
       </div>
     </Form>
 
@@ -67,6 +73,8 @@
         </div>
       </template>
     </div>
+
+    <UpdatePasswordForm />
   </div>
 </template>
 
@@ -79,6 +87,7 @@ import FieldForm from '@/components/Form/FieldForm.vue'
 import { Form } from 'vee-validate'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import useProfile from '@/composables/useProfile'
+import UpdatePasswordForm from '@/components/UpdatePasswordForm.vue'
 
 const { getProfile, auth, processing, updateProfile, form } = useProfile()
 const { authRoute, getAuthRoute, processing: processingGoogle } = useGoogle()

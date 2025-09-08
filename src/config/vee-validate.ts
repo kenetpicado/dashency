@@ -15,17 +15,29 @@ configure({
   validateOnModelUpdate: false
 })
 
+configure({
+  generateMessage: localize({
+    es: {
+      messages: {
+        required: 'Este campo es requerido',
+        min: 'Debe tener al menos 0:{min} caracteres',
+        confirmed: 'Este campo no coincide'
+      }
+    }
+  })
+})
+
 defineRule('password', (value: string) => {
   if (value.length < 8) {
-    return 'La contraseña debe tener al menos 8 caracteres'
+    return 'Debe tener al menos 8 caracteres'
   }
 
   if (!/[A-Z]/.test(value)) {
-    return 'La contraseña debe contener al menos una letra mayúscula'
+    return 'Debe contener al menos una letra mayúscula'
   }
 
   if (!/\d/.test(value)) {
-    return 'La contraseña debe contener al menos un número'
+    return 'Debe contener al menos un número'
   }
 
   return true
