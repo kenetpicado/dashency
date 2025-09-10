@@ -41,7 +41,7 @@ import {
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'
 
-const { hasRoles } = useAuthStore()
+const { canShowThisItem } = useAuthStore()
 const route = useRoute()
 const logo = import.meta.env.VITE_APP_LOGO || ''
 
@@ -55,42 +55,42 @@ const items = [
     title: 'Inicio',
     to: { name: 'home' },
     icon: IconHome,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
-    activeIn: ['home']
+    show: canShowThisItem({ name: 'home' }),
+    activeIn: ['home'],
   },
   {
     title: 'Usuarios',
     to: { name: 'users' },
     icon: IconUsersGroup,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    show: canShowThisItem({ name: 'users' }),
     activeIn: []
   },
   {
     title: 'Lotes',
     to: { name: 'batches' },
     icon: IconPackages,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    show: canShowThisItem({ name: 'batches' }),
     activeIn: ['batches.create', 'batches.show']
   },
   {
     title: 'Paquetes',
     to: { name: 'packages' },
     icon: IconPackage,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    show: canShowThisItem({ name: 'packages' }),
     activeIn: []
   },
   {
     title: 'Correo',
     to: { name: 'mail.packages' },
     icon: IconMail,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    show: canShowThisItem({ name: 'mail.packages' }),
     activeIn: []
   },
   {
     title: 'Sincronización',
     to: { name: 'sync' },
     icon: IconReload,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    show: canShowThisItem({ name: 'sync' }),
     activeIn: []
   },
   {
@@ -102,33 +102,28 @@ const items = [
     title: 'Facturación',
     to: { name: 'billing' },
     icon: IconDatabaseDollar,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR', 'CAJERO']),
+    show: canShowThisItem({ name: 'billing' }),
     activeIn: ['billing.create', 'billing.show']
   },
   {
     title: 'Gastos',
     to: { name: 'expenses' },
     icon: IconTransferOut,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    show: canShowThisItem({ name: 'expenses' }),
     activeIn: []
   },
   {
     title: 'Arqueos',
     to: { name: 'archings' },
     icon: IconLogs,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
+    show: canShowThisItem({ name: 'archings' }),
     activeIn: ['archings.create', 'archings.show']
   },
   {
     title: 'Configuración',
     to: { name: 'settings' },
     icon: IconSettings,
-    show: hasRoles(['ROOT', 'ADMINISTRADOR']),
-    activeIn: []
-  },
-  {
-    title: 'Otros',
-    show: true,
+    show: canShowThisItem({ name: 'settings' }),
     activeIn: []
   },
   {
@@ -139,4 +134,5 @@ const items = [
     activeIn: []
   }
 ]
+
 </script>
