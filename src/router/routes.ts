@@ -48,28 +48,28 @@ export const authRoutes = [
     meta: { title: 'Paquetes', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
-    path: 'shipments',
+    path: 'encomiendas',
     component: () => import('../views/Shipment/ShipmentView.vue'),
     name: 'shipments',
-    meta: { title: 'Shipments', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+    meta: { title: 'Encomiendas', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
-    path: 'shipments/crear',
+    path: 'encomiendas/crear',
     component: () => import('../views/Shipment/ShipmentCreate.vue'),
     name: 'shipments.create',
-    meta: { title: 'Crear Shipment', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+    meta: { title: 'Crear Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
-    path: 'shipments/:id',
+    path: 'encomiendas/:id',
     component: () => import('../views/Shipment/ShipmentShow.vue'),
     name: 'shipments.show',
-    meta: { title: 'Shipment', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+    meta: { title: 'Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
-    path: 'shipments/:id/editar',
+    path: 'encomiendas/:id/editar',
     component: () => import('../views/Shipment/ShipmentCreate.vue'),
     name: 'shipments.edit',
-    meta: { title: 'Shipment', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+    meta: { title: 'Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
     path: 'paquetes-de-correo',

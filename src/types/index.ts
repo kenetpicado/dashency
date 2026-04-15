@@ -176,6 +176,7 @@ export interface IShipment {
   receiverName: string
   receiverPhone: string
   fullAddress: string
+  tracking?: string
   createdAt?: Date
 }
 
