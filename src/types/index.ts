@@ -167,6 +167,25 @@ export interface IExpense {
   user?: IUserInfo
 }
 
+export interface IShipment {
+  id?: string
+  senderName: string
+  senderPhone: string
+  destinationDepartment: string
+  destinationCountry: string
+  receiverName: string
+  receiverPhone: string
+  fullAddress: string
+  tracking?: string
+  createdAt?: Date
+}
+
+export interface IShipmentResponse {
+  data: IShipment[]
+  pages: number
+  current: number
+}
+
 export interface IExpenseResponse {
   data: IExpense[]
   pages: number

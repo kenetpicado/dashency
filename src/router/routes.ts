@@ -48,6 +48,30 @@ export const authRoutes = [
     meta: { title: 'Paquetes', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
+    path: 'encomiendas',
+    component: () => import('../views/Shipment/ShipmentView.vue'),
+    name: 'shipments',
+    meta: { title: 'Encomiendas', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+  },
+  {
+    path: 'encomiendas/crear',
+    component: () => import('../views/Shipment/ShipmentCreate.vue'),
+    name: 'shipments.create',
+    meta: { title: 'Crear Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+  },
+  {
+    path: 'encomiendas/:id',
+    component: () => import('../views/Shipment/ShipmentShow.vue'),
+    name: 'shipments.show',
+    meta: { title: 'Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+  },
+  {
+    path: 'encomiendas/:id/editar',
+    component: () => import('../views/Shipment/ShipmentCreate.vue'),
+    name: 'shipments.edit',
+    meta: { title: 'Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
+  },
+  {
     path: 'paquetes-de-correo',
     component: () => import('../views/MailPackage/MailPackageView.vue'),
     name: 'mail.packages',

@@ -29,12 +29,11 @@ import {
   IconHome,
   IconPackage,
   IconPackages,
+  IconTruckDelivery,
   IconUsersGroup,
   IconDatabaseDollar,
   IconTransferOut,
   IconLogs,
-  IconMail,
-  IconReload,
   IconSettings,
   IconUser
 } from '@tabler/icons-vue'
@@ -56,7 +55,7 @@ const items = [
     to: { name: 'home' },
     icon: IconHome,
     show: canShowThisItem({ name: 'home' }),
-    activeIn: ['home'],
+    activeIn: ['home']
   },
   {
     title: 'Usuarios',
@@ -80,18 +79,11 @@ const items = [
     activeIn: []
   },
   {
-    title: 'Correo',
-    to: { name: 'mail.packages' },
-    icon: IconMail,
-    show: canShowThisItem({ name: 'mail.packages' }),
-    activeIn: []
-  },
-  {
-    title: 'Sincronización',
-    to: { name: 'sync' },
-    icon: IconReload,
-    show: canShowThisItem({ name: 'sync' }),
-    activeIn: []
+    title: 'Encomiendas',
+    to: { name: 'shipments' },
+    icon: IconTruckDelivery,
+    show: canShowThisItem({ name: 'shipments' }),
+    activeIn: ['shipments.create', 'shipments.show']
   },
   {
     title: 'Finanzas',
@@ -134,5 +126,4 @@ const items = [
     activeIn: []
   }
 ]
-
 </script>
