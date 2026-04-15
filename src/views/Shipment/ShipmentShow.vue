@@ -8,7 +8,7 @@
       <RouterLink :to="{ name: 'shipments.create' }">
         <BtnSecondary> Crear nuevo </BtnSecondary>
       </RouterLink>
-      <BtnPrimary v-print="printObj"> Imprimir </BtnPrimary>
+      <BtnPrimary id="printButton" v-print="printObj"> Imprimir </BtnPrimary>
     </div>
   </div>
 
@@ -66,41 +66,43 @@
       </div>
     </div>
 
-    <div
-      style="width: 6in; height: 4in"
-      class="uppercase flex flex-col gap-2 bg-white text-xl"
-      id="printMe"
-    >
-      <div>
-        <img src="/stick-logo.jpg" alt="Logo" class="py-1 h-[60px] w-auto mx-auto" />
-      </div>
-      <div>
-        Remitente <br />
-        <strong> {{ shipment.senderName }} ({{ shipment.senderPhone }}) </strong>
-      </div>
-      <div>
-        Destinatario <br />
-        <strong> {{ shipment.receiverName }} ({{ shipment.receiverPhone }}) </strong>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
+    <div v-show="false">
+      <div
+        style="width: 6in; height: 4in"
+        class="uppercase flex flex-col gap-2 bg-white text-xl"
+        id="printMe"
+      >
         <div>
-          Departamento <br />
-          <strong>
-            {{ shipment.destinationDepartment }}
-          </strong>
+          <img src="/stick-logo.jpg" alt="Logo" class="py-1 h-[60px] w-auto mx-auto" />
         </div>
         <div>
-          Pais <br />
+          Remitente <br />
+          <strong> {{ shipment.senderName }} ({{ shipment.senderPhone }}) </strong>
+        </div>
+        <div>
+          Destinatario <br />
+          <strong> {{ shipment.receiverName }} ({{ shipment.receiverPhone }}) </strong>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            Departamento <br />
+            <strong>
+              {{ shipment.destinationDepartment }}
+            </strong>
+          </div>
+          <div>
+            Pais <br />
+            <strong>
+              {{ shipment.destinationCountry }}
+            </strong>
+          </div>
+        </div>
+        <div class="line-clamp-2">
+          Direccion <br />
           <strong>
-            {{ shipment.destinationCountry }}
+            {{ shipment.fullAddress }}
           </strong>
         </div>
-      </div>
-      <div class="line-clamp-2">
-        Direccion <br />
-        <strong>
-          {{ shipment.fullAddress }}
-        </strong>
       </div>
     </div>
   </template>
@@ -109,18 +111,26 @@
 <script setup lang="ts">
 import TheTable from '@/components/Table/TheTable.vue'
 import useShipment from '@/composables/useShipment'
-import { onMounted } from 'vue'
+import { nextTick, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { format } from '@formkit/tempo'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
-import { config } from '@/config/config'
 
 const route = useRoute()
 const { getShipment, shipment, processing } = useShipment()
 
 onMounted(async () => {
   await getShipment(route.params.id as string)
+
+  if (route.query.action === 'print') {
+    nextTick(() => {
+      const printButton = document.getElementById('printButton')
+      if (printButton) {
+        printButton.click()
+      }
+    })
+  }
 })
 
 const printObj = {

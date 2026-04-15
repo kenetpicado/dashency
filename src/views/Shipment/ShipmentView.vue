@@ -59,7 +59,7 @@ import useShipment from '@/composables/useShipment'
 import { format } from '@formkit/tempo'
 import { IconEdit, IconEye, IconTrash } from '@tabler/icons-vue'
 import { onMounted, watch } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import TableSkeleton from '@/components/TableSkeleton.vue'
 
 const { getShipments, shipments, processing, deleteShipment, meta } = useShipment()
