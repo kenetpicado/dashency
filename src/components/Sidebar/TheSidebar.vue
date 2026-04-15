@@ -29,6 +29,7 @@ import {
   IconHome,
   IconPackage,
   IconPackages,
+  IconTruckDelivery,
   IconUsersGroup,
   IconDatabaseDollar,
   IconTransferOut,
@@ -76,6 +77,13 @@ const items = [
     icon: IconPackage,
     show: canShowThisItem({ name: 'packages' }),
     activeIn: []
+  },
+  {
+    title: 'Encomiendas',
+    to: { name: 'shipments' },
+    icon: IconTruckDelivery,
+    show: canShowThisItem({ name: 'shipments' }),
+    activeIn: ['shipments.create', 'shipments.show']
   },
   {
     title: 'Finanzas',
