@@ -6,7 +6,7 @@
     </div>
     <div class="flex gap-4">
       <RouterLink :to="{ name: 'shipments.create' }">
-        <BtnSecondary> Crear nuevo </BtnSecondary>
+        <BtnSecondary> Crear otro </BtnSecondary>
       </RouterLink>
       <BtnPrimary id="printButton" v-print="printObj"> Imprimir </BtnPrimary>
     </div>
