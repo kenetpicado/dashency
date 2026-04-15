@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import InputForm from '@/components/Form/InputForm.vue'
 import { ref } from 'vue'
 import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import useAuth from '@/composables/useAuth.js'
 import type { ILoginForm } from '@/types'
 import { Form } from 'vee-validate'
 import FieldForm from '@/components/Form/FieldForm.vue'
+import { config } from '@/config/config'
 
 const { login, processing } = useAuth()
 
@@ -13,13 +13,11 @@ const form = ref<ILoginForm>({
   email: '',
   password: ''
 })
-
-const logo = import.meta.env.VITE_APP_LOGO || ''
 </script>
 
 <template>
   <div class="flex flex-col justify-center items-center">
-    <img :src="logo" alt="Logo" class="w-auto h-[4rem] mx-auto" />
+    <img v-if="config.logo" :src="config.logo" alt="Logo" class="w-auto h-[4rem] mx-auto" />
   </div>
 
   <Form @submit="login(form)" class="mb-6">
