@@ -4,12 +4,9 @@
       <h2 class="text-lg font-bold">Encomienda</h2>
       <div class="text-sm text-balance text-gray-400">Detalles de la etiqueta de encomienda</div>
     </div>
-    <div class="flex gap-4">
-      <RouterLink :to="{ name: 'shipments.create' }">
-        <BtnSecondary> Crear otro </BtnSecondary>
-      </RouterLink>
-      <BtnPrimary id="printButton" v-print="printObj"> Imprimir </BtnPrimary>
-    </div>
+    <RouterLink :to="{ name: 'shipments.create' }">
+      <BtnSecondary> Crear otro </BtnSecondary>
+    </RouterLink>
   </div>
 
   <template v-if="processing">
@@ -57,16 +54,30 @@
               <td class="border-r border-gray-200 text-gray-400">Dirección completa</td>
               <td>{{ shipment.fullAddress }}</td>
             </tr>
+
             <tr>
-              <td class="border-r border-gray-200 text-gray-400">Tracking</td>
-              <td>{{ shipment.tracking }}</td>
+              <td class="border-r border-gray-200 text-gray-400">Acciones</td>
+              <td>
+                <div class="flex flex-col gap-4">
+                  <BtnSecondary class="hidden lg:block" id="printButton" v-print="printObj">
+                    Imprimir
+                  </BtnSecondary>
+                  <BtnSecondary
+                    :loading="downloadingImage"
+                    :disabled="processing || !shipment"
+                    @click="downloadLabelAsPng"
+                  >
+                    Descargar
+                  </BtnSecondary>
+                </div>
+              </td>
             </tr>
           </template>
         </TheTable>
       </div>
     </div>
 
-    <div v-show="false">
+    <div class="overflow-x-auto">
       <div
         style="width: 6in; height: 4in"
         class="uppercase flex flex-col gap-2 bg-white text-xl"
@@ -97,7 +108,7 @@
             </strong>
           </div>
         </div>
-        <div class="line-clamp-2">
+        <div class="line-clamp-4">
           Direccion <br />
           <strong>
             {{ shipment.fullAddress }}
@@ -111,26 +122,55 @@
 <script setup lang="ts">
 import TheTable from '@/components/Table/TheTable.vue'
 import useShipment from '@/composables/useShipment'
-import { nextTick, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { format } from '@formkit/tempo'
-import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
+import { toPng } from 'html-to-image'
+import toast from '@/utils/toast'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 
 const route = useRoute()
 const { getShipment, shipment, processing } = useShipment()
+const downloadingImage = ref(false)
+
+const downloadLabelAsPng = async () => {
+  const element = document.getElementById('printMe')
+
+  if (!element) {
+    toast.error('No se pudo encontrar la etiqueta para descargar')
+    return
+  }
+
+  downloadingImage.value = true
+
+  try {
+    const width = element.offsetWidth
+    const height = element.offsetHeight
+
+    const dataUrl = await toPng(element, {
+      cacheBust: true,
+      pixelRatio: 2,
+      width,
+      height,
+      canvasWidth: width,
+      canvasHeight: height
+    })
+
+    const link = document.createElement('a')
+    link.download = `${shipment.value?.tracking || 'etiqueta'}.png`
+    link.href = dataUrl
+    link.click()
+
+    toast.success('Imagen descargada')
+  } catch (error) {
+    toast.error('No se pudo descargar la imagen')
+  } finally {
+    downloadingImage.value = false
+  }
+}
 
 onMounted(async () => {
   await getShipment(route.params.id as string)
-
-  if (route.query.action === 'print') {
-    nextTick(() => {
-      const printButton = document.getElementById('printButton')
-      if (printButton) {
-        printButton.click()
-      }
-    })
-  }
 })
 
 const printObj = {
