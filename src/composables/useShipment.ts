@@ -48,7 +48,7 @@ export default function useShipment() {
     }
   }
 
-  async function storeShipment(body: IShipment, printAuto: boolean) {
+  async function storeShipment(body: IShipment) {
     processing.value = true
 
     try {
@@ -56,7 +56,7 @@ export default function useShipment() {
       toast.success('Creado correctamente')
 
       if (data._id) {
-        router.push({ name: 'shipments.show', params: { id: data._id }, query: { action: printAuto ? 'print' : 'view' } })
+        router.push({ name: 'shipments.show', params: { id: data._id } })
       }
     } catch (err) {
       processError(err)
@@ -65,13 +65,13 @@ export default function useShipment() {
     }
   }
 
-  async function updateShipment(body: IShipment, printAuto: boolean) {
+  async function updateShipment(body: IShipment) {
     processing.value = true
 
     try {
       await api.put('/shipments/' + body.id, body)
       toast.success('Actualizado correctamente')
-      router.push({ name: 'shipments.show', params: { id: body.id }, query: { action: printAuto ? 'print' : 'view' } })
+      router.push({ name: 'shipments.show', params: { id: body.id } })
     } catch (err) {
       processError(err)
     } finally {

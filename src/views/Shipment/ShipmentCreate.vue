@@ -69,13 +69,6 @@
         placeholder="ej. Calle 123, Ciudad, Referencias"
       />
 
-      <div class="form-control w-fit">
-        <label class="label cursor-pointer gap-2">
-          <input type="checkbox" class="toggle" v-model="printAuto" />
-          <span class="label-text">Imprimir automaticamente</span>
-        </label>
-      </div>
-
       <div class="modal-action justify-end">
         <RouterLink :to="{ name: 'shipments' }">
           <BtnSecondary> Cancelar </BtnSecondary>
@@ -91,7 +84,6 @@ import BtnPrimary from '@/components/Buttons/BtnPrimary.vue'
 import BtnSecondary from '@/components/Buttons/BtnSecondary.vue'
 import FieldForm from '@/components/Form/FieldForm.vue'
 import useShipment from '@/composables/useShipment'
-import { useStorage } from '@vueuse/core'
 import { Form } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
@@ -110,12 +102,8 @@ const form = ref({
   fullAddress: ''
 })
 
-const printAuto = useStorage('shipment_print_auto', true)
-
 const onSubmit = () => {
-  form.value.id
-    ? updateShipment(form.value, printAuto.value)
-    : storeShipment(form.value, printAuto.value)
+  form.value.id ? updateShipment(form.value) : storeShipment(form.value)
 }
 
 onMounted(async () => {
