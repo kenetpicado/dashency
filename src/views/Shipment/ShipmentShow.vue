@@ -80,7 +80,7 @@
     <div class="overflow-x-auto">
       <div
         style="width: 6in; height: 4in"
-        class="uppercase flex flex-col gap-2 bg-white text-xl"
+        class="uppercase flex flex-col gap-2 bg-white text-xl p-2"
         id="printMe"
       >
         <div>
