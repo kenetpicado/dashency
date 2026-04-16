@@ -80,7 +80,7 @@
     <div class="overflow-x-auto">
       <div
         style="width: 6in; height: 4in"
-        class="uppercase flex flex-col gap-2 bg-white text-xl p-2"
+        class="uppercase flex flex-col gap-2 bg-white text-xl p-4"
         id="printMe"
       >
         <div>
@@ -108,8 +108,8 @@
             </strong>
           </div>
         </div>
-        <div class="line-clamp-4">
-          Direccion <br />
+        <div class="line-clamp-3">
+          Direccion:
           <strong>
             {{ shipment.fullAddress }}
           </strong>
