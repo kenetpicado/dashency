@@ -178,6 +178,7 @@ export interface IShipment {
   fullAddress: string
   tracking?: string
   createdAt?: Date
+  guide?: number
 }
 
 export interface IShipmentResponse {

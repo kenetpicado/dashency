@@ -80,11 +80,14 @@
     <div class="overflow-x-auto">
       <div
         style="width: 6in; height: 4in"
-        class="uppercase flex flex-col gap-2 bg-white text-xl p-4"
+        class="uppercase flex flex-col gap-2.5 bg-white text-xl p-4"
         id="printMe"
       >
-        <div>
-          <img src="/stick-logo.jpg" alt="Logo" class="py-1 h-[60px] w-auto mx-auto" />
+        <div class="flex justify-between items-start mb-2">
+          <img src="/stick-logo.jpg" alt="Logo" class="h-[55px] w-auto" />
+          <span v-if="shipment.guide" class="text-4xl font-bold">
+            {{ String(shipment.guide).padStart(7, '0') }}
+          </span>
         </div>
         <div>
           Remitente <br />
@@ -109,7 +112,7 @@
           </div>
         </div>
         <div class="line-clamp-3">
-          Direccion:
+          Dir.:
           <strong>
             {{ shipment.fullAddress }}
           </strong>
