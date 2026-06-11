@@ -72,16 +72,10 @@ export const authRoutes = [
     meta: { title: 'Encomienda', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
-    path: 'paquetes-de-correo',
+    path: 'correo',
     component: () => import('../views/MailPackage/MailPackageView.vue'),
     name: 'mail.packages',
     meta: { title: 'Paquetes de correos', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
-  },
-  {
-    path: 'sincronizacion',
-    component: () => import('../views/Sync/SyncView.vue'),
-    name: 'sync',
-    meta: { title: 'Sincronización', roles: ['ROOT', 'ADMINISTRADOR', 'CAJERO'] }
   },
   {
     path: 'facturacion',

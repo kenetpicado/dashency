@@ -1,109 +1,93 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import usePackage from '@/composables/usePackage'
+import useGoogle from '@/composables/useGoogle'
 import TheTable from '@/components/Table/TheTable.vue'
-import { watchDebounced } from '@vueuse/core'
 import { format } from '@formkit/tempo'
-import ThePaginate from '@/components/ThePaginate.vue'
-import FieldForm from '@/components/Form/FieldForm.vue'
 
-const { getMailPackages, mailPackages, queryParams, meta, processing } = usePackage()
+const { emails, getEmails, processing, queryParams } = useGoogle()
 
-onMounted(() => {
-  getMailPackages()
+onMounted(async () => {
+  await getEmails()
 })
 
-watchDebounced(
-  queryParams.value,
-  () => {
-    meta.value.page = 1
-    getMailPackages()
-  },
-  { debounce: 700, maxWait: 1000 }
-)
+function getNextPage() {
+  if (!emails.value.nextPageToken) return
+
+  queryParams.page = emails.value.nextPageToken
+  getEmails()
+}
 </script>
 
 <template>
-  <header class="flex items-center justify-between mb-6">
-    <span class="font-bold text-2xl">Correo</span>
-  </header>
-
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
-    <FieldForm
-      text="Guía"
-      name="guide"
-      v-model="queryParams.guide"
-      placeholder="Número de guia"
-      type="number"
-    />
-
-    <FieldForm
-      text="Cliente"
-      name="client"
-      v-model="queryParams.client"
-      placeholder="Nombre del cliente"
-      type="search"
-    />
-
-    <FieldForm
-      text="Tracking"
-      name="tracking"
-      v-model="queryParams.tracking"
-      placeholder="ej. 1Z12345E0205271688"
-      type="search"
-    />
-
-    <FieldForm as="select" text="Tipo" name="type" v-model="queryParams.type">
-      <option value="">Todos</option>
-      <option value="Maritimo/Ocean">Maritimo/Ocean</option>
-      <option value="Aereo/Air">Aereo/Air</option>
-    </FieldForm>
+  <div class="mb-4 flex items-center justify-between gap-4">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-lg font-bold">Correo</h2>
+      <div class="text-sm text-balance text-gray-400">
+        Paquetes registrados mediante correo electrónico
+      </div>
+    </div>
   </div>
 
-  <TheTable>
-    <template #header>
-      <th>Creado</th>
-      <th>Guia</th>
-      <th>Tipo</th>
-      <th>Peso</th>
-      <th>Cliente</th>
-      <th>Tracking</th>
-      <th>Descripción</th>
-    </template>
-    <template #body>
-      <tr v-if="processing">
-        <td colspan="7">
-          <span class="loading-table-data"> </span>
-        </td>
-      </tr>
-      <tr v-else-if="!mailPackages.length">
-        <td colspan="7" class="text-center">No hay paquetes</td>
-      </tr>
-      <tr v-else v-for="(item, index) in mailPackages" :key="index" class="hover:bg-gray-50">
-        <td>
-          <span v-if="item.createdAt">
-            {{ format(item.createdAt, { date: 'short', time: 'short' }) }}
-          </span>
-        </td>
-        <td>
-          {{ item.guide || '-' }}
-        </td>
-        <td>
-          {{ item.type }}
-        </td>
-        <td>{{ item.grossWeight }} lb(s)</td>
-        <td>
-          {{ item.client }}
-        </td>
-        <td>
-          {{ item.tracking || '-' }}
-        </td>
-        <td>
-          {{ item.description }}
-        </td>
-      </tr>
-    </template>
-  </TheTable>
+  <div v-if="processing" class="text-center max-w-lg mx-auto space-y-4 text-balance">
+    <span class="loading loading-dots loading-lg"></span>
+    <h2 class="font-bold text-lg">Sincronizando paquetes...</h2>
+    <p class="text-gray-400 text-sm">
+      Esto puede tardar unos momentos dependiendo de la cantidad de correos a procesar.
+    </p>
+    <p class="text-gray-400 text-sm">
+      Por favor, ten paciencia mientras completamos la sincronización.
+    </p>
+  </div>
 
-  <ThePaginate v-model="meta.page" :meta="meta" />
+  <template v-else>
+    <TheTable>
+      <template #header>
+        <th>Fecha</th>
+        <th>Guia</th>
+        <th>Tipo</th>
+        <th>Peso</th>
+        <th>Tracking</th>
+        <th>Nombre</th>
+        <th>Desc.</th>
+      </template>
+      <template #body>
+        <tr v-if="!emails.data.length">
+          <td colspan="7" class="text-center">No hay datos que mostrar</td>
+        </tr>
+
+        <template v-else>
+          <tr v-for="(item, index) in emails.data" :key="index" class="hover:bg-gray-50">
+            <td>
+              <span v-if="item.data.createdAt">
+                {{ format(item.data.createdAt, { date: 'short', time: 'medium' }) }}
+              </span>
+            </td>
+            <td>
+              {{ item.data.guide }}
+            </td>
+            <td>
+              {{ item.data.type }}
+            </td>
+            <td>
+              {{ item.data.weight }}
+            </td>
+            <td>
+              <span :class="{ 'text-blue-500 cursor-pointer underline': item.data.id }">
+                {{ item.data.tracking }}
+              </span>
+            </td>
+            <td>
+              {{ item.data.client }}
+            </td>
+            <td>
+              {{ item.data.description }}
+            </td>
+          </tr>
+        </template>
+      </template>
+    </TheTable>
+    <div v-if="emails.nextPageToken" class="flex justify-center mt-4">
+      <button type="button" class="btn btn-neutral" @click="getNextPage">Siguiente página</button>
+    </div>
+  </template>
 </template>

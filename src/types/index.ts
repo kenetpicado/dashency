@@ -50,6 +50,7 @@ export interface IPackage {
   guide?: string
   description?: string
   pieces?: number
+  weight?: number
   grossWeight: number
   client: string
   entryDate?: string
@@ -241,6 +242,8 @@ export interface ICredential {
   id: string
   provider: string
   createdAt: string
+  updatedAt: string
+  expiresAt: number
   email: string
   from_email?: string
   picture: string
@@ -274,9 +277,9 @@ export interface IMessageContent {
 }
 
 export interface IEmail {
-  messages: IMessage[]
-  nextPageToken: string
-  resultSizeEstimate: number
+  id: string
+  isStored?: boolean
+  data: IPackage
 }
 
 export interface IMessage {

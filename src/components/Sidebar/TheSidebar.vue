@@ -35,7 +35,8 @@ import {
   IconTransferOut,
   IconLogs,
   IconSettings,
-  IconUser
+  IconUser,
+  IconBrandGmail
 } from '@tabler/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRoute } from 'vue-router'
@@ -84,6 +85,13 @@ const items = [
     icon: IconTruckDelivery,
     show: canShowThisItem({ name: 'shipments' }),
     activeIn: ['shipments.create', 'shipments.show']
+  },
+  {
+    title: 'Correo',
+    to: { name: 'mail.packages' },
+    icon: IconBrandGmail,
+    show: canShowThisItem({ name: 'mail.packages' }),
+    activeIn: []
   },
   {
     title: 'Finanzas',
