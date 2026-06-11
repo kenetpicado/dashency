@@ -1,42 +1,50 @@
 import { useGoogleStore } from '@/stores/google'
 import api from '@/config/axios'
-import type { IEmail, IMessageContent } from '@/types'
 import { storeToRefs } from 'pinia'
-import toast from '@/utils/toast'
-import { ref } from 'vue'
+import processError from '@/utils/process-error'
+import { reactive, ref } from 'vue'
+import { cleanQueryParamsTs } from '@/utils/query-params'
 
-export default function useAuth() {
-  const processing = ref(false)
-  const { authRoute, emails, message } = storeToRefs(useGoogleStore())
+export default function useGoogle() {
+  const processing = ref<boolean>(false)
+  const { authRoute, emails } = storeToRefs(useGoogleStore())
+
+  const queryParams = reactive({
+    page: ''
+  })
 
   async function getAuthRoute() {
-    processing.value = false
-    await api
-      .get('/google/auth-route')
-      .then((response) => {
-        useGoogleStore().setAuthRoute(response.data as string)
-      })
-      .finally(() => {
-        processing.value = false
-      })
+    processing.value = true
+
+    try {
+      const { data } = await api.get('/google/auth-route')
+      authRoute.value = data as string
+    } catch (error) {
+      processError(error)
+    } finally {
+      processing.value = false
+    }
   }
 
   async function getEmails() {
-    await api
-      .get('/google/emails')
-      .then((response) => {
-        useGoogleStore().setEmails(response.data as IEmail)
-      })
-      .catch((error) => {
-        toast.error(error.response?.data?.message || 'Error fetching emails')
-      })
+    processing.value = true
+
+    try {
+      const { data } = await api.get('/google/emails', { params: cleanQueryParamsTs(queryParams) })
+      emails.value = data
+    } catch (error) {
+      processError(error)
+    } finally {
+      processing.value = false
+    }
   }
 
-  async function getMessage(id: string) {
-    await api.get('/google/emails/' + id).then((response) => {
-      useGoogleStore().setMessage(response.data as IMessageContent)
-    })
+  return {
+    getAuthRoute,
+    authRoute,
+    getEmails,
+    emails,
+    processing,
+    queryParams
   }
-
-  return { getAuthRoute, authRoute, getEmails, emails, getMessage, message, processing }
 }
